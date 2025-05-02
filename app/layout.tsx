@@ -12,7 +12,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "QuantHive | Democratizing Investment Strategies",
   description: "Leveraging AI and mathematical modeling to democratize investment strategies",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/QHL.png',
+    apple: '/QHL.png',
+  },
 }
 
 export default function RootLayout({
