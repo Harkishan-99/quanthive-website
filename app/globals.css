@@ -2,25 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --gray-100: #f5f5f5;
-  --gray-200: #e5e5e5;
-  --gray-300: #d4d4d4;
-  --gray-400: #a3a3a3;
-  --gray-500: #737373;
-  --gray-600: #525252;
-  --gray-700: #404040;
-  --gray-800: #262626;
-  --gray-900: #171717;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-size: 16px;
-  line-height: 1.6;
+@layer base {
+
+  /* ------------- Values to be updated for light theme when it is ready -------------------- */
+  :root {
+
+
+    /* -----Old Styles------ */
+    /* --background: #ffffff;
+    --foreground: #000000;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-300: #d4d4d4;
+    --gray-400: #a3a3a3;
+    --gray-500: #737373;
+    --gray-600: #525252;
+    --gray-700: #404040;
+    --gray-800: #262626;
+    --gray-900: #171717; */
+
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 1%;
+    /* Updated value as in design */
+    --foreground: 0 0% 100%;
+    /* Updated value as in design */
+    --card: 0 0% 4% 5%;
+    /* Updated value as in design */
+    --card-foreground: 0 0% 17%;
+    /* Updated value as in design */
+    --popover: 0 0% 4% 5%;
+    /* Updated value as in design */
+    --popover-foreground: 0 0% 17%;
+    /* Updated value as in design */
+    --primary: 0 0% 100%;
+    /* Updated value as in design */
+    --primary-foreground: 0 0% 37%;
+    /* Updated value as in design */
+    --secondary: 0 0% 31%;
+    /* Updated value as in design */
+    --secondary-foreground: 0 0% 37%;
+    /* Updated value as in design */
+    --muted: 0 0% 17%;
+    /* Updated value as in design */
+    --muted-foreground: 0 0% 16%;
+    /* Updated value as in design */
+    --accent: 50 90% 84%;
+    /* Updated value as in design */
+    --accent-foreground: 50 26% 61%;
+    /* Updated value as in design */
+    --success: 100 100% 65%;
+    /* Updated value as in design */
+    --success-foreground: 100 100% 65%;
+    /* Updated value as in design */
+    --destructive: 365 100% 62%;
+    /* Updated value as in design */
+    --destructive-foreground: 365 100% 62%;
+    /* Updated value as in design */
+    --border: 0 0% 17%;
+    /* Updated value as in design */
+    --input: 240 3.7% 15.9%;
+    --ring: 0 0% 17%;
+    /* Updated value as in design */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-luxe_uno);
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+  }
 }
 
 h1,
@@ -33,7 +124,8 @@ h6 {
   line-height: 1.2;
 }
 
-.section-title {
+/* -------------------------- Old Styles ---------------------------------- */
+/* .section-title {
   @apply text-sm font-medium uppercase tracking-wider text-gray-500 mb-4;
 }
 
@@ -75,4 +167,4 @@ h6 {
 
 .container {
   @apply max-w-7xl mx-auto;
-}
+} */

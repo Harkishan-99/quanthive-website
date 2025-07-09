@@ -12,6 +12,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        luxe_uno: ["var(--font-luxe_uno)"],
         title: ["var(--font-space-grotesk)"],
         content: ["var(--font-roboto-serif)"],
       },
