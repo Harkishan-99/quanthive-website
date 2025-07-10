@@ -7,7 +7,7 @@ const Logo = ({ color }: { color?: string }) => {
       height="auto"
       viewBox="0 0 153 196"
       fill="none"
-      className="mt-0.5"
+      className="mt-1"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
