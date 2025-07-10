@@ -9,17 +9,9 @@ import React, { useRef, useState } from "react";
 import Logo from "../Logo";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { motion, Transition, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { useOnClickOutside } from "usehooks-ts";
-import {
-  Dialog,
-  DialogDescription,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/Miscellaneous/AnimatedDialog";
+import Menu from "../Menu";
 
 const navItems = [
   { label: "Flash", href: "#", hasTrademark: true },
@@ -142,16 +134,7 @@ const Navbar = () => {
         </div>
       </motion.div>
 
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="absolute top-full mt-6 bg-card border-2 border-card-foreground rounded-xl p-4 z-10"
-        >
-          <NavbarItems />
-        </motion.div>
-      )}
+      {isOpen && <Menu />}
     </nav>
   );
 };

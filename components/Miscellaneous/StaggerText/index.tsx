@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const StaggerText = ({
+export const StaggerText = ({
   children,
   className,
   duration,
