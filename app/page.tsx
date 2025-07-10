@@ -14,7 +14,7 @@ import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="relative min-h-screen">
       <div className="absolute top-0 left-0 w-10 h-10 bg-[#111111]" />
       <div className="absolute top-0 right-0 w-10 h-10 bg-[#111111]" />
       <div className="absolute bottom-0 left-0 w-10 h-10 bg-[#111111]" />

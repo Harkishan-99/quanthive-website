@@ -9,8 +9,17 @@ import React, { useRef, useState } from "react";
 import Logo from "../Logo";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Transition, Variants } from "framer-motion";
 import { useOnClickOutside } from "usehooks-ts";
+import {
+  Dialog,
+  DialogDescription,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/Miscellaneous/AnimatedDialog";
 
 const navItems = [
   { label: "Flash", href: "#", hasTrademark: true },
@@ -32,7 +41,7 @@ const NavbarItems = () => {
           opacity: 1,
           transition: {
             staggerChildren: 0.1,
-            delayChildren: 0.5,
+            delayChildren: 0.6,
           },
         },
       }}
@@ -97,52 +106,48 @@ const Navbar = () => {
   return (
     <nav
       ref={dialogRef}
-      className="absolute top-12 left-1/2 -translate-x-1/2 flex flex-row items-center justify-center"
+      className="pt-10 relative flex flex-row items-center justify-center"
     >
-      <div
+      <motion.div
+        initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
+        animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
+        transition={{
+          duration: 0.4,
+          ease: "easeInOut",
+          opacity: { duration: 0.2 },
+          scale: { duration: 0.3 },
+        }}
+        style={{ transformOrigin: "center" }}
         className={`${
           isOpen ? "scale-105" : "hover:scale-105"
         } transition-all duration-300`}
       >
-        <motion.div
-          initial={{ scaleX: 0, scaleY: 0 }}
-          animate={{ scaleX: 1, scaleY: 1 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          style={{ transformOrigin: "center" }}
-          className="flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5 transition-all duration-300"
-        >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-            className="flex items-center"
+        <div className="flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5">
+          <div className="w-7 h-7 mr-3 flex items-center justify-center">
+            <Logo />
+          </div>
+
+          <NavbarItems />
+
+          <div
+            onClick={() => {
+              isOpen ? setIsOpen(false) : setIsOpen(true);
+            }}
+            className={`text-foreground text-lg ml-1.5 ${
+              isOpen ? "scale-125" : "hover:scale-125"
+            } transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
           >
-            <div className="w-7 h-7 mr-3 flex items-center justify-center">
-              <Logo />
-            </div>
-
-            <NavbarItems />
-
-            <button
-              onClick={() => {
-                isOpen ? setIsOpen(false) : setIsOpen(true);
-              }}
-              className={`text-foreground text-lg ml-1.5 ${
-                isOpen ? "scale-125" : "hover:scale-125"
-              } transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
-            >
-              <ChevronDown strokeWidth={"2.5"} size={"24"} />
-            </button>
-          </motion.div>
-        </motion.div>
-      </div>
+            <ChevronDown strokeWidth={"2.5"} size={"24"} />
+          </div>
+        </div>
+      </motion.div>
 
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-[#0A0A0A] rounded-lg shadow-lg p-4 z-10"
+          className="absolute top-full mt-6 bg-card border-2 border-card-foreground rounded-xl p-4 z-10"
         >
           <NavbarItems />
         </motion.div>

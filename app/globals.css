@@ -55,51 +55,76 @@
   }
 
   .dark {
-    --background: 0 0% 1%;
-    /* Updated value as in design */
-    --foreground: 0 0% 100%;
-    /* Updated value as in design */
-    --card: 0 0% 4% 5%;
-    /* Updated value as in design */
-    --card-foreground: 0 0% 17%;
-    /* Updated value as in design */
-    --popover: 0 0% 4% 5%;
-    /* Updated value as in design */
-    --popover-foreground: 0 0% 17%;
-    /* Updated value as in design */
-    --primary: 0 0% 100%;
-    /* Updated value as in design */
-    --primary-foreground: 0 0% 37%;
-    /* Updated value as in design */
-    --secondary: 0 0% 31%;
-    /* Updated value as in design */
-    --secondary-foreground: 0 0% 37%;
-    /* Updated value as in design */
-    --muted: 0 0% 17%;
-    /* Updated value as in design */
-    --muted-foreground: 0 0% 16%;
-    /* Updated value as in design */
-    --accent: 50 90% 84%;
-    /* Updated value as in design */
-    --accent-foreground: 50 26% 61%;
-    /* Updated value as in design */
-    --success: 100 100% 65%;
-    /* Updated value as in design */
-    --success-foreground: 100 100% 65%;
-    /* Updated value as in design */
-    --destructive: 365 100% 62%;
-    /* Updated value as in design */
-    --destructive-foreground: 365 100% 62%;
-    /* Updated value as in design */
-    --border: 0 0% 17%;
-    /* Updated value as in design */
+    /* Updated value as in the design */
+    --background: 0 0% 1%; /* #030303 */
+
+    /* Updated value as in the design */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+
+    /* Updated value as in the design */
+    --card: 0 0% 4% / 5%; /* #0A0A0A + (5% Opacity) */
+
+    /* Updated value as in the design */
+    --card-foreground: 0 0% 17%; /* #2A2A2A */
+
+    /* Updated value as in the design */
+    --popover: 0 0% 4% / 5%; /* #0A0A0A + (5% Opacity) */
+
+    /* Updated value as in the design */
+    --popover-foreground: 0 0% 17%; /* #2A2A2A */
+
+    /* Updated value as in the design */
+    --primary: 0 0% 100%; /* #FFFFFF */
+
+    /* Updated value as in the design */
+    --primary-foreground: 0 0% 37%; /* #5E5E5E */
+
+    /* Updated value as in the design */
+    --secondary: 0 0% 31%; /* #505050 */
+
+    /* Updated value as in the design */
+    --secondary-foreground: 0 0% 37%; /* #5E5E5E */
+
+    /* Updated value as in the design */
+    --muted: 0 0% 17%; /* #2A2A2A */
+
+    /* Updated value as in the design */
+    --muted-foreground: 0 0% 16%; /* #282828 */
+
+    /* Updated value as in the design */
+    --accent: 50 90% 84%; /* #FBEEAF */
+
+    /* Updated value as in the design */
+    --accent-foreground: 50 26% 61%; /* #B5AC81 */
+
+    /* Updated value as in the design */
+    --success: 100 100% 65%; /* #8AFF4F */
+
+    /* Updated value as in the design */
+    --success-foreground: 100 100% 65%; /* #8AFF4F */
+
+    /* Updated value as in the design */
+    --destructive: 355 100% 62%; /* #FF3D4E */
+
+    /* Updated value as in the design */
+    --destructive-foreground: 355 100% 62%; /* #FF3D4E */
+
+    /* Updated value as in the design */
+    --border: 0 0% 17%; /* #2A2A2A */
+
     --input: 240 3.7% 15.9%;
-    --ring: 0 0% 17%;
-    /* Updated value as in design */
+
+    /* Updated value as in the design */
+    --ring: 0 0% 17%; /* #2A2A2A */
+
     --chart-1: 220 70% 50%;
+
     --chart-2: 160 60% 45%;
+
     --chart-3: 30 80% 55%;
+
     --chart-4: 280 65% 60%;
+
     --chart-5: 340 75% 55%;
   }
 }
