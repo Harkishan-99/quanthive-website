@@ -9,15 +9,10 @@ import React, { useRef, useState } from "react";
 import Logo from "../Logo";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useOnClickOutside } from "usehooks-ts";
 import Menu from "../Menu";
-
-const navItems = [
-  { label: "Flash", href: "#", hasTrademark: true },
-  { label: "Benchmark", href: "#", hasTrademark: false },
-  { label: "Careers", href: "#", hasTrademark: false },
-];
+import { navItems } from "@/lib/constants";
 
 const NavbarItems = () => {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
@@ -121,7 +116,7 @@ const Navbar = () => {
 
           <NavbarItems />
 
-          <div
+          <button
             onClick={() => {
               isOpen ? setIsOpen(false) : setIsOpen(true);
             }}
@@ -130,11 +125,11 @@ const Navbar = () => {
             } transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
           >
             <ChevronDown strokeWidth={"2.5"} size={"24"} />
-          </div>
+          </button>
         </div>
       </motion.div>
 
-      {isOpen && <Menu />}
+      <AnimatePresence>{isOpen && <Menu />}</AnimatePresence>
     </nav>
   );
 };

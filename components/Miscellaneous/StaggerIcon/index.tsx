@@ -13,7 +13,7 @@ export const StaggerIcon = ({
 }) => {
   return (
     <div
-      className={`relative overflow-hidden inline-block ${className}`}
+      className={`relative overflow-hidden ${className}`}
       style={{ lineHeight: 0.75 }}
     >
       <motion.div

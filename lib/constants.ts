@@ -1,3 +1,9 @@
+const navItems = [
+  { label: "Flash", href: "#", hasTrademark: true },
+  { label: "Benchmark", href: "#", hasTrademark: false },
+  { label: "Careers", href: "#", hasTrademark: false },
+];
+
 const menuItems = [
   {
     "About Us": [
@@ -37,4 +43,4 @@ const menuItems = [
   },
 ];
 
-export { menuItems };
+export { menuItems, navItems };
