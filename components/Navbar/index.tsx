@@ -77,7 +77,7 @@ const NavbarItems = () => {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const dialogRef = useRef<HTMLElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = () => {
     if (isOpen) {
@@ -91,25 +91,25 @@ const Navbar = () => {
   );
 
   return (
-    <nav
-      ref={dialogRef}
-      className="pt-10 relative flex flex-row items-center justify-center"
-    >
-      <motion.div
-        initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
-        animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
-        transition={{
-          duration: 0.4,
-          ease: "easeInOut",
-          opacity: { duration: 0.2 },
-          scale: { duration: 0.3 },
-        }}
-        style={{ transformOrigin: "center" }}
-        className={`${
-          isOpen ? "scale-105" : "hover:scale-105"
-        } transition-all duration-300`}
+    <div className="pt-10 relative flex flex-row items-center justify-center">
+      <div
+        ref={dialogRef}
+        className="w-fit flex flex-row items-center justify-center"
       >
-        <div className="flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5">
+        <motion.nav
+          initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
+          animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
+          transition={{
+            duration: 0.4,
+            ease: "easeInOut",
+            opacity: { duration: 0.2 },
+            scale: { duration: 0.3 },
+          }}
+          style={{ transformOrigin: "center" }}
+          className={`${
+            isOpen ? "scale-105" : "hover:scale-105"
+          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5`}
+        >
           <div className="w-7 h-7 mr-3 flex items-center justify-center">
             <Logo />
           </div>
@@ -126,11 +126,11 @@ const Navbar = () => {
           >
             <ChevronDown strokeWidth={"2.5"} size={"24"} />
           </button>
-        </div>
-      </motion.div>
+        </motion.nav>
 
-      <AnimatePresence>{isOpen && <Menu />}</AnimatePresence>
-    </nav>
+        <AnimatePresence>{isOpen && <Menu />}</AnimatePresence>
+      </div>
+    </div>
   );
 };
 

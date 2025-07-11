@@ -38,13 +38,13 @@ const Menu = () => {
   };
 
   return (
-    <motion.div
+    <motion.menu
       key="menu"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="absolute max-w-5xl w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-10 px-9 pb-14 z-10 backdrop-blur-[8px]"
+      className="absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-10 px-9 pb-14 z-10 backdrop-blur-[18px]"
     >
       <input
         type="text"
@@ -59,51 +59,54 @@ const Menu = () => {
           {Object.entries(section).map(([title, items]) => (
             <div key={title}>
               <h3 className="text-xl font-semibold mb-5">{title}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-lg:gap-y-6">
                 {items.map((item: any, index: number) => (
-                  <div key={index} className="flex items-center">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-[136px] h-[72px] border-2 border-[#2A2A2A] rounded-lg"
-                    />
+                  <Link href={item.href} key={index} className="group">
+                    <motion.div
+                      initial="initial"
+                      whileHover="hovered"
+                      className={`flex items-center ${
+                        (index + 1) % 3 == 0
+                          ? "lg:justify-end"
+                          : "lg:justify-start"
+                      }`}
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-[136px] h-[72px] border-2 border-[#2A2A2A] rounded-lg"
+                      />
 
-                    <div className="flex flex-col ml-4">
-                      <span className="flex items-end text-2xl font-semibold text-primary-foreground -mb-1">
-                        {item.number}
-                      </span>
+                      <div className="flex flex-col ml-4">
+                        <span className="flex items-end text-2xl font-semibold text-primary-foreground -mb-1">
+                          {item.number}
+                        </span>
 
-                      <motion.div
-                        initial="initial"
-                        whileHover="hovered"
-                        className="flex items-start"
-                      >
-                        <Link
-                          href={item.href}
-                          className="relative flex flex-row group"
-                        >
-                          <div className="flex flex-row items-end justify-center text-foreground">
-                            <p className="text-2xl font-normal whitespace-nowrap">
-                              <span className="group-hover:underline underline-offset-4">
-                                {item.title}
-                              </span>
-                              {item.hasTradeMark && (
-                                <span className="relative -top-1 mr-1 ml-0.5 leading-none">
-                                  <sup className="text-[10px]">TM</sup>
+                        <div className="flex items-start">
+                          <div className="relative flex flex-row group">
+                            <div className="flex flex-row items-end justify-center text-foreground">
+                              <p className="text-2xl font-normal whitespace-nowrap">
+                                <span className="group-hover:underline underline-offset-4">
+                                  {item.title}
                                 </span>
-                              )}
-                            </p>
-                            <StaggerIcon
-                              icon={ArrowUpRight}
-                              size={24}
-                              duration={0.25}
-                              className="h-fit mb-0.5 -ml-0.5"
-                            />
+                                {item.hasTradeMark && (
+                                  <span className="relative -top-1 mr-1 ml-0.5 leading-none">
+                                    <sup className="text-[10px]">TM</sup>
+                                  </span>
+                                )}
+                              </p>
+                              <StaggerIcon
+                                icon={ArrowUpRight}
+                                size={24}
+                                duration={0.25}
+                                className="h-fit mb-0.5 -ml-0.5"
+                              />
+                            </div>
                           </div>
-                        </Link>
-                      </motion.div>
-                    </div>
-                  </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -115,7 +118,7 @@ const Menu = () => {
           No items found
         </div>
       )}
-    </motion.div>
+    </motion.menu>
   );
 };
 
