@@ -22,7 +22,7 @@ const Menu = () => {
 
         Object.entries(section).forEach(([sectionTitle, items]) => {
           const matchingItems = items.filter((item: any) =>
-            item.title.toLowerCase().startsWith(query)
+            item.title.toLowerCase().includes(query)
           );
 
           if (matchingItems.length > 0) {
@@ -55,7 +55,7 @@ const Menu = () => {
       />
 
       {filteredMenuItems.map((section, index) => (
-        <div key={index} className="mt-11">
+        <div key={index} className="mt-11 select-none">
           {Object.entries(section).map(([title, items]) => (
             <div key={title}>
               <h3 className="text-xl font-semibold mb-5">{title}</h3>
@@ -114,7 +114,7 @@ const Menu = () => {
         </div>
       ))}
       {filteredMenuItems.length === 0 && (
-        <div className="mt-6 text-xl text-center text-muted-foreground">
+        <div className="mt-6 text-xl text-center text-parimary">
           No items found
         </div>
       )}

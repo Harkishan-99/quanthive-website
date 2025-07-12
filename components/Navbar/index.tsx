@@ -100,7 +100,7 @@ const Navbar = () => {
           initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
           animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
           transition={{
-            duration: 0.4,
+            duration: 0.3,
             ease: "easeInOut",
             opacity: { duration: 0.2 },
             scale: { duration: 0.3 },
@@ -108,7 +108,7 @@ const Navbar = () => {
           style={{ transformOrigin: "center" }}
           className={`${
             isOpen ? "scale-105" : "hover:scale-105"
-          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5`}
+          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5 select-none`}
         >
           <div className="w-7 h-7 mr-3 flex items-center justify-center">
             <Logo />

@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
@@ -57,8 +57,14 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backgroundImage: {
+        new_release_btn_gradient:
+          "linear-gradient(90deg, #FBEEAF 0%, #B5AC81 25%, #FBEEAF 50%, #B5AC81 75%, #FBEEAF 100%)",
+        cta_btn_gradient:
+          "linear-gradient(90deg, #131313 0%, #303030 25%, #131313 50%, #303030 75%, #131313 100%)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
-export default config
+};
+export default config;

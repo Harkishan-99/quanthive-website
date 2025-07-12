@@ -56,66 +56,86 @@
 
   .dark {
     /* Updated value as in the design */
-    --background: 0 0% 1%; /* #030303 */
+    --background: 0 0% 1%;
+    /* #030303 */
 
     /* Updated value as in the design */
-    --foreground: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 100%;
+    /* #FFFFFF */
 
     /* Updated value as in the design */
-    --card: 0 0% 4% / 5%; /* #0A0A0A + (5% Opacity) */
+    --card: 0 0% 4% / 5%;
+    /* #0A0A0A + (5% Opacity) */
 
     /* Updated value as in the design */
-    --card-foreground: 0 0% 17%; /* #2A2A2A */
+    --card-foreground: 0 0% 17%;
+    /* #2A2A2A */
 
     /* Updated value as in the design */
-    --popover: 0 0% 4% / 5%; /* #0A0A0A + (5% Opacity) */
+    --popover: 0 0% 4% / 5%;
+    /* #0A0A0A + (5% Opacity) */
 
     /* Updated value as in the design */
-    --popover-foreground: 0 0% 17%; /* #2A2A2A */
+    --popover-foreground: 0 0% 17%;
+    /* #2A2A2A */
 
     /* Updated value as in the design */
-    --primary: 0 0% 100%; /* #FFFFFF */
+    --primary: 0 0% 100%;
+    /* #FFFFFF */
 
     /* Updated value as in the design */
-    --primary-foreground: 0 0% 37%; /* #5E5E5E */
+    --primary-foreground: 0 0% 37%;
+    /* #5E5E5E */
 
     /* Updated value as in the design */
-    --secondary: 0 0% 31%; /* #505050 */
+    --secondary: 0 0% 31%;
+    /* #505050 */
 
     /* Updated value as in the design */
-    --secondary-foreground: 0 0% 37%; /* #5E5E5E */
+    --secondary-foreground: 0 0% 37%;
+    /* #5E5E5E */
 
     /* Updated value as in the design */
-    --muted: 0 0% 17%; /* #2A2A2A */
+    --muted: 0 0% 17%;
+    /* #2A2A2A */
 
     /* Updated value as in the design */
-    --muted-foreground: 0 0% 16%; /* #282828 */
+    --muted-foreground: 0 0% 16%;
+    /* #282828 */
 
     /* Updated value as in the design */
-    --accent: 50 90% 84%; /* #FBEEAF */
+    --accent: 50 90% 84%;
+    /* #FBEEAF */
 
     /* Updated value as in the design */
-    --accent-foreground: 50 26% 61%; /* #B5AC81 */
+    --accent-foreground: 50 26% 61%;
+    /* #B5AC81 */
 
     /* Updated value as in the design */
-    --success: 100 100% 65%; /* #8AFF4F */
+    --success: 100 100% 65%;
+    /* #8AFF4F */
 
     /* Updated value as in the design */
-    --success-foreground: 100 100% 65%; /* #8AFF4F */
+    --success-foreground: 100 100% 65%;
+    /* #8AFF4F */
 
     /* Updated value as in the design */
-    --destructive: 355 100% 62%; /* #FF3D4E */
+    --destructive: 355 100% 62%;
+    /* #FF3D4E */
 
     /* Updated value as in the design */
-    --destructive-foreground: 355 100% 62%; /* #FF3D4E */
+    --destructive-foreground: 355 100% 62%;
+    /* #FF3D4E */
 
     /* Updated value as in the design */
-    --border: 0 0% 17%; /* #2A2A2A */
+    --border: 0 0% 17%;
+    /* #2A2A2A */
 
     --input: 240 3.7% 15.9%;
 
     /* Updated value as in the design */
-    --ring: 0 0% 17%; /* #2A2A2A */
+    --ring: 0 0% 17%;
+    /* #2A2A2A */
 
     --chart-1: 220 70% 50%;
 
@@ -132,6 +152,10 @@
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth !important;
   }
 
   body {
