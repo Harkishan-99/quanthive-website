@@ -18,7 +18,7 @@ const Hero = () => {
     >
       {/* New Release Button */}
       <motion.div
-        className="mt-16 mb-6"
+        className="mt-12 md:mt-16 mb-6"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -32,7 +32,7 @@ const Hero = () => {
 
       {/* Title Section */}
       <motion.div
-        className="text-accent text-center mb-20 select-none"
+        className="text-accent text-center mb-14 md:mb-20 select-none"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -42,7 +42,7 @@ const Hero = () => {
         }}
       >
         <motion.h1
-          className="text-4xl font-semibold mb-2"
+          className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -54,7 +54,7 @@ const Hero = () => {
           Democratizing
         </motion.h1>
         <motion.h1
-          className="text-4xl font-semibold mb-2"
+          className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -66,7 +66,7 @@ const Hero = () => {
           Wall Street Through
         </motion.h1>
         <motion.h1
-          className="text-4xl font-semibold mb-4"
+          className="text-3xl md:text-4xl font-semibold mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -77,12 +77,14 @@ const Hero = () => {
         >
           ExplanableAI
           <span className="relative ml-0.5 leading-none">
-            <sup className="absolute top-1 text-sm font-normal">TM</sup>
+            <sup className="absolute top-1 text-xs md:text-sm font-normal">
+              TM
+            </sup>
           </span>
         </motion.h1>
 
         <motion.p
-          className="text-primary text-lg"
+          className="text-primary md:text-lg"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{

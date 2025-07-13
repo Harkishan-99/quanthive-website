@@ -31,8 +31,8 @@ const Footer = () => {
       const windowHeight = window.innerHeight;
       const scrolled = currentScrollY + windowHeight;
 
-      // Only show footer when we're within 10px of the actual bottom (very precise)
-      const isAtBottom = scrolled >= documentHeight - 10;
+      // Only show footer when we're within 30px of the actual bottom (very precise)
+      const isAtBottom = scrolled >= documentHeight - 30;
       const isScrollingDown = currentScrollY > lastScrollY;
       const isScrollingUp = currentScrollY < lastScrollY;
 

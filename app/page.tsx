@@ -56,10 +56,10 @@ export default function Home() {
 
             {/* -------------- New Code ------------ */}
             <>
-              <div className="absolute top-0 left-0 w-10 h-10 bg-[#111111]" />
-              <div className="absolute top-0 right-0 w-10 h-10 bg-[#111111]" />
-              <div className="absolute bottom-0 left-0 w-10 h-10 bg-[#111111]" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 bg-[#111111]" />
+              <div className="absolute top-0 left-0 w-7 h-7 md:w-10 md:h-10 bg-[#111111]" />
+              <div className="absolute top-0 right-0 w-7 h-7 md:w-10 md:h-10 bg-[#111111]" />
+              <div className="absolute bottom-0 left-0 w-7 h-7 md:w-10 md:h-10 bg-[#111111]" />
+              <div className="absolute bottom-0 right-0 w-7 h-7 md:w-10 md:h-10 bg-[#111111]" />
             </>
 
             <Navbar />
@@ -75,7 +75,7 @@ export default function Home() {
                 <ArrowBigDownDash />
               </p>
               <hr className="mb-8" />
-              <div className="max-w-4xl mx-auto">
+              <div className="max-w-4xl mx-auto px-4">
                 <h2 className="text-3xl font-bold text-accent text-center mb-12">
                   Experience the Power of ExplanableAI™
                 </h2>
@@ -170,28 +170,29 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg">
+                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg px-4">
                     <p className="text-primary text-lg">
                       Keep scrolling to test the footer behavior...
                     </p>
                   </div>
 
-                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg">
+                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg px-4">
                     <p className="text-primary text-lg">
                       Almost there! The footer should appear soon.
                     </p>
                   </div>
 
-                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg">
+                  <div className="h-96 flex items-center justify-center bg-gray-900/30 rounded-lg px-4">
                     <p className="text-primary text-lg">
                       This is the bottom section - footer should be visible now!
                     </p>
                   </div>
 
-                  <div className="h-32 flex items-center justify-center">
+                  <div className="h-32 flex flex-col items-center justify-center">
                     <p className="text-accent text-lg font-semibold">
                       🎉 You've reached the bottom! 🎉
                     </p>
+                    <p>Scroll down more to see the footer.</p>
                   </div>
                 </div>
               </div>

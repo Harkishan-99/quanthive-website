@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useOnClickOutside } from "usehooks-ts";
 import Menu from "../Menu";
 import { navItems } from "@/lib/constants";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const NavbarItems = () => {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
@@ -48,24 +49,24 @@ const NavbarItems = () => {
         >
           <Link
             href={item.href}
-            className="relative px-2.5 py-1 flex flex-row"
+            className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row"
             onMouseEnter={() => setHoveredItem(index)}
             onMouseLeave={() => setHoveredItem(null)}
           >
-            <div className="text-foreground text-lg font-normal whitespace-nowrap">
+            <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
               <span className="relative">
                 {item.label}
 
                 {hoveredItem === index && (
                   <motion.div
-                    className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-foreground rounded-full"
+                    className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
                     layoutId="navbar-underline"
                   />
                 )}
               </span>
 
               {item.hasTrademark && (
-                <sup className="text-[10px] ml-0.5">TM</sup>
+                <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
               )}
             </div>
           </Link>
@@ -76,6 +77,7 @@ const NavbarItems = () => {
 };
 
 const Navbar = () => {
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -108,9 +110,9 @@ const Navbar = () => {
           style={{ transformOrigin: "center" }}
           className={`${
             isOpen ? "scale-105" : "hover:scale-105"
-          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-2 px-5 select-none`}
+          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none`}
         >
-          <div className="w-7 h-7 mr-3 flex items-center justify-center">
+          <div className="w-5 h-5 md:w-7 md:h-7 mr-3 mt-0.5 md:mt-1 flex items-center justify-center">
             <Logo />
           </div>
 
@@ -124,7 +126,11 @@ const Navbar = () => {
               isOpen ? "scale-125" : "hover:scale-125"
             } transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
           >
-            <ChevronDown strokeWidth={"2.5"} size={"24"} />
+            {isMobile ? (
+              <ChevronDown strokeWidth={"2.5"} size={"20"} />
+            ) : (
+              <ChevronDown strokeWidth={"2.5"} size={"24"} />
+            )}
           </button>
         </motion.nav>
 
