@@ -16,6 +16,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ArrowBigDownDash } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -53,6 +54,7 @@ export default function Home() {
             <Contact />
             <Footer /> */}
 
+            {/* -------------- New Code ------------ */}
             <>
               <div className="absolute top-0 left-0 w-10 h-10 bg-[#111111]" />
               <div className="absolute top-0 right-0 w-10 h-10 bg-[#111111]" />
@@ -61,12 +63,18 @@ export default function Home() {
             </>
 
             <Navbar />
-            {/* -------------- New Code ------------ */}
-            {/* Boxes */}
             <Hero />
 
+            {/* -------------------- Extra Content for scrolling ------------------ */}
             {/* Add content to enable scrolling */}
-            <section className="py-20 px-4">
+            <section className="py-28 px-4">
+              <hr />
+              <p className="flex flex-row my-4 text-lg text-accent items-center justify-center">
+                <ArrowBigDownDash />
+                Filler Content. Please Ignore.
+                <ArrowBigDownDash />
+              </p>
+              <hr className="mb-8" />
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl font-bold text-accent text-center mb-12">
                   Experience the Power of ExplanableAI™
@@ -180,7 +188,7 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <div className="h-64 flex items-center justify-center">
+                  <div className="h-32 flex items-center justify-center">
                     <p className="text-accent text-lg font-semibold">
                       🎉 You've reached the bottom! 🎉
                     </p>

@@ -74,7 +74,7 @@ const Footer = () => {
       className="fixed bottom-0 left-0 right-0 z-50 bg-[#0F0F0F]"
       style={{ transform: "translateY(100%)" }}
     >
-      <div className="relative px-10 py-4">
+      <div className="relative px-10 py-3">
         <>
           <div className="absolute top-0 left-0 w-5 h-5 bg-[#1B1B1B]" />
           <div className="absolute top-0 right-0 w-5 h-5 bg-[#1B1B1B]" />
