@@ -1,33 +1,113 @@
 import React from "react";
+import { motion } from "motion/react";
 import NewReleaseButton from "./NewReleaseButton";
 import CTAButton from "./CTAButton";
 
 const Hero = () => {
   return (
-    <section id="hero" className="relative mt-10 flex flex-col items-center justify-center">
-      {/* To-do */}
-      <div className="mt-16 mb-6">
+    <motion.section
+      id="hero"
+      className="relative mt-10 flex flex-col items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: 1,
+        staggerChildren: 0.3,
+        delayChildren: 0.5,
+      }}
+    >
+      {/* New Release Button */}
+      <motion.div
+        className="mt-16 mb-6"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.5,
+          ease: "easeOut",
+        }}
+      >
         <NewReleaseButton />
-      </div>
+      </motion.div>
 
-      <div className="text-accent text-center mb-20 select-none">
-        <h1 className="text-4xl font-semibold mb-2">Democratizing</h1>
-        <h1 className="text-4xl font-semibold mb-2">Wall Street Through</h1>
-        <h1 className="text-4xl font-semibold mb-4">
+      {/* Title Section */}
+      <motion.div
+        className="text-accent text-center mb-20 select-none"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.4,
+          ease: "easeOut",
+        }}
+      >
+        <motion.h1
+          className="text-4xl font-semibold mb-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            delay: 0.4,
+            ease: "easeOut",
+          }}
+        >
+          Democratizing
+        </motion.h1>
+        <motion.h1
+          className="text-4xl font-semibold mb-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            delay: 0.6,
+            ease: "easeOut",
+          }}
+        >
+          Wall Street Through
+        </motion.h1>
+        <motion.h1
+          className="text-4xl font-semibold mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            delay: 0.8,
+            ease: "easeOut",
+          }}
+        >
           ExplanableAI
           <span className="relative ml-0.5 leading-none">
             <sup className="absolute top-1 text-sm font-normal">TM</sup>
           </span>
-        </h1>
+        </motion.h1>
 
-        <p className="text-primary text-lg">
+        <motion.p
+          className="text-primary text-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            delay: 1,
+            ease: "easeOut",
+          }}
+        >
           From Input To Insights, All Within A Minute.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
-      {/* To-do */}
-      <CTAButton />
-    </section>
+      {/* CTA Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          delay: 1.1,
+          ease: "easeOut",
+        }}
+      >
+        <CTAButton />
+      </motion.div>
+    </motion.section>
   );
 };
 

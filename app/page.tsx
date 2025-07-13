@@ -67,9 +67,9 @@ export default function Home() {
 
             {/* -------------------- Extra Content for scrolling ------------------ */}
             {/* Add content to enable scrolling */}
-            <section className="py-28 px-4">
+            <section className="py-28">
               <hr />
-              <p className="flex flex-row my-4 text-lg text-accent items-center justify-center">
+              <p className="flex flex-row my-4 gap-4 text-lg text-accent items-center justify-center">
                 <ArrowBigDownDash />
                 Filler Content. Please Ignore.
                 <ArrowBigDownDash />
