@@ -71,7 +71,7 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-[#0F0F0F]"
+      className="bg-[#0F0F0F] mt-20"
       style={{ transform: "translateY(100%)" }}
     >
       <div className="relative px-10 py-3">

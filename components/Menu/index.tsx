@@ -1,12 +1,16 @@
 import { menuItems } from "@/lib/constants";
 import { ArrowUpRight } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import React, { useState } from "react";
 import { StaggerIcon } from "../Miscellaneous/StaggerIcon";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const Menu = () => {
+type MenuProps = {
+  onTeamClick?: () => void;
+};
+
+const Menu: React.FC<MenuProps> = ({ onTeamClick }) => {
   const isMobile = useIsMobile();
   const [filteredMenuItems, setFilteredMenuItems] = useState(menuItems);
 
@@ -64,28 +68,28 @@ const Menu = () => {
                 {title}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 md:gap-y-6">
-                {items.map((item: any, index: number) => (
-                  <Link href={item.href} key={index} className="group">
-                    <motion.div
-                      initial="initial"
-                      whileHover="hovered"
-                      className={`flex items-center ${
-                        (index + 1) % 3 == 0
+                {items.map((item: any, idx: number) =>
+                  item.title === "Our Team" && onTeamClick ? (
+                    <button
+                      key={idx}
+                      type="button"
+                      className={`group flex items-center w-full bg-transparent border-none p-0 m-0 text-left ${
+                        (idx + 1) % 3 === 0
                           ? "lg:justify-end"
                           : "lg:justify-start"
                       }`}
+                      onClick={onTeamClick}
+                      style={{ cursor: "pointer" }}
                     >
                       <img
                         src={item.image}
                         alt={item.title}
                         className="w-[112px] h-[62px] md:w-[136px] md:h-[72px] border-2 border-[#2A2A2A] rounded-lg"
                       />
-
                       <div className="flex flex-col ml-4">
                         <span className="flex items-end text-xl md:text-2xl font-semibold text-primary-foreground -mb-1">
                           {item.number}
                         </span>
-
                         <div className="flex items-start">
                           <div className="relative flex flex-row group">
                             <div className="flex flex-row items-end justify-center text-foreground">
@@ -120,9 +124,65 @@ const Menu = () => {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
-                  </Link>
-                ))}
+                    </button>
+                  ) : (
+                    <Link href={item.href} key={idx} className="group">
+                      <motion.div
+                        initial="initial"
+                        whileHover="hovered"
+                        className={`flex items-center ${
+                          (idx + 1) % 3 === 0
+                            ? "lg:justify-end"
+                            : "lg:justify-start"
+                        }`}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-[112px] h-[62px] md:w-[136px] md:h-[72px] border-2 border-[#2A2A2A] rounded-lg"
+                        />
+                        <div className="flex flex-col ml-4">
+                          <span className="flex items-end text-xl md:text-2xl font-semibold text-primary-foreground -mb-1">
+                            {item.number}
+                          </span>
+                          <div className="flex items-start">
+                            <div className="relative flex flex-row group">
+                              <div className="flex flex-row items-end justify-center text-foreground">
+                                <p className="text-xl md:text-2xl font-normal whitespace-nowrap">
+                                  <span className="group-hover:underline underline-offset-4">
+                                    {item.title}
+                                  </span>
+                                  {item.hasTradeMark && (
+                                    <span className="relative -top-1 mr-1 ml-0.5 leading-none">
+                                      <sup className="text-[8px] md:text-[10px]">
+                                        TM
+                                      </sup>
+                                    </span>
+                                  )}
+                                </p>
+                                {isMobile ? (
+                                  <StaggerIcon
+                                    icon={ArrowUpRight}
+                                    size={20}
+                                    duration={0.25}
+                                    className="h-fit mb-0.5 -ml-0.5"
+                                  />
+                                ) : (
+                                  <StaggerIcon
+                                    icon={ArrowUpRight}
+                                    size={24}
+                                    duration={0.25}
+                                    className="h-fit mb-0.5 -ml-0.5"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           ))}

@@ -2,8 +2,8 @@ import { title } from "process";
 
 const navItems = [
   { label: "Flash", href: "#", hasTrademark: true },
-  { label: "Benchmark", href: "#", hasTrademark: false },
-  { label: "Careers", href: "#", hasTrademark: false },
+  { label: "About", href: "#", hasTrademark: false },
+  { label: "Contact", href: "#", hasTrademark: false },
 ];
 
 const menuItems = [
@@ -17,7 +17,7 @@ const menuItems = [
         image: "/images/webp/menu-about-us-1.webp",
       },
       {
-        title: "Our Mission",
+        title: "Our Team",
         hasTradeMark: false,
         href: "#",
         number: "02",

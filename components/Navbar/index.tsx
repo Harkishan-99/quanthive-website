@@ -1,10 +1,3 @@
-/* ---------------------- New Navbar ------------------------ 
-This a new navbar component that is being created.
-It is a placeholder for now and will be updated later.
-It will be used in the main page of the website.
--------------------------------------------------------------
-*/
-
 import React, { useRef, useState } from "react";
 import Logo from "../Logo";
 import Link from "next/link";
@@ -15,7 +8,13 @@ import Menu from "../Menu";
 import { navItems } from "@/lib/constants";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const NavbarItems = () => {
+// Add onTeamClick to NavbarProps
+type NavbarProps = {
+  onAboutClick: () => void;
+  onTeamClick: () => void;
+};
+
+const NavbarItems: React.FC<{ onAboutClick: () => void }> = ({ onAboutClick }) => {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
   return (
@@ -47,36 +46,60 @@ const NavbarItems = () => {
             },
           }}
         >
-          <Link
-            href={item.href}
-            className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row"
-            onMouseEnter={() => setHoveredItem(index)}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
-              <span className="relative">
-                {item.label}
-
-                {hoveredItem === index && (
-                  <motion.div
-                    className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
-                    layoutId="navbar-underline"
-                  />
+          {item.label.toLowerCase() === "about" ? (
+            <button
+              type="button"
+              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row bg-transparent border-none cursor-pointer"
+              onMouseEnter={() => setHoveredItem(index)}
+              onMouseLeave={() => setHoveredItem(null)}
+              onClick={onAboutClick}
+              style={{ background: "none" }}
+            >
+              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
+                <span className="relative">
+                  {item.label}
+                  {hoveredItem === index && (
+                    <motion.div
+                      className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
+                      layoutId="navbar-underline"
+                    />
+                  )}
+                </span>
+                {item.hasTrademark && (
+                  <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
                 )}
-              </span>
-
-              {item.hasTrademark && (
-                <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
-              )}
-            </div>
-          </Link>
+              </div>
+            </button>
+          ) : (
+            <Link
+              href={item.href}
+              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row"
+              onMouseEnter={() => setHoveredItem(index)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
+              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
+                <span className="relative">
+                  {item.label}
+                  {hoveredItem === index && (
+                    <motion.div
+                      className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
+                      layoutId="navbar-underline"
+                    />
+                  )}
+                </span>
+                {item.hasTrademark && (
+                  <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
+                )}
+              </div>
+            </Link>
+          )}
         </motion.div>
       ))}
     </motion.div>
   );
 };
 
-const Navbar = () => {
+const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -116,7 +139,8 @@ const Navbar = () => {
             <Logo />
           </div>
 
-          <NavbarItems />
+          {/* Pass onAboutClick to NavbarItems */}
+          <NavbarItems onAboutClick={onAboutClick} />
 
           <button
             onClick={() => {
@@ -134,7 +158,10 @@ const Navbar = () => {
           </button>
         </motion.nav>
 
-        <AnimatePresence>{isOpen && <Menu />}</AnimatePresence>
+        {/* Pass onTeamClick to Menu */}
+        <AnimatePresence>
+          {isOpen && <Menu onTeamClick={onTeamClick} />}
+        </AnimatePresence>
       </div>
     </div>
   );

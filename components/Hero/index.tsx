@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import NewReleaseButton from "./NewReleaseButton";
 import CTAButton from "./CTAButton";
 
@@ -7,7 +7,7 @@ const Hero = () => {
   return (
     <motion.section
       id="hero"
-      className="relative mt-10 flex flex-col items-center justify-center"
+      className="hero-section"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{
@@ -16,6 +16,16 @@ const Hero = () => {
         delayChildren: 0.5,
       }}
     >
+      {/* Background Video */}
+      <video
+        className="hero-bg-video"
+        src="/assets/bkg_video_three.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+
       {/* New Release Button */}
       <motion.div
         className="mt-12 md:mt-16 mb-6"
@@ -109,6 +119,32 @@ const Hero = () => {
       >
         <CTAButton />
       </motion.div>
+
+      {/* Inline CSS for video background */}
+      <style jsx>{`
+        .hero-section {
+          position: relative;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        .hero-bg-video {
+          position: fixed;
+          top: 0;
+          left: 0;
+          min-width: 100vw;
+          min-height: 100vh;
+          width: 100vw;
+          height: 100vh;
+          object-fit: cover;
+          z-index: -1;
+          pointer-events: none;
+        }
+      `}</style>
     </motion.section>
   );
 };
