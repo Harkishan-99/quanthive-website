@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./NewTeamSlider.module.css";
+import Navbar from "./Navbar";
 
 // You can move this to a separate file if you want
 const sliderData = [
@@ -25,6 +26,10 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [slideWidth, setSlideWidth] = useState(390);
+
+  // Handler stubs for Navbar
+  const handleAboutClick = () => {};
+  const handleTeamClick = () => {};
 
   // Responsive check
   useEffect(() => {
@@ -233,10 +238,15 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
             overflow: "auto"
           }}
         >
+          {/* Shared Navbar at the top */}
+          <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", zIndex: 10 }}>
+            <Navbar onAboutClick={handleAboutClick} onTeamClick={handleTeamClick} />
+          </div>
+          {/* Close button, fixed in top-right */}
           <button
             onClick={onClose}
             style={{
-              position: "absolute",
+              position: "fixed",
               top: 24,
               right: 24,
               fontSize: 32,
@@ -251,16 +261,6 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
             ×
           </button>
           <div className={styles.container}>
-            <nav className={styles.nav}>
-              <div className={styles.logo}>
-                <a href="#">Team | QuantHive</a>
-              </div>
-              <div className={styles["nav-links"]}>
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Contact</a>
-              </div>
-            </nav>
             <div className={styles.slider}>
               <div className={styles["slide-track"]} ref={trackRef}>
                 {slides}

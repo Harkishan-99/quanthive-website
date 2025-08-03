@@ -1,4 +1,3 @@
-// ... existing imports ...
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import styles from "./AboutSlider.module.css";
@@ -17,9 +16,10 @@ const slideTitles = [
 type AboutSliderProps = {
   open: boolean;
   onClose: () => void;
+  onOpenTeam: () => void;
 };
 
-const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
+const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
   const scrollOffset = useRef(0); // This replaces Lenis scroll
@@ -35,6 +35,11 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
     updateTexture?: (offset: number) => void;
     render?: () => void;
   }>({});
+
+  const handleAboutClick = () => {};
+  const handleTeamClick = () => {
+    onOpenTeam();
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -323,10 +328,6 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
       wrapper.removeEventListener("touchmove", onTouchMove);
     };
   }, [open]);
-
-  // Handler stubs for Navbar
-  const handleAboutClick = () => {};
-  const handleTeamClick = () => {};
 
   if (!open) return null;
 
