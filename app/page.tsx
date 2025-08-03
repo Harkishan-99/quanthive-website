@@ -54,13 +54,14 @@ export default function Home() {
             />
 
             <Hero />
-            <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} />
-            <NewTeamSlider open={teamOpen} onClose={() => setTeamOpen(false)} />
+            
 
             <Footer />
           </main>
         </div>
       </div>
+        <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} />
+        <NewTeamSlider open={teamOpen} onClose={() => setTeamOpen(false)} />
     </>
   );
 }
