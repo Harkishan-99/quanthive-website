@@ -1,7 +1,8 @@
+// ... existing imports ...
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import Lenis from "@studio-freight/lenis";
 import styles from "./AboutSlider.module.css";
+import Navbar from "./Navbar";
 
 const slideTitles = [
   "Field Unit",
@@ -13,7 +14,6 @@ const slideTitles = [
   "Horizon",
 ];
 
-// 1. Add prop types
 type AboutSliderProps = {
   open: boolean;
   onClose: () => void;
@@ -21,16 +21,23 @@ type AboutSliderProps = {
 
 const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
+  const scrollOffset = useRef(0); // This replaces Lenis scroll
+  const isDragging = useRef(false);
+  const lastY = useRef(0);
+  const animationFrame = useRef<number | null>(null);
+
+  // Store Three.js objects to avoid re-creating on every render
+  const threeObjects = useRef<{
+    renderer?: THREE.WebGLRenderer;
+    scene?: THREE.Scene;
+    camera?: THREE.PerspectiveCamera;
+    updateTexture?: (offset: number) => void;
+    render?: () => void;
+  }>({});
 
   useEffect(() => {
-    if (!open) return; // Only run effect when open
-
-    const lenis = new Lenis();
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    if (!open) return;
 
     const images: HTMLImageElement[] = [];
     let loadedImageCount = 0;
@@ -209,13 +216,18 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
         texture.needsUpdate = true;
       }
 
-      let currentScroll = 0;
-      lenis.on("scroll", ({ scroll, limit }: any) => {
-        currentScroll = scroll / limit;
-        updateTexture(-currentScroll);
+      function render() {
+        updateTexture(scrollOffset.current);
         renderer.render(scene, camera);
-      });
+      }
 
+      // Store for later use
+      threeObjects.current = { renderer, scene, camera, updateTexture, render };
+
+      // Initial render
+      render();
+
+      // Handle resize
       let resizeTimeout: NodeJS.Timeout;
       window.addEventListener("resize", () => {
         if (resizeTimeout) clearTimeout(resizeTimeout);
@@ -223,62 +235,130 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose }) => {
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
+          render();
         }, 250);
       });
-
-      updateTexture(0);
-      renderer.render(scene, camera);
     }
 
     loadImages();
 
     // Cleanup on unmount
     return () => {
-      lenis.destroy();
+      if (threeObjects.current.renderer) {
+        threeObjects.current.renderer.dispose();
+      }
       // Optionally: remove event listeners, dispose Three.js objects, etc.
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+      }
     };
-  }, [open]); // re-run effect when open changes
+  }, [open]);
 
-  // 2. Conditionally render based on open prop
+  // --- Custom Scroll Logic ---
+  useEffect(() => {
+    if (!open) return;
+    const wrapper = sliderWrapperRef.current;
+    if (!wrapper) return;
+
+    // Mouse wheel scroll
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      // Adjust scroll speed as needed
+      scrollOffset.current += e.deltaY * 0.001;
+      // Keep scrollOffset in [0, 1) for infinite loop
+      if (scrollOffset.current < 0) scrollOffset.current += 1;
+      if (scrollOffset.current >= 1) scrollOffset.current -= 1;
+      if (threeObjects.current.render) threeObjects.current.render();
+    };
+
+    // Drag scroll
+    const onPointerDown = (e: PointerEvent) => {
+      isDragging.current = true;
+      lastY.current = e.clientY;
+      wrapper.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDragging.current) return;
+      const delta = e.clientY - lastY.current;
+      lastY.current = e.clientY;
+      scrollOffset.current += delta * 0.003; // Adjust drag sensitivity
+      if (scrollOffset.current < 0) scrollOffset.current += 1;
+      if (scrollOffset.current >= 1) scrollOffset.current -= 1;
+      if (threeObjects.current.render) threeObjects.current.render();
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      isDragging.current = false;
+      wrapper.releasePointerCapture(e.pointerId);
+    };
+
+    wrapper.addEventListener("wheel", onWheel, { passive: false });
+    wrapper.addEventListener("pointerdown", onPointerDown);
+    wrapper.addEventListener("pointermove", onPointerMove);
+    wrapper.addEventListener("pointerup", onPointerUp);
+
+    // Touch support (optional)
+    let lastTouchY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) lastTouchY = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const delta = e.touches[0].clientY - lastTouchY;
+        lastTouchY = e.touches[0].clientY;
+        scrollOffset.current += delta * 0.003;
+        if (scrollOffset.current < 0) scrollOffset.current += 1;
+        if (scrollOffset.current >= 1) scrollOffset.current -= 1;
+        if (threeObjects.current.render) threeObjects.current.render();
+      }
+    };
+    wrapper.addEventListener("touchstart", onTouchStart);
+    wrapper.addEventListener("touchmove", onTouchMove);
+
+    return () => {
+      wrapper.removeEventListener("wheel", onWheel);
+      wrapper.removeEventListener("pointerdown", onPointerDown);
+      wrapper.removeEventListener("pointermove", onPointerMove);
+      wrapper.removeEventListener("pointerup", onPointerUp);
+      wrapper.removeEventListener("touchstart", onTouchStart);
+      wrapper.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [open]);
+
+  // Handler stubs for Navbar
+  const handleAboutClick = () => {};
+  const handleTeamClick = () => {};
+
   if (!open) return null;
 
   return (
     <div className={styles.container}>
-      <nav className={styles.nav}>
-        <p id="logo" className={styles.logo}>QUANTHIVE</p>
-        <div className={styles.navLinks}>
-          <a href="#">About</a>
-          <a href="#">Careers</a>
-          <a href="#">Contact</a>
-        </div>
-        {/* Close button */}
-        <button
-          className={styles.closeBtn}
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            position: "absolute",
-            top: 24,
-            right: 24,
-            fontSize: 32,
-            background: "none",
-            border: "none",
-            color: "#fff",
-            cursor: "pointer",
-            zIndex: 1001,
-          }}
-        >
-          ×
-        </button>
-      </nav>
-      <div className={styles.sliderWrapper}>
+      {/* Shared Navbar at the top */}
+      <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", zIndex: 10 }}>
+        <Navbar onAboutClick={handleAboutClick} onTeamClick={handleTeamClick} />
+      </div>
+      {/* Close button, fixed in top-right */}
+      <button
+        className={styles.closeBtn}
+        onClick={onClose}
+        aria-label="Close"
+        style={{
+          position: "fixed",
+          top: 24,
+          right: 24,
+          fontSize: 32,
+          background: "none",
+          border: "none",
+          color: "#fff",
+          cursor: "pointer",
+          zIndex: 1001,
+        }}
+      >
+        ×
+      </button>
+      <div className={styles.sliderWrapper} ref={sliderWrapperRef}>
         <canvas ref={canvasRef}></canvas>
         <div className={styles.overlay}></div>
       </div>
-      <footer className={styles.footer}>
-        <p>© 2024 QuantHive. All rights reserved.</p>
-        <p>Made with ❤️ by QuantHive</p>
-      </footer>
     </div>
   );
 };

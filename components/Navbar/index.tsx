@@ -49,13 +49,13 @@ const NavbarItems: React.FC<{ onAboutClick: () => void }> = ({ onAboutClick }) =
           {item.label.toLowerCase() === "about" ? (
             <button
               type="button"
-              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row bg-transparent border-none cursor-pointer"
+              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row bg-transparent border-none cursor-pointer navbar-item-mobile"
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
               onClick={onAboutClick}
               style={{ background: "none" }}
             >
-              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
+              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
                 <span className="relative">
                   {item.label}
                   {hoveredItem === index && (
@@ -73,11 +73,11 @@ const NavbarItems: React.FC<{ onAboutClick: () => void }> = ({ onAboutClick }) =
           ) : (
             <Link
               href={item.href}
-              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row"
+              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row navbar-item-mobile"
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
             >
-              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap">
+              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
                 <span className="relative">
                   {item.label}
                   {hoveredItem === index && (
@@ -131,11 +131,11 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
             scale: { duration: 0.3 },
           }}
           style={{ transformOrigin: "center" }}
-          className={`${
+          className={`navbar-mobile ${
             isOpen ? "scale-105" : "hover:scale-105"
           } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none`}
         >
-          <div className="w-5 h-5 md:w-7 md:h-7 mr-3 mt-0.5 md:mt-1 flex items-center justify-center">
+          <div className="logo-mobile w-5 h-5 md:w-7 md:h-7 mr-3 mt-0.5 md:mt-1 flex items-center justify-center">
             <Logo />
           </div>
 
@@ -148,13 +148,12 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
             }}
             className={`text-foreground text-lg ml-1.5 ${
               isOpen ? "scale-125" : "hover:scale-125"
-            } transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
+            } transition-all duration-300 ${isOpen ? "rotate-180" : ""} navbar-dropdown-mobile`}
           >
-            {isMobile ? (
-              <ChevronDown strokeWidth={"2.5"} size={"20"} />
-            ) : (
-              <ChevronDown strokeWidth={"2.5"} size={"24"} />
-            )}
+            <ChevronDown
+              strokeWidth={"2.5"}
+              size={isMobile ? 28 : 24} // Larger on mobile
+            />
           </button>
         </motion.nav>
 
@@ -163,6 +162,35 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
           {isOpen && <Menu onTeamClick={onTeamClick} />}
         </AnimatePresence>
       </div>
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .navbar-mobile {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+            min-height: 3.5rem;
+          }
+          .logo-mobile {
+            width: 2.25rem !important;
+            height: 2.25rem !important;
+            margin-right: 1.25rem !important;
+          }
+          .navbar-item-mobile {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+          }
+          .navbar-item-text-mobile {
+            font-size: 1.45rem !important; /* 20px */
+          }
+          .navbar-dropdown-mobile svg {
+            width: 2rem !important;
+            height: 2rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
