@@ -54,7 +54,8 @@ export default function Home() {
             />
 
             <Hero />
-            
+
+            <div className="h-96" /> {/* Placeholder for additional content and also scrollbar needs some space to work properly   */}
 
             <Footer />
           </main>
