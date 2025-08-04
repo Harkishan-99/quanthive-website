@@ -19,7 +19,7 @@ const Hero = () => {
       {/* Background Video */}
       <video
         className="hero-bg-video"
-        src="/assets/bkg_video_three.mp4"
+        src="/assets/bkg_video_four.mp4"
         autoPlay
         loop
         muted
@@ -54,7 +54,7 @@ const Hero = () => {
           }}
         >
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2"
+            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 luminosity-text"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -66,7 +66,7 @@ const Hero = () => {
             Democratizing
           </motion.h1>
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2"
+            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 luminosity-text"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -78,7 +78,7 @@ const Hero = () => {
             Wall Street Through
           </motion.h1>
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-4"
+            className="text-3xl md:text-4xl font-semibold mb-4 luminosity-text"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -96,7 +96,7 @@ const Hero = () => {
           </motion.h1>
 
           <motion.p
-            className="text-primary md:text-lg"
+            className="text-primary md:text-lg luminosity-text"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -146,9 +146,15 @@ const Hero = () => {
           object-fit: cover;
           z-index: -1;
           pointer-events: none;
+          filter: hue-rotate(180deg);
         }
         .hero-content-mobile-shift {
           width: 100%;
+        }
+        .luminosity-text {
+          color: hsl(0deg 100% 92%);
+          mix-blend-mode: exclusion;
+          
         }
         @media (max-width: 640px) {
           .hero-content-mobile-shift {

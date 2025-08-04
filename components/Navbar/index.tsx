@@ -14,7 +14,7 @@ type NavbarProps = {
   onTeamClick: () => void;
 };
 
-const NavbarItems: React.FC<{ onAboutClick: () => void }> = ({ onAboutClick }) => {
+const NavbarItems: React.FC = () => {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
   return (
@@ -46,53 +46,27 @@ const NavbarItems: React.FC<{ onAboutClick: () => void }> = ({ onAboutClick }) =
             },
           }}
         >
-          {item.label.toLowerCase() === "about" ? (
-            <button
-              type="button"
-              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row bg-transparent border-none cursor-pointer navbar-item-mobile"
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={onAboutClick}
-              style={{ background: "none" }}
-            >
-              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
-                <span className="relative">
-                  {item.label}
-                  {hoveredItem === index && (
-                    <motion.div
-                      className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
-                      layoutId="navbar-underline"
-                    />
-                  )}
-                </span>
-                {item.hasTrademark && (
-                  <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
+          <Link
+            href={item.href}
+            className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row navbar-item-mobile"
+            onMouseEnter={() => setHoveredItem(index)}
+            onMouseLeave={() => setHoveredItem(null)}
+          >
+            <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
+              <span className="relative">
+                {item.label}
+                {hoveredItem === index && (
+                  <motion.div
+                    className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
+                    layoutId="navbar-underline"
+                  />
                 )}
-              </div>
-            </button>
-          ) : (
-            <Link
-              href={item.href}
-              className="relative px-1.5 py-[3px] md:px-2.5 md:py-1 flex flex-row navbar-item-mobile"
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-            >
-              <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
-                <span className="relative">
-                  {item.label}
-                  {hoveredItem === index && (
-                    <motion.div
-                      className="absolute -bottom-[1px] md:-bottom-0.5 left-0 right-0 h-[1px] md:h-0.5 bg-foreground rounded-full"
-                      layoutId="navbar-underline"
-                    />
-                  )}
-                </span>
-                {item.hasTrademark && (
-                  <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
-                )}
-              </div>
-            </Link>
-          )}
+              </span>
+              {item.hasTrademark && (
+                <sup className="text-[8px] md:text-[10px] ml-0.5">TM</sup>
+              )}
+            </div>
+          </Link>
         </motion.div>
       ))}
     </motion.div>
@@ -140,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
           </div>
 
           {/* Pass onAboutClick to NavbarItems */}
-          <NavbarItems onAboutClick={onAboutClick} />
+          <NavbarItems />
 
           <button
             onClick={() => {

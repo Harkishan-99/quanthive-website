@@ -1,9 +1,9 @@
 import { title } from "process";
 
 const navItems = [
-  { label: "Flash", href: "#", hasTrademark: true },
-  { label: "About", href: "#", hasTrademark: false },
-  { label: "Contact", href: "#", hasTrademark: false },
+  { label: "Flash", href: "/flash", hasTrademark: true },
+  { label: "About", href: "/about", hasTrademark: false },
+  { label: "Contact", href: "/contact", hasTrademark: false },
 ];
 
 const menuItems = [
@@ -12,32 +12,32 @@ const menuItems = [
       {
         title: "Explore",
         hasTradeMark: false,
-        href: "#",
+        href: "/about/explore",
         number: "01",
         image: "/images/webp/menu-about-us-1.webp",
       },
       {
         title: "Our Team",
         hasTradeMark: false,
-        href: "#",
+        href: "/team",
         number: "02",
         image: "/images/webp/menu-about-us-2.webp",
       },
       {
         title: "Contact",
         hasTradeMark: false,
-        href: "#",
+        href: "/contact",
         number: "03",
         image: "/images/webp/menu-about-us-3.webp",
       },
     ],
   },
   {
-    Prouducts: [
+    Products: [
       {
         title: "Flash",
         hasTradeMark: true,
-        href: "#",
+        href: "/flash",
         number: "01",
         image: "/images/webp/menu-products-1.webp",
       },
