@@ -55,13 +55,14 @@ export default function Home() {
 
             <Hero />
 
-            <div className="h-96" /> {/* Placeholder for additional content and also scrollbar needs some space to work properly   */}
+            {/* Minimal spacer to ensure footer animation works properly */}
+            <div className="h-32" />
 
             <Footer />
           </main>
         </div>
       </div>
-        <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} />
+        <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} onOpenTeam={() => setTeamOpen(true)} />
         <NewTeamSlider open={teamOpen} onClose={() => setTeamOpen(false)} />
     </>
   );

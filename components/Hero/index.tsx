@@ -19,7 +19,7 @@ const Hero = () => {
       {/* Background Video */}
       <video
         className="hero-bg-video"
-        src="/assets/bkg_video_four.mp4"
+        src="/assets/bkg_video_five.mp4"
         autoPlay
         loop
         muted
@@ -63,7 +63,7 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-            Democratizing
+            In Finance
           </motion.h1>
           <motion.h1
             className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 luminosity-text"
@@ -75,8 +75,8 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-            Wall Street Through
-          </motion.h1>
+            Speed isn't everything.
+            </motion.h1>
           <motion.h1
             className="text-3xl md:text-4xl font-semibold mb-4 luminosity-text"
             initial={{ opacity: 0, y: 20 }}
@@ -87,10 +87,10 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-            ExplanableAI
-            <span className="relative ml-0.5 leading-none">
+          It's the Only Thing.
+          <span className="relative ml-0.5 leading-none">
               <sup className="absolute top-1 text-xs md:text-sm font-normal">
-                TM
+              {/* TM */}
               </sup>
             </span>
           </motion.h1>
@@ -105,7 +105,7 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-            From Input To Insights, All Within A Minute.
+          From Input To Insights, All Within A Minute.
           </motion.p>
         </motion.div>
 
