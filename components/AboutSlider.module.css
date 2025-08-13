@@ -159,6 +159,8 @@
   backdrop-filter: none;
   pointer-events: auto;
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
 }
 
 .circleButton svg {

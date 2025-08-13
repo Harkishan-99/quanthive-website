@@ -1,0 +1,17 @@
+@media (max-width: 640px) {
+  .logo-mobile {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    margin-right: 1.25rem !important;
+  }
+
+
+  .navbar-item-mobile {
+    margin-bottom: 0.03rem;
+  }
+
+}
+
+.navbar-item-mobile {
+  margin-bottom: 0.03rem;
+}

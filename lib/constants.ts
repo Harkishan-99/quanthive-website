@@ -10,9 +10,9 @@ const menuItems = [
   {
     "About Us": [
       {
-        title: "Explore",
+        title: "About",
         hasTradeMark: false,
-        href: "/about/explore",
+        href: "/about",
         number: "01",
         image: "/images/webp/menu-about-us-1.webp",
       },
@@ -48,27 +48,19 @@ const menuItems = [
 const footerItems = {
   left: [
     {
-      title: "Our Story",
-      href: "#",
-    },
-    {
-      title: "Our Team",
-      href: "#",
-    },
-    {
-      title: "Blog",
+      title: "Connect",
       href: "#",
       items: [
         {
-          title: "What do Quant developers do?",
+          title: "LinkedIn",
           href: "#",
         },
         {
-          title: "How does Flashᵀᴹ work?",
+          title: "Twitter",
           href: "#",
         },
         {
-          title: "Random blog written by Harikishan",
+          title: "YouTube",
           href: "#",
         },
       ],
@@ -96,6 +88,20 @@ const footerItems = {
     {
       title: "Contact",
       href: "#",
+      items: [
+        {
+          title: "Mail",
+          href: "#",
+        },
+        {
+          title: "Location",
+          href: "#",
+        },
+        {
+          title: "Phone",
+          href: "#",
+        },
+      ],
     },
   ],
 };

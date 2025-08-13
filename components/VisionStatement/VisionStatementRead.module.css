@@ -1,0 +1,543 @@
+/* Reset and Base Styles */
+.container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f1eb;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Smooth scrolling and prevent overflow issues - handled via JavaScript */
+
+/* Floating Navbar */
+.floatingNavbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 20px 0;
+  pointer-events: none;
+}
+
+.floatingNavbar > * {
+  pointer-events: auto;
+}
+
+/* Header */
+.header {
+  background-color: rgba(245, 241, 235, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  margin-top: 60px; /* Add space to align with floating navbar */
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 0;
+}
+
+.designerName {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+}
+
+.designerTitle {
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+}
+
+.nav {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.navLink {
+  color: #999;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.navLink:hover {
+  color: #333;
+}
+
+/* Hero Section */
+.hero {
+  padding: 25px 20px 50px;
+  text-align: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.projectType {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.projectTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(60px, 12vw, 140px);
+  font-weight: 400;
+  color: #2d5a3d;
+  line-height: 0.9;
+  margin-bottom: 0;
+  letter-spacing: -2px;
+}
+
+/* Project Details */
+.projectDetails {
+  padding: 60px 20px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 80px;
+  max-width: 900px;
+  margin: 0 auto;
+  justify-items: center;
+}
+
+.detailItem {
+  text-align: center;
+  width: 100%;
+}
+
+.detailLabel {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 8px;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+}
+
+.detailValue {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.detailValue a {
+  color: #2d5a3d;
+  text-decoration: none;
+}
+
+.detailValue a:hover {
+  text-decoration: underline;
+}
+
+/* Main Image */
+.mainImage {
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.imageWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.projectImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 80vh;
+  object-fit: cover;
+}
+
+/* Logo Grid Styles */
+.logoGridWrapper {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.logoGridTitle {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 40px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.logoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.logoItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.companyLogo {
+  max-width: 250px;
+  max-height: 125px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.7);
+  transition: all 0.3s ease;
+}
+
+.companyLogo:hover {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.05);
+}
+
+.placeholderLogo {
+  width: 120px;
+  height: 60px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+.placeholderLogo span {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.placeholderLogo:hover {
+  border-color: #333;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Vision Statement Content */
+.visionContent {
+  padding: 80px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.visionContentWrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.visionText {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: #2d5a3d;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* Next Project */
+.nextSection {
+  background: #e5e4e2;
+  padding: 120px 20px 160px;
+  text-align: center;
+}
+
+.nextLabel {
+  color: #333;
+  opacity: 0.8;
+  margin-bottom: 20px;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+}
+
+.nextTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 9vw, 8rem);
+  line-height: 1;
+  margin: 0 auto 40px;
+  color: #000;
+}
+
+.nextCircleButton {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.08);
+  color: #111;
+  border: 1px solid rgba(0,0,0,0.2);
+  transition: transform .3s ease, background .3s ease;
+}
+
+.nextCircleButton:hover {
+  transform: scale(1.06);
+  background: rgba(0,0,0,0.12);
+}
+
+/* Responsive Design */
+
+/* Medium screens (tablets) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .detailsGrid {
+    gap: 60px;
+    max-width: 800px;
+  }
+  
+  .logoGrid {
+    gap: 30px 40px;
+    max-width: 700px;
+  }
+  
+  .logoGridTitle {
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 16px;
+    margin-top: 50px; /* Adjust for smaller navbar on mobile */
+  }
+
+  .headerContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px 0;
+  }
+
+  .designerName {
+    display: none;
+  }
+
+  .designerTitle {
+    display: none;
+  }
+
+  .nav {
+    align-self: flex-end;
+    gap: 24px;
+  }
+  
+  .navLink {
+    display: none;
+  }
+
+  .hero {
+    padding: 25px 16px 25px;
+  }
+
+  .projectType {
+    font-size: 14px;
+    margin-top: 70px;
+    margin-bottom: 16px;
+  }
+
+  .projectTitle {
+    font-size: clamp(40px, 15vw, 80px);
+    letter-spacing: -1px;
+  }
+
+  .projectDetails {
+    padding: 40px 16px 50px;
+  }
+
+  .detailsGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .detailItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    text-align: left;
+  }
+
+  .detailLabel {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .detailValue {
+    text-align: right;
+  }
+
+  .mainImage {
+    padding: 20px 16px;
+  }
+
+  .imageWrapper {
+    border-radius: 8px;
+  }
+
+  .logoGridWrapper {
+    padding: 30px 16px;
+  }
+  
+  .logoGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 20px;
+    max-width: 100%;
+  }
+  
+  .logoGridTitle {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .logoItem {
+    height: 120px;
+  }
+  
+  .companyLogo {
+    max-width: 180px;
+    max-height: 90px;
+  }
+  
+  .placeholderLogo {
+    width: 100px;
+    height: 50px;
+  }
+  
+  .placeholderLogo span {
+    font-size: 12px;
+  }
+
+  .visionContent {
+    padding: 60px 16px;
+  }
+
+  .visionText {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 12px;
+    margin-top: 45px; /* Adjust for even smaller navbar on very small screens */
+  }
+
+  .headerContent {
+    padding: 12px 0;
+  }
+
+  .designerName {
+    display: none;
+  }
+
+  .designerTitle {
+    display: none;
+  }
+
+  .navLink {
+    display: none;
+  }
+
+  .nav {
+    gap: 20px;
+  }
+
+  .hero {
+    padding: 20px 12px 20px;
+  }
+
+  .projectTitle {
+    font-size: clamp(36px, 18vw, 70px);
+  }
+
+  .projectDetails {
+    padding: 30px 12px 40px;
+  }
+
+  .detailsGrid {
+    gap: 32px;
+    max-width: 100%;
+  }
+
+  .detailLabel,
+  .detailValue {
+    font-size: 14px;
+  }
+
+  .mainImage {
+    padding: 20px 12px;
+  }
+  
+  .logoGridWrapper {
+    padding: 25px 12px;
+  }
+  
+  .logoGrid {
+    gap: 25px 15px;
+  }
+  
+  .logoGridTitle {
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+  
+  .logoItem {
+    height: 110px;
+  }
+  
+  .companyLogo {
+    max-width: 150px;
+    max-height: 75px;
+  }
+  
+  .placeholderLogo {
+    width: 80px;
+    height: 40px;
+  }
+  
+  .placeholderLogo span {
+    font-size: 10px;
+  }
+
+  .visionContent {
+    padding: 50px 12px;
+  }
+
+  .visionText {
+    font-size: clamp(1.25rem, 7vw, 2rem);
+    line-height: 1.5;
+  }
+}

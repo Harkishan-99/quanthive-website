@@ -2,47 +2,63 @@ import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRouter } from "next/navigation";
 import styles from "./AboutSlider.module.css";
 import Navbar from "./Navbar";
 import { ArrowUpRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Each image corresponds to its respective text overlay context
 const slideData = [
   {
+    imageIndex: 1, // img1.jpg
     title: "Vision Statement",
     description: "QuantHive",
-    subtitle: "Vision Statement"
+    subtitle: "Vision Statement",
+    context: "Vision Statement" // Explicit context mapping
   },
   {
+    imageIndex: 2, // img2.jpg
     title: "Origin Story", 
     description: "QuantHive",
-    subtitle: "Origin Story"
+    subtitle: "Origin Story",
+    context: "Origin Story"
   },
   {
+    imageIndex: 3, // img3.jpg
     title: "Timeline & MileStones",
     description: "QuantHive", 
-    subtitle: "Timeline & MileStones"
+    subtitle: "Timeline & MileStones",
+    context: "Timeline & MileStones"
   },
   {
+    imageIndex: 4, // img4.jpg
     title: "Growth Validation",
     description: "QuantHive",
-    subtitle: "Growth Validation"
+    subtitle: "Growth Validation",
+    context: "Growth Validation"
   },
   {
+    imageIndex: 5, // img5.jpg
     title: "Current Partners",
     description: "QuantHive",
-    subtitle: "Current Partners"
+    subtitle: "Current Partners",
+    context: "Current Partners"
   },
   {
+    imageIndex: 6, // img6.jpg
     title: "Nebula Point",
     description: "QuantHive",
-    subtitle: "Cosmic Journey"
+    subtitle: "Cosmic Journey",
+    context: "Nebula Point"
   },
   {
+    imageIndex: 7, // img7.jpg
     title: "Horizon",
     description: "QuantHive",
-    subtitle: "Future Visions"
+    subtitle: "Future Visions",
+    context: "Horizon"
   },
 ];
 
@@ -55,6 +71,7 @@ type AboutSliderProps = {
 };
 
 const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) => {
+  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
   const textOverlaysRef = useRef<HTMLDivElement | null>(null);
@@ -82,6 +99,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
   };
 
   // Function to update text overlays and trigger animations
+  // This ensures that when a specific card reaches the vertical center,
+  // only its corresponding text overlay appears with the correct context/title
   const updateTextOverlays = (offset: number) => {
     const totalSlides = slideData.length;
     const slideHeight = 15;
@@ -168,23 +187,25 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
     let loadedImageCount = 0;
 
     function loadImages() {
-      for (let i = 1; i <= 7; i++) {
+      // Load images based on slideData imageIndex mapping
+      slideData.forEach((slide, index) => {
         const img = new window.Image();
         img.onload = function () {
-          images.push(img);
+          images[index] = img; // Store image at the correct index position
           loadedImageCount++;
-          if (loadedImageCount === 7) {
+          if (loadedImageCount === slideData.length) {
             initializeScene();
           }
         };
         img.onerror = function () {
+          console.warn(`Failed to load image: img${slide.imageIndex}.jpg`);
           loadedImageCount++;
-          if (loadedImageCount === 7) {
+          if (loadedImageCount === slideData.length) {
             initializeScene();
           }
         };
-        img.src = `./assets/img${i}.jpg`; // Adjust path as needed
-      }
+        img.src = `./assets/img${slide.imageIndex}.jpg`; // Use explicit imageIndex from slideData
+      });
     }
 
     function initializeScene() {
@@ -521,6 +542,12 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
     // Drag scroll
     const onPointerDown = (e: PointerEvent) => {
+      // Don't start dragging if clicking on a button
+      const target = e.target as HTMLElement;
+      if (target.closest('button')) {
+        return;
+      }
+      
       isDragging.current = true;
       lastY.current = e.clientY;
       
@@ -645,12 +672,15 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         <div className={styles.gradientTop}></div>
         <div className={styles.gradientBottom}></div>
         
-        {/* Text Overlays */}
+        {/* Text Overlays - Each corresponds to its specific image context */}
         <div className={styles.textOverlays} ref={textOverlaysRef}>
           {slideData.map((slide, index) => (
             <div
               key={index}
               className={`slide-text ${styles.slideText}`}
+              data-slide-index={index}
+              data-image-index={slide.imageIndex}
+              data-context={slide.context}
             >
               <div className={styles.textContent}>
                 <p className={styles.description}>{slide.description}</p>
@@ -659,6 +689,30 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                 {/* Circle Arrow Button */}
                 <button 
                   className={styles.circleButton}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Route per slide index
+                    if (index === 0) {
+                      router.push('/about/vision-statement-read');
+                    } else if (index === 1) {
+                      router.push('/about/origin-story-read');
+                    } else if (index === 2) {
+                      router.push('/about/timeline-milestones-read');
+                    } else if (index === 3) {
+                      router.push('/about/growth-validation-read');
+                    } else if (index === 4) {
+                      router.push('/about/current-partners-read');
+                    } else if (index === 5) {
+                      router.push('/about/nebula-point-read');
+                    } else if (index === 6) {
+                      router.push('/about/horizon-read');
+                    }
+                  }}
+                  style={{
+                    cursor: index <= 6 ? 'pointer' : 'default',
+                    zIndex: 10,
+                  }}
                   onMouseEnter={(e) => {
                     const button = e.currentTarget;
                     const svg = button.querySelector('svg');
