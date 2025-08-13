@@ -53,7 +53,7 @@ const NavbarItems: React.FC = () => {
             onMouseEnter={() => setHoveredItem(index)}
             onMouseLeave={() => setHoveredItem(null)}
           >
-            <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile">
+            <div className="text-foreground text-base md:text-lg font-normal whitespace-nowrap navbar-item-text-mobile font-luxe_uno">
               <span className="relative">
                 {item.label}
                 {hoveredItem === index && (
@@ -108,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
           style={{ transformOrigin: "center" }}
           className={`navbar-mobile ${
             isOpen ? "scale-105" : "hover:scale-105"
-          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none`}
+          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none ${styles['navbar-font']}`}
         >
           <div className={`logo-mobile w-5 h-5 md:w-7 md:h-7 mr-3 mt-0.5 md:mt-1 flex items-center justify-center ${styles['logo-mobile']}`}>
             <Link href="/">

@@ -15,3 +15,8 @@
 .navbar-item-mobile {
   margin-bottom: 0.03rem;
 }
+
+/* Ensure navbar always uses the correct global font */
+.navbar-font {
+  font-family: var(--font-luxe_uno) !important;
+}

@@ -50,7 +50,7 @@ const Menu: React.FC<MenuProps> = ({ onTeamClick }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-10 backdrop-blur-[18px]"
+      className="font-luxe_uno absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-10 backdrop-blur-[18px]"
     >
       <input
         type="text"
