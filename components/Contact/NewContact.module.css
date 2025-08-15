@@ -609,7 +609,7 @@
 @media (max-width: 900px) {
   .card {
     width: 25%;
-    height: 55%; /* reduce vertical size on small screens */
+    height: auto; /* reduce vertical size on small screens */
     padding: 1rem;
   }
   

@@ -546,8 +546,17 @@ export default function NewContact() {
                   ) : "Send Message"}
                 </button>
               </form>
+              <div className={styles.contactInfo}>
+                <p className="text-center">
+                  Or feel free to reach out to us at
+                </p>
+                <div className="text-center text-2xl my-4 px-2 py-5">
+                  mail@quanthive.in
+                </div>
+              </div>
             </div>
           </div>
+
           <div ref={mapCardRef} className={styles.card}>
             <div className={`${styles.mapContainer} ${mapAnimationStarted ? styles.animationActive : ''}`}>
               <div className={styles.mapZoomContainer}>
