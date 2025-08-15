@@ -4,6 +4,7 @@ import { luxe_uno } from "@/lib/fonts";
 import "./globals.css";
 import type React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 /* 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className={`${luxe_uno.variable} relative`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
