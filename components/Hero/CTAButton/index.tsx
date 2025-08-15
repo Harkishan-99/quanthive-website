@@ -6,7 +6,7 @@ const CTAButton = () => {
     <div className="flex justify-center items-center w-full mt-8">
       <Link
         id="cta-button"
-        href="#"
+        href="/flash"
         className="flex items-center justify-center rounded-full bg-cta_btn_gradient p-0.5 md:p-[3px] hover:scale-110 select-none transition-all duration-300 focus:scale-90"
         style={{ width: "auto" }}
       >
