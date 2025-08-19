@@ -110,7 +110,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
             isOpen ? "scale-105" : "hover:scale-105"
           } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none ${styles['navbar-font']}`}
         >
-          <div className={`logo-mobile w-5 h-5 md:w-7 md:h-7 mr-3 mt-0.5 md:mt-1 flex items-center justify-center ${styles['logo-mobile']}`}>
+          <div className={`logo-mobile w-4 h-4 md:w-7 md:h-7 mr-2 md:mr-3 mt-0.5 md:mt-1 flex items-center justify-center ${styles['logo-mobile']}`}>
             <Link href="/">
               <span className="inline-flex items-center justify-center" aria-label="Home">
                 <Logo />
@@ -151,9 +151,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
             min-height: 3.5rem;
           }
           .logo-mobile {
-            width: 2.25rem !important;
-            height: 2.25rem !important;
-            margin-right: 1.25rem !important;
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            margin-right: 1rem !important;
           }
           .navbar-item-mobile {
             padding-left: 0.75rem !important;

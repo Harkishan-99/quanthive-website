@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
 
 export default function FlashPage() {
@@ -106,61 +107,68 @@ export default function FlashPage() {
     };
   }, []);
   return (
-    <main className="relative min-h-screen w-screen overflow-hidden">
-      <img
-        src="/assets/Flash%20Hero.png"
-        alt="Flash Hero"
-        className="absolute inset-0 w-full h-full object-cover -z-10"
-      />
-      <div className="relative z-10">
-        <Navbar onAboutClick={() => {}} onTeamClick={() => {}} />
-      </div>
-      {/* Floating tooltips near the Flash title */}
-      <div
-        ref={leftTooltipRef}
-        className="absolute z-0"
-        style={{
-          top: "33%",
-          left: "calc(50% - 315px)",
-          transform: `translate(${(leftBase.x + leftOffset.x).toFixed(2)}px, ${(leftBase.y + leftOffset.y).toFixed(2)}px)`,
-          pointerEvents: "none",
-        }}
-      >
-        <div className="tooltip-enter tooltip-enter-left inline-block">
-          <img
-            src="/assets/tooltip_left.png"
-            alt="100% Transparent"
-            className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
-          />
+    <div className="relative w-full">
+      {/* Hero Section */}
+      <main className="relative h-screen w-full overflow-hidden">
+        <img
+          src="/assets/Flash%20Hero.png"
+          alt="Flash Hero"
+          className="absolute inset-0 w-full h-full object-cover -z-10"
+        />
+        <div className="relative z-10">
+          <Navbar onAboutClick={() => {}} onTeamClick={() => {}} />
         </div>
-      </div>
-      <div
-        ref={rightTooltipRef}
-        className="absolute z-0"
-        style={{
-          top: "38%",
-          left: "calc(50% + 165px)",
-          transform: `translate(${(rightBase.x + rightOffset.x).toFixed(2)}px, ${(rightBase.y + rightOffset.y).toFixed(2)}px)`,
-          pointerEvents: "none",
-        }}
-      >
-        <div className="tooltip-enter tooltip-enter-right inline-block">
-          <img
-            src="/assets/tooltip_right.png"
-            alt="100x Faster"
-            className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
-          />
+        {/* Floating tooltips near the Flash title */}
+        <div
+          ref={leftTooltipRef}
+          className="absolute z-0"
+          style={{
+            top: "33%",
+            left: "calc(50% - 315px)",
+            transform: `translate(${(leftBase.x + leftOffset.x).toFixed(2)}px, ${(leftBase.y + leftOffset.y).toFixed(2)}px)`,
+            pointerEvents: "none",
+          }}
+        >
+          <div className="tooltip-enter tooltip-enter-left inline-block">
+            <img
+              src="/assets/tooltip_left.png"
+              alt="100% Transparent"
+              className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
+            />
+          </div>
         </div>
-      </div>
-      <div className="absolute left-1/2 -translate-x-1/2 top-[68%] md:top-[66%] lg:top-[64%] z-0">
-        <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer">
-          <img
-            src="/assets/get_notified.svg"
-            alt="Get Notified"
-            className="w-[104px] md:w-[127px] lg:w-[146px] h-auto"
-          />
+        <div
+          ref={rightTooltipRef}
+          className="absolute z-0"
+          style={{
+            top: "38%",
+            left: "calc(50% + 165px)",
+            transform: `translate(${(rightBase.x + rightOffset.x).toFixed(2)}px, ${(rightBase.y + rightOffset.y).toFixed(2)}px)`,
+            pointerEvents: "none",
+          }}
+        >
+          <div className="tooltip-enter tooltip-enter-right inline-block">
+            <img
+              src="/assets/tooltip_right.png"
+              alt="100x Faster"
+              className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
+            />
+          </div>
         </div>
-      </div>
+        <div className="absolute left-1/2 -translate-x-1/2 top-[68%] md:top-[66%] lg:top-[64%] z-0">
+          <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer">
+            <img
+              src="/assets/get_notified.svg"
+              alt="Get Notified"
+              className="w-[104px] md:w-[127px] lg:w-[146px] h-auto"
+            />
+          </div>
+        </div>
+      </main>
+      
+      {/* Footer */}
+      <Footer />
+      
       <style jsx>{`
         .get-notified-btn {
           position: relative;
@@ -205,7 +213,7 @@ export default function FlashPage() {
           100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
         }
       `}</style>
-    </main>
+    </div>
   );
 }
 

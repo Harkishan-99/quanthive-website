@@ -5,32 +5,23 @@ import CTAButton from "./CTAButton";
 
 const Hero = () => {
   return (
-    <motion.section
-      id="hero"
-      className="hero-section"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{
-        duration: 1,
-        staggerChildren: 0.3,
-        delayChildren: 0.5,
-      }}
-    >
+    <div className="relative w-full h-screen bg-black overflow-hidden">
       {/* Background Video */}
       <video
-        className="hero-bg-video"
+        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+        style={{ filter: 'hue-rotate(180deg)' }}
         src="/assets/bkg_video_five.mp4"
         autoPlay
         loop
         muted
         playsInline
       />
-
-      {/* Mobile-shifted Content */}
-      <div className="hero-content-mobile-shift">
+      
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 -mt-28">
         {/* New Release Button */}
         <motion.div
-          className="mt-12 md:mt-16 mb-6"
+          className="mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -44,7 +35,7 @@ const Hero = () => {
 
         {/* Title Section */}
         <motion.div
-          className="text-accent text-center mb-14 md:mb-20 select-none"
+          className="text-center mb-14 md:mb-20 select-none"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
@@ -54,7 +45,7 @@ const Hero = () => {
           }}
         >
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 luminosity-text"
+            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -66,7 +57,7 @@ const Hero = () => {
             In Finance
           </motion.h1>
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 luminosity-text"
+            className="text-3xl md:text-4xl font-semibold mb-1 md:mb-2 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -76,9 +67,9 @@ const Hero = () => {
             }}
           >
             Speed isn't everything.
-            </motion.h1>
+          </motion.h1>
           <motion.h1
-            className="text-3xl md:text-4xl font-semibold mb-4 luminosity-text"
+            className="text-3xl md:text-4xl font-semibold mb-4 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -87,16 +78,16 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-          It's the Only Thing.
-          <span className="relative ml-0.5 leading-none">
+            It's the Only Thing.
+            <span className="relative ml-0.5 leading-none">
               <sup className="absolute top-1 text-xs md:text-sm font-normal">
-              {/* TM */}
+                {/* TM */}
               </sup>
             </span>
           </motion.h1>
 
           <motion.p
-            className="text-primary md:text-lg luminosity-text"
+            className="text-gray-300 md:text-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -105,7 +96,7 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-          From Input To Insights, All Within A Minute.
+            From Input To Insights, All Within A Minute.
           </motion.p>
         </motion.div>
 
@@ -122,47 +113,7 @@ const Hero = () => {
           <CTAButton />
         </motion.div>
       </div>
-
-      {/* Inline CSS for video background and mobile shift */}
-      <style jsx>{`
-        .hero-section {
-          position: relative;
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-        .hero-bg-video {
-          position: fixed;
-          top: 0;
-          left: 0;
-          min-width: 100vw;
-          min-height: 100vh;
-          width: 100vw;
-          height: 100vh;
-          object-fit: cover;
-          z-index: -1;
-          pointer-events: none;
-          filter: hue-rotate(180deg);
-        }
-        .hero-content-mobile-shift {
-          width: 100%;
-        }
-        .luminosity-text {
-          color: hsl(0deg 100% 92%);
-          mix-blend-mode: exclusion;
-          
-        }
-        @media (max-width: 640px) {
-          .hero-content-mobile-shift {
-            margin-top: 4.5rem; /* Adjust this value as needed for more/less shift */
-          }
-        }
-      `}</style>
-    </motion.section>
+    </div>
   );
 };
 

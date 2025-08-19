@@ -5,6 +5,7 @@ import styles from "./NewContact.module.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -546,14 +547,6 @@ export default function NewContact() {
                   ) : "Send Message"}
                 </button>
               </form>
-              <div className={styles.contactInfo}>
-                <p className="text-center">
-                  Or feel free to reach out to us at
-                </p>
-                <div className="text-center text-2xl my-4 px-2 py-5">
-                  mail@quanthive.in
-                </div>
-              </div>
             </div>
           </div>
 
@@ -702,6 +695,9 @@ export default function NewContact() {
       <section ref={outroSectionRef} className={`${styles.section} ${styles.outro}`}>
         <h1 ref={outroTitleRef} className={styles.heading}>Your message, our move.</h1>
       </section>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

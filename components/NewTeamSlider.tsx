@@ -266,10 +266,35 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
                 {slides}
               </div>
             </div>
-            <footer className={styles.footer}>
-              <p>IITM Research Park</p>
-              <p>Built by QuantHive</p>
-            </footer>
+            
+            {/* Footer Links and Copyright */}
+            <div style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              padding: "20px 24px",
+              background: "rgba(15,15,15,0.95)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              zIndex: 10
+            }}>
+              {/* Left side - Contact Links */}
+              <div>
+                <h4 style={{ color: "#9CA3AF", fontSize: "14px", fontWeight: "500", marginBottom: "8px" }}>Contact</h4>
+                <div style={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+                  <a href="#" style={{ color: "#E5E7EB", fontSize: "15px", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#D1D5DB"} onMouseLeave={(e) => e.currentTarget.style.color = "#E5E7EB"}>Mail</a>
+                  <a href="#" style={{ color: "#E5E7EB", fontSize: "15px", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#D1D5DB"} onMouseLeave={(e) => e.currentTarget.style.color = "#E5E7EB"}>Location</a>
+                  <a href="#" style={{ color: "#E5E7EB", fontSize: "15px", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#D1D5DB"} onMouseLeave={(e) => e.currentTarget.style.color = "#E5E7EB"}>Phone</a>
+                </div>
+              </div>
+              
+              {/* Right side - Copyright */}
+              <div style={{ textAlign: "right" }}>
+                <p style={{ color: "#9CA3AF", fontSize: "14px", margin: 0 }}>&copy; 2025 QuantHive</p>
+              </div>
+            </div>
           </div>
         </motion.div>
       )}
