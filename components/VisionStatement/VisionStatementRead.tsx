@@ -160,10 +160,10 @@ const VisionStatementRead: React.FC<VisionStatementReadProps> = ({
         <section className={styles.visionContent}>
           <div className={styles.visionContentWrapper}>
             <p className={styles.visionText}>
-              Empowering investment managers with an AI-native, zero-trust 
-              platform that transforms ideas into audited, production-ready 
-              strategies 100× faster—explaining not just what works, but why, 
-              across any market condition
+            Empowering the financial institution across the globe
+            to make smarter, faster, and more confident decisions
+            and shaping the future of finance
+            with intelligent, adaptive technology.
             </p>
           </div>
         </section>

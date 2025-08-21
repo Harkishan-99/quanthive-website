@@ -112,7 +112,7 @@ export default function OriginStoryReadPage() {
         <section ref={mainImageRef} className={styles.mainImage}>
           <div className={styles.imageWrapper}>
             <img
-              src="https://icandsr.iitm.ac.in/assets/img/IITMadras.jpg"
+              src="https://cdn.mos.cms.futurecdn.net/YxRYisJDPmj5yTaof6wPda.jpg"
               alt="Origin Story"
               className={styles.projectImage}
             />
@@ -123,7 +123,7 @@ export default function OriginStoryReadPage() {
         <section className={styles.visionContent}>
           <div className={styles.visionContentWrapper}>
             <p className={styles.visionText}>
-              Born at the foundation team of IIT Madras, built by founders who have lived and breathed quantitative thinking. From the halls of IIT Madras to the world stage, we're here to redefine how investment strategies are tested, executed and explainted all with the AI.
+            QuantHive emerged inside the walls of IIT Madras, blending deep expertise in mathematics, quant-finance, and software engineering; with a goal to solve for global capital market. Driven by a shared frustration with the industry’s reliance on intuition over evidence, the team set out to build the rigorous, intelligent platform they wished existed—one that could finally solve the real financial challenges ignored by conventional tools
             </p>
           </div>
         </section>

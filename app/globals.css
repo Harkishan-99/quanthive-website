@@ -1,6 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=General+Sans:wght@200;300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Awwwards-style font classes */
+.font-inter {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-space-grotesk {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-clash-display {
+  font-family: 'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-general-sans {
+  font-family: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Premium typography utilities */
+.text-premium {
+  font-feature-settings: 'liga' 1, 'kern' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom font weights for premium look */
+.font-ultralight {
+  font-weight: 100;
+}
+
+.font-extralight {
+  font-weight: 200;
+}
+
+.font-light {
+  font-weight: 300;
+}
+
+.font-normal {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-extrabold {
+  font-weight: 800;
+}
+
+.font-black {
+  font-weight: 900;
+}
 
 @layer utilities {
   .text-balance {
@@ -9,24 +75,48 @@
 }
 
 @layer base {
+  /* Performance optimizations */
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth !important;
+    /* Optimize for performance */
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-luxe_uno);
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    /* Optimize for performance */
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Optimize images and videos */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Optimize animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 
   /* ------------- Values to be updated for light theme when it is ready -------------------- */
   :root {
-
-
-    /* -----Old Styles------ */
-    /* --background: #ffffff;
-    --foreground: #000000;
-    --gray-100: #f5f5f5;
-    --gray-200: #e5e5e5;
-    --gray-300: #d4d4d4;
-    --gray-400: #a3a3a3;
-    --gray-500: #737373;
-    --gray-600: #525252;
-    --gray-700: #404040;
-    --gray-800: #262626;
-    --gray-900: #171717; */
-
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -55,169 +145,36 @@
   }
 
   .dark {
-    /* Updated value as in the design */
     --background: 0 0% 1%;
-    /* #030303 */
-
-    /* Updated value as in the design */
     --foreground: 0 0% 100%;
-    /* #FFFFFF */
-
-    /* Updated value as in the design */
     --card: 0 0% 4% / 5%;
-    /* #0A0A0A + (5% Opacity) */
-
-    /* Updated value as in the design */
     --card-foreground: 0 0% 17%;
-    /* #2A2A2A */
-
-    /* Updated value as in the design */
     --popover: 0 0% 4% / 5%;
-    /* #0A0A0A + (5% Opacity) */
-
-    /* Updated value as in the design */
     --popover-foreground: 0 0% 17%;
-    /* #2A2A2A */
-
-    /* Updated value as in the design */
     --primary: 0 0% 100%;
-    /* #FFFFFF */
-
-    /* Updated value as in the design */
     --primary-foreground: 0 0% 37%;
-    /* #5E5E5E */
-
-    /* Updated value as in the design */
     --secondary: 0 0% 31%;
-    /* #505050 */
-
-    /* Updated value as in the design */
     --secondary-foreground: 0 0% 37%;
-    /* #5E5E5E */
-
-    /* Updated value as in the design */
     --muted: 0 0% 17%;
-    /* #2A2A2A */
-
-    /* Updated value as in the design */
     --muted-foreground: 0 0% 16%;
-    /* #282828 */
-
-    /* Updated value as in the design */
     --accent: 50 90% 84%;
-    /* #FBEEAF */
-
-    /* Updated value as in the design */
     --accent-foreground: 50 26% 61%;
-    /* #B5AC81 */
-
-    /* Updated value as in the design */
     --success: 100 100% 65%;
-    /* #8AFF4F */
-
-    /* Updated value as in the design */
     --success-foreground: 100 100% 65%;
-    /* #8AFF4F */
-
-    /* Updated value as in the design */
     --destructive: 355 100% 62%;
-    /* #FF3D4E */
-
-    /* Updated value as in the design */
     --destructive-foreground: 355 100% 62%;
-    /* #FF3D4E */
-
-    /* Updated value as in the design */
     --border: 0 0% 17%;
-    /* #2A2A2A */
-
     --input: 240 3.7% 15.9%;
-
-    /* Updated value as in the design */
     --ring: 0 0% 17%;
-    /* #2A2A2A */
-
     --chart-1: 220 70% 50%;
-
     --chart-2: 160 60% 45%;
-
     --chart-3: 30 80% 55%;
-
     --chart-4: 280 65% 60%;
-
     --chart-5: 340 75% 55%;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    scroll-behavior: smooth !important;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-luxe_uno);
-    font-size: 16px;
-    letter-spacing: 0.05em;
-    line-height: 1.6;
-  }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   line-height: 1.2;
 }
-
-/* -------------------------- Old Styles ---------------------------------- */
-/* .section-title {
-  @apply text-sm font-medium uppercase tracking-wider text-gray-500 mb-4;
-}
-
-.section-heading {
-  @apply text-3xl md:text-4xl font-medium mb-8 max-w-2xl;
-}
-
-.section-description {
-  @apply text-base font-normal leading-relaxed max-w-3xl text-gray-700;
-}
-
-.nav-link {
-  @apply text-sm font-medium transition-colors duration-200 ease-in-out;
-}
-
-.nav-link:hover {
-  @apply text-gray-500;
-}
-
-.button-primary {
-  @apply px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors duration-200 ease-in-out text-sm font-medium;
-}
-
-.button-secondary {
-  @apply px-6 py-3 border border-black text-black rounded-md hover:bg-black hover:text-white transition-colors duration-200 ease-in-out text-sm font-medium;
-}
-
-.math-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-.grid-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-.section {
-  @apply px-4 md:px-8 py-20;
-}
-
-.container {
-  @apply max-w-7xl mx-auto;
-} */

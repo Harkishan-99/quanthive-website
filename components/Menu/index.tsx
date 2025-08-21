@@ -50,7 +50,7 @@ const Menu: React.FC<MenuProps> = ({ onTeamClick }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="font-luxe_uno absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-10 backdrop-blur-[18px]"
+      className="font-luxe_uno absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-50 backdrop-blur-[18px]"
     >
       <input
         type="text"
@@ -68,64 +68,7 @@ const Menu: React.FC<MenuProps> = ({ onTeamClick }) => {
                 {title}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 md:gap-y-6">
-                {items.map((item: any, idx: number) =>
-                  item.title === "Our Team" && onTeamClick ? (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`group flex items-center w-full bg-transparent border-none p-0 m-0 text-left ${
-                        (idx + 1) % 3 === 0
-                          ? "lg:justify-end"
-                          : "lg:justify-start"
-                      }`}
-                      onClick={onTeamClick}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-[112px] h-[62px] md:w-[136px] md:h-[72px] border-2 border-[#2A2A2A] rounded-lg"
-                      />
-                      <div className="flex flex-col ml-4">
-                        <span className="flex items-end text-xl md:text-2xl font-semibold text-primary-foreground -mb-1">
-                          {item.number}
-                        </span>
-                        <div className="flex items-start">
-                          <div className="relative flex flex-row group">
-                            <div className="flex flex-row items-end justify-center text-foreground">
-                              <p className="text-xl md:text-2xl font-normal whitespace-nowrap">
-                                <span className="group-hover:underline underline-offset-4">
-                                  {item.title}
-                                </span>
-                                {item.hasTradeMark && (
-                                  <span className="relative -top-1 mr-1 ml-0.5 leading-none">
-                                    <sup className="text-[8px] md:text-[10px]">
-                                      TM
-                                    </sup>
-                                  </span>
-                                )}
-                              </p>
-                              {isMobile ? (
-                                <StaggerIcon
-                                  icon={ArrowUpRight}
-                                  size={20}
-                                  duration={0.25}
-                                  className="h-fit mb-0.5 -ml-0.5"
-                                />
-                              ) : (
-                                <StaggerIcon
-                                  icon={ArrowUpRight}
-                                  size={24}
-                                  duration={0.25}
-                                  className="h-fit mb-0.5 -ml-0.5"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  ) : (
+                {items.map((item: any, idx: number) => (
                     <Link href={item.href} key={idx} className="group">
                       <motion.div
                         initial="initial"
