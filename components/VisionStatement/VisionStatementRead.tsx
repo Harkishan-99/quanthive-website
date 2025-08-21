@@ -149,8 +149,8 @@ const VisionStatementRead: React.FC<VisionStatementReadProps> = ({
         <section ref={mainImageRef} className={styles.mainImage}>
           <div className={styles.imageWrapper}>
             <img 
-              src="/assets/img4.jpg" 
-              alt="Kolmården Wildlife Park" 
+              src="/assets/vision-statement.webp" 
+              alt="Stary Night Image" 
               className={styles.projectImage}
             />
           </div>

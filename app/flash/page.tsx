@@ -14,8 +14,20 @@ export default function FlashPage() {
   const [leftBase, setLeftBase] = useState({ x: 0, y: 0 });
   const [rightBase, setRightBase] = useState({ x: 0, y: 0 });
   const getNotifiedRef = useRef<HTMLDivElement>(null!);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if device is mobile and update state
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+    
     // Play shimmer once after 1s on page load
     const el = getNotifiedRef.current;
     let addTimer: number | undefined;
@@ -104,6 +116,7 @@ export default function FlashPage() {
     window.addEventListener("mousemove", handleMouseMove);
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener('resize', checkMobile);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       if (addTimer) window.clearTimeout(addTimer);
       if (removeTimer) window.clearTimeout(removeTimer);
@@ -114,59 +127,59 @@ export default function FlashPage() {
       {/* Hero Section */}
       <main className="relative h-screen w-full overflow-hidden">
         <img
-          src="/assets/Flash%20Hero.png"
-          alt="Flash Hero"
+          src={isMobile ? "/assets/Flash mobile.webp" : "/assets/Flash Hero.webp"}
+          alt={isMobile ? "Flash Mobile" : "Flash Hero"}
           className="absolute inset-0 w-full h-full object-cover -z-10"
         />
         <div className="relative z-10">
           <Navbar onAboutClick={() => {}} onTeamClick={() => {}} />
         </div>
-        {/* Floating tooltips near the Flash title */}
-        <div
-          ref={leftTooltipRef}
-          className="absolute z-0"
-          style={{
-            top: "33%",
-            left: "calc(50% - 315px)",
-            transform: `translate(${(leftBase.x + leftOffset.x).toFixed(2)}px, ${(leftBase.y + leftOffset.y).toFixed(2)}px)`,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="tooltip-enter tooltip-enter-left inline-block">
-            <img
-              src="/assets/tooltip_left.png"
-              alt="100% Transparent"
-              className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
-            />
-          </div>
-        </div>
-        <div
-          ref={rightTooltipRef}
-          className="absolute z-0"
-          style={{
-            top: "38%",
-            left: "calc(50% + 165px)",
-            transform: `translate(${(rightBase.x + rightOffset.x).toFixed(2)}px, ${(rightBase.y + rightOffset.y).toFixed(2)}px)`,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="tooltip-enter tooltip-enter-right inline-block">
-            <img
-              src="/assets/tooltip_right.png"
-              alt="100x Faster"
-              className="w-[120px] md:w-[140px] lg:w-[150px] h-auto"
-            />
-          </div>
-        </div>
-        <div className="absolute left-1/2 -translate-x-1/2 top-[68%] md:top-[66%] lg:top-[64%] z-0">
-          <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer">
-            <img
-              src="/assets/get_notified.svg"
-              alt="Get Notified"
-              className="w-[104px] md:w-[127px] lg:w-[146px] h-auto"
-            />
-          </div>
-        </div>
+                 {/* Floating tooltips near the Flash title */}
+         <div
+           ref={leftTooltipRef}
+           className="absolute z-0"
+           style={{
+             top: isMobile ? "37%" : "33%",
+             left: isMobile ? "-0%" : "calc(50% - 315px)",
+             transform: `translate(${(leftBase.x + leftOffset.x).toFixed(2)}px, ${(leftBase.y + leftOffset.y).toFixed(2)}px)`,
+             pointerEvents: "none",
+           }}
+         >
+           <div className="tooltip-enter tooltip-enter-left inline-block">
+             <img
+               src="/assets/tooltip_left.png"
+               alt="100% Transparent"
+               className={isMobile ? "w-[120px] h-auto" : "w-[120px] md:w-[140px] lg:w-[150px] h-auto"}
+             />
+           </div>
+         </div>
+         <div
+           ref={rightTooltipRef}
+           className="absolute z-0"
+           style={{
+             top: isMobile ? "38%" : "38%",
+             left: isMobile ? "calc(100% - 122px)" : "calc(50% + 165px)",
+             transform: `translate(${(rightBase.x + rightOffset.x).toFixed(2)}px, ${(rightBase.y + rightOffset.y).toFixed(2)}px)`,
+             pointerEvents: "none",
+           }}
+         >
+           <div className="tooltip-enter tooltip-enter-right inline-block">
+             <img
+               src="/assets/tooltip_right.png"
+               alt="100x Faster"
+               className={isMobile ? "w-[120px] h-auto" : "w-[120px] md:w-[140px] lg:w-[150px] h-auto"}
+             />
+           </div>
+         </div>
+                 <div className={`absolute left-1/2 -translate-x-1/2 z-0 ${isMobile ? 'top-[55%]' : 'top-[68%] md:top-[66%] lg:top-[64%]'}`}>
+           <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer">
+             <img
+               src="/assets/get_notified.svg"
+               alt="Get Notified"
+               className={isMobile ? "w-[120px] h-auto" : "w-[104px] md:w-[127px] lg:w-[146px] h-auto"}
+             />
+           </div>
+         </div>
       </main>
       
       {/* Footer */}

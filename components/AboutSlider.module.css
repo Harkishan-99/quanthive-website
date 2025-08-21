@@ -37,39 +37,75 @@
   }
   
   .nav {
-    position: fixed;
-    top: 0;
-    width: 100vw;
-    padding: 2em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 2;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  padding: 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2em;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  padding: 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 1.5em;
   }
   
   .navLinks {
-    display: flex;
-    gap: 2em;
+    gap: 1.5em;
   }
   
   .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    padding: 2em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 2;
+    padding: 1.5em;
+  }
+  
+  .logo {
+    font-size: 11px;
   }
   
   .sliderWrapper {
+    /* Allow natural mobile touch scrolling */
+    touch-action: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
+  }
+  
+  .container {
+    /* Allow natural scrolling on mobile */
+    overflow: visible;
     position: fixed;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
   }
+}
+  
+  .sliderWrapper {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  /* Allow natural touch scrolling on mobile */
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+}
   
   .sliderWrapper canvas {
     position: fixed;
@@ -120,10 +156,23 @@
   max-width: 800px;
   padding: 0 2rem;
   will-change: opacity, transform;
+  /* Ensure proper centering on all devices */
+  margin: 0 auto;
+  /* Force centering on desktop */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .textContent {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .description {
@@ -161,6 +210,9 @@
   margin: 0 auto;
   position: relative;
   z-index: 10;
+  /* Prevent touch interference on mobile */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .circleButton svg {
@@ -181,14 +233,127 @@
   .circleButton {
     width: 50px;
     height: 50px;
+    /* Enhanced mobile touch handling */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
   
   .circleButton svg {
     width: 16px;
     height: 16px;
+    pointer-events: none; /* Prevent SVG from interfering with button clicks */
   }
 
   .slideText {
-    left: 0;
+    /* Force proper centering on mobile with !important */
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    padding: 0 1rem !important;
+    max-width: 90vw !important;
+    width: auto !important;
+    position: fixed !important;
+  }
+  
+  .textOverlays {
+    /* Ensure proper centering container */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .textContent {
+    /* Ensure text content is properly centered */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+}
+
+/* Additional mobile breakpoint for very small screens */
+@media (max-width: 480px) {
+  .slideText {
+    padding: 0 0.5rem !important;
+    max-width: 95vw !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+  }
+  
+  .title {
+    font-size: clamp(1.5rem, 10vw, 3rem);
+    margin-bottom: 1rem;
+  }
+  
+  .description {
+    font-size: 9px;
+    margin-bottom: 0.6rem;
+  }
+  
+  .circleButton {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .circleButton svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Force mobile centering for all screen sizes under 768px */
+@media screen and (max-width: 768px) {
+  .container .textOverlays .slideText {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    position: fixed !important;
+    display: block !important;
+    text-align: center !important;
+  }
+  
+  .container .textOverlays .slideText .textContent {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}
+
+/* Ensure proper centering on desktop screens */
+@media screen and (min-width: 769px) {
+  .container .textOverlays .slideText {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    position: fixed !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    max-width: 800px !important;
+  }
+  
+  .container .textOverlays .slideText .textContent {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+  
+  .container .textOverlays .slideText .circleButton {
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }

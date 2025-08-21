@@ -136,14 +136,30 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
           if (index === centerSlideIndex) {
             // Show current slide text
             (element as HTMLElement).style.display = 'block';
-            // Completely reset all transforms to ensure exact positioning
-            gsap.set(element, { 
-              x: 0, 
-              y: 0, 
-              scale: 1,
-              rotation: 0,
-              clearProps: 'transform' 
-            });
+            // Reset transforms but maintain centering positioning
+            // Ensure proper positioning for both mobile and desktop
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+              gsap.set(element, { 
+                x: 0, 
+                y: 0, 
+                scale: 1,
+                rotation: 0,
+                left: '50%',
+                top: '50%',
+                transform: 'translate3d(-50%, -50%, 0)'
+              });
+            } else {
+              gsap.set(element, { 
+                x: 0, 
+                y: 0, 
+                scale: 1,
+                rotation: 0,
+                left: '50%',
+                top: '50%',
+                transform: 'translate3d(-50%, -50%, 0)'
+              });
+            }
             gsap.fromTo(
               element,
               { opacity: 0, scale: 0.98 },
@@ -164,14 +180,29 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
               ease: 'power2.in',
               onComplete: () => {
                 (element as HTMLElement).style.display = 'none';
-                // Completely reset all transforms after hiding
-                gsap.set(element, { 
-                  x: 0, 
-                  y: 0, 
-                  scale: 1,
-                  rotation: 0,
-                  clearProps: 'transform' 
-                });
+                // Reset transforms after hiding but maintain centering
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                  gsap.set(element, { 
+                    x: 0, 
+                    y: 0, 
+                    scale: 1,
+                    rotation: 0,
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate3d(-50%, -50%, 0)'
+                  });
+                } else {
+                  gsap.set(element, { 
+                    x: 0, 
+                    y: 0, 
+                    scale: 1,
+                    rotation: 0,
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate3d(-50%, -50%, 0)'
+                  });
+                }
               }
             });
           }
@@ -190,6 +221,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       // Load images based on slideData imageIndex mapping
       slideData.forEach((slide, index) => {
         const img = new window.Image();
+        img.src = `./assets/img${slide.imageIndex}.webp`;
+        
         img.onload = function () {
           images[index] = img; // Store image at the correct index position
           loadedImageCount++;
@@ -198,18 +231,38 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
           }
         };
         img.onerror = function () {
-          console.warn(`Failed to load image: img${slide.imageIndex}.jpg`);
+          console.warn(`Failed to load image: img${slide.imageIndex}.webp`);
           loadedImageCount++;
           if (loadedImageCount === slideData.length) {
             initializeScene();
           }
         };
-        img.src = `./assets/img${slide.imageIndex}.jpg`; // Use explicit imageIndex from slideData
       });
     }
 
     function initializeScene() {
       if (!canvasRef.current) return;
+      
+      // Function to get responsive dimensions
+      const getResponsiveDimensions = () => {
+        const isMobile = window.innerWidth <= 768;
+        return {
+          parentWidth: isMobile ? 8 : 20, // Smaller width on mobile
+          parentHeight: isMobile ? 30 : 75, // Much smaller height on mobile
+          curvature: isMobile ? 15 : 35, // Less curvature on mobile
+          slideHeight: isMobile ? 6 : 15, // Smaller slide height on mobile
+          gap: isMobile ? 0.2 : 0.5, // Smaller gap on mobile
+          isMobile,
+          // Mobile-specific optimizations
+          segmentsX: isMobile ? 30 : 200, // Further reduce geometry complexity on mobile
+          segmentsY: isMobile ? 30 : 200,
+          textureWidth: isMobile ? 512 : 2048, // Much lower texture resolution on mobile
+          textureHeight: isMobile ? 2048 : 8192 // Much lower texture height on mobile
+        };
+      };
+
+      let dimensions = getResponsiveDimensions();
+      
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
         45,
@@ -220,38 +273,25 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current,
-        antialias: true,
+        antialias: !dimensions.isMobile, // Disable antialiasing on mobile for performance
         powerPreference: "high-performance",
+        alpha: false,
+        stencil: false,
+        depth: true,
       });
 
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      // Reduce pixel ratio on mobile for better performance
+      renderer.setPixelRatio(dimensions.isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
       renderer.setClearColor(0x000000);
-
-      // Function to get responsive dimensions
-      const getResponsiveDimensions = () => {
-        const isMobile = window.innerWidth <= 768;
-        return {
-          parentWidth: isMobile ? 12 : 20,
-          parentHeight: isMobile ? 45 : 75,
-          curvature: isMobile ? 25 : 35,
-          slideHeight: isMobile ? 9 : 15,
-          gap: isMobile ? 0.3 : 0.5,
-          isMobile
-        };
-      };
-
-      let dimensions = getResponsiveDimensions();
-      const segmentsX = 200;
-      const segmentsY = 200;
 
       // Function to create geometry with current dimensions
       const createGeometry = () => {
         const geometry = new THREE.PlaneGeometry(
           dimensions.parentWidth,
           dimensions.parentHeight,
-          segmentsX,
-          segmentsY
+          dimensions.segmentsX,
+          dimensions.segmentsY
         );
 
         const positions = geometry.attributes.position.array as Float32Array;
@@ -275,8 +315,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         willReadFrequently: false,
       }) as CanvasRenderingContext2D;
 
-      textureCanvas.width = 2048;
-      textureCanvas.height = 8192;
+      textureCanvas.width = dimensions.textureWidth;
+      textureCanvas.height = dimensions.textureHeight;
 
       const texture = new THREE.CanvasTexture(textureCanvas);
       texture.wrapS = THREE.RepeatWrapping;
@@ -297,18 +337,18 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       const isMobile = window.innerWidth <= 768;
       
       if (isMobile) {
-        // Mobile: Less perspective, more straightened view
-        parentMesh.rotation.x = THREE.MathUtils.degToRad(-10);
-        parentMesh.rotation.y = THREE.MathUtils.degToRad(8);
+        // Mobile: Optimized for smaller dimensions
+        parentMesh.rotation.x = THREE.MathUtils.degToRad(-8);
+        parentMesh.rotation.y = THREE.MathUtils.degToRad(5);
         
-        const distance = 15;
-        const heightOffset = 2;
-        const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(8));
-        const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(8));
+        const distance = 12; // Closer camera for smaller content
+        const heightOffset = 1.5;
+        const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(5));
+        const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(5));
         
         camera.position.set(offsetX, heightOffset, offsetZ);
-        camera.lookAt(0, -1, 0);
-        camera.rotation.z = THREE.MathUtils.degToRad(-2);
+        camera.lookAt(0, -0.5, 0);
+        camera.rotation.z = THREE.MathUtils.degToRad(-1);
       } else {
         // Desktop: Original perspective view
         parentMesh.rotation.x = THREE.MathUtils.degToRad(-20);
@@ -330,12 +370,14 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
-        const fontSize = 180;
+        // Optimize for mobile by reducing font size and extra slides
+        const fontSize = dimensions.isMobile ? 90 : 180;
         ctx.font = `500 ${fontSize}px Dahlia, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        const extraSlides = 2;
+        // Reduce extra slides on mobile for better performance
+        const extraSlides = dimensions.isMobile ? 0 : 2; // No extra slides on mobile for maximum performance
 
         for (let i = -extraSlides; i < totalSlides + extraSlides; i++) {
           let slideY = -i * (dimensions.slideHeight + dimensions.gap);
@@ -349,9 +391,9 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
           let slideNumber = slideIndex + 1;
 
           const slideRect = {
-            x: textureCanvas.width * 0.05,
+            x: textureCanvas.width * (dimensions.isMobile ? 0.1 : 0.05), // More padding on mobile
             y: wrappedY,
-            width: textureCanvas.width * 0.9,
+            width: textureCanvas.width * (dimensions.isMobile ? 0.8 : 0.9), // Smaller width on mobile
             height: (dimensions.slideHeight / cycleHeight) * textureCanvas.height,
           };
 
@@ -393,7 +435,15 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         texture.needsUpdate = true;
       }
 
+      // Throttle rendering on mobile for better performance
+      let lastRenderTime = 0;
+      const renderThrottle = dimensions.isMobile ? 50 : 16; // 20fps on mobile, 60fps on desktop
+      
       function render() {
+        const now = Date.now();
+        if (now - lastRenderTime < renderThrottle) return;
+        lastRenderTime = now;
+        
         // Use modulo to wrap scroll offset for infinite scrolling
         const wrappedOffset = ((scrollOffset.current % 1) + 1) % 1;
         updateTexture(wrappedOffset);
@@ -444,18 +494,18 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
           
           // Update positioning based on screen size
           if (dimensions.isMobile) {
-            // Mobile: Less perspective, more straightened view
-            parentMesh.rotation.x = THREE.MathUtils.degToRad(-10);
-            parentMesh.rotation.y = THREE.MathUtils.degToRad(8);
+            // Mobile: Optimized for smaller dimensions
+            parentMesh.rotation.x = THREE.MathUtils.degToRad(-8);
+            parentMesh.rotation.y = THREE.MathUtils.degToRad(5);
             
-            const distance = 15;
-            const heightOffset = 2;
-            const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(8));
-            const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(8));
+            const distance = 12; // Closer camera for smaller content
+            const heightOffset = 1.5;
+            const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(5));
+            const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(5));
             
             camera.position.set(offsetX, heightOffset, offsetZ);
-            camera.lookAt(0, -1, 0);
-            camera.rotation.z = THREE.MathUtils.degToRad(-2);
+            camera.lookAt(0, -0.5, 0);
+            camera.rotation.z = THREE.MathUtils.degToRad(-1);
           } else {
             // Desktop: Original perspective view
             parentMesh.rotation.x = THREE.MathUtils.degToRad(-20);
@@ -512,7 +562,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
     // Mouse wheel scroll with smooth animation
     const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
+      // Don't prevent default to allow natural scrolling on all devices
       
       // Cancel any existing smooth scroll tween
       if (smoothScrollTween.current) {
@@ -520,7 +570,9 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       }
       
       // Update target scroll position (allow values beyond [0,1] for smooth infinite scrolling)
-      targetScrollOffset.current += e.deltaY * 0.001;
+      const isMobile = window.innerWidth <= 768;
+      const scrollSensitivity = isMobile ? 0.0005 : 0.001; // Lower sensitivity on mobile for better control
+      targetScrollOffset.current += e.deltaY * scrollSensitivity;
       
       // Use GSAP for smooth scrolling
       smoothScrollTween.current = gsap.to(scrollOffset, {
@@ -542,9 +594,9 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
     // Drag scroll
     const onPointerDown = (e: PointerEvent) => {
-      // Don't start dragging if clicking on a button
+      // Don't start dragging if clicking on a button or its children
       const target = e.target as HTMLElement;
-      if (target.closest('button')) {
+      if (target.closest('button') || target.closest('svg') || target.closest('path')) {
         return;
       }
       
@@ -556,7 +608,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         smoothScrollTween.current.kill();
       }
       
-      wrapper.setPointerCapture(e.pointerId);
+      // Don't set pointer capture to allow natural touch scrolling
     };
     const onPointerMove = (e: PointerEvent) => {
       if (!isDragging.current) return;
@@ -564,14 +616,15 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       lastY.current = e.clientY;
       
       // Direct scroll during drag for immediate feedback (allow values beyond [0,1])
-      scrollOffset.current += delta * 0.003;
+      const isMobile = window.innerWidth <= 768;
+      const dragSensitivity = isMobile ? 0.001 : 0.003; // Lower sensitivity on mobile for better control
+      scrollOffset.current += delta * dragSensitivity;
       targetScrollOffset.current = scrollOffset.current; // Keep target in sync
       
       if (threeObjects.current.render) threeObjects.current.render();
     };
     const onPointerUp = (e: PointerEvent) => {
       isDragging.current = false;
-      wrapper.releasePointerCapture(e.pointerId);
       
       // Wrap scroll values after dragging ends
       while (scrollOffset.current < 0) scrollOffset.current += 1;
@@ -587,29 +640,41 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
     // Touch support with smooth scrolling
     let lastTouchY = 0;
+    let isTouching = false;
+    
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
+        isTouching = true;
         lastTouchY = e.touches[0].clientY;
         
         // Cancel smooth scroll animation when touch starts
         if (smoothScrollTween.current) {
           smoothScrollTween.current.kill();
         }
+        
+        // Don't prevent default on mobile to allow natural scrolling
       }
     };
+    
     const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
+      if (e.touches.length === 1 && isTouching) {
         const delta = e.touches[0].clientY - lastTouchY;
         lastTouchY = e.touches[0].clientY;
         
         // Direct scroll during touch for immediate feedback (allow values beyond [0,1])
-        scrollOffset.current += delta * 0.003;
+        const isMobile = window.innerWidth <= 768;
+        const touchSensitivity = isMobile ? 0.001 : 0.003; // Lower sensitivity on mobile for better control
+        scrollOffset.current += delta * touchSensitivity;
         targetScrollOffset.current = scrollOffset.current; // Keep target in sync
         
         if (threeObjects.current.render) threeObjects.current.render();
+        
+        // Don't prevent default to allow natural mobile scrolling
       }
     };
+    
     const onTouchEnd = () => {
+      isTouching = false;
       // Wrap scroll values after touching ends
       while (scrollOffset.current < 0) scrollOffset.current += 1;
       while (scrollOffset.current >= 1) scrollOffset.current -= 1;
@@ -620,6 +685,57 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
     wrapper.addEventListener("touchstart", onTouchStart);
     wrapper.addEventListener("touchmove", onTouchMove);
     wrapper.addEventListener("touchend", onTouchEnd);
+    
+    // Prevent scroll interference when touching text overlay area
+    const textOverlays = textOverlaysRef.current;
+    if (textOverlays) {
+      textOverlays.addEventListener("touchstart", (e) => {
+        // Only prevent if touching a button
+        const target = e.target as HTMLElement;
+        if (target.closest('button')) {
+          e.preventDefault();
+          e.stopPropagation();
+          // Disable dragging when touching buttons
+          isDragging.current = false;
+        }
+      });
+      
+      textOverlays.addEventListener("touchmove", (e) => {
+        // Prevent scroll when touching buttons
+        const target = e.target as HTMLElement;
+        if (target.closest('button')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+    }
+
+    // Handle window resize and orientation changes for all screen sizes
+    const handleResize = () => {
+      const textElements = textOverlaysRef.current?.querySelectorAll('.slide-text');
+      
+      if (textElements) {
+        textElements.forEach((element) => {
+          const htmlElement = element as HTMLElement;
+          // Force proper positioning on resize for all screen sizes
+          htmlElement.style.left = '50%';
+          htmlElement.style.top = '50%';
+          htmlElement.style.transform = 'translate3d(-50%, -50%, 0)';
+          htmlElement.style.position = 'fixed';
+          htmlElement.style.textAlign = 'center';
+          htmlElement.style.display = 'flex';
+          htmlElement.style.flexDirection = 'column';
+          htmlElement.style.alignItems = 'center';
+          htmlElement.style.justifyContent = 'center';
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    // Initial positioning check
+    handleResize();
 
     return () => {
       wrapper.removeEventListener("wheel", onWheel);
@@ -629,6 +745,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       wrapper.removeEventListener("touchstart", onTouchStart);
       wrapper.removeEventListener("touchmove", onTouchMove);
       wrapper.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
       
       // Cleanup smooth scroll animation
       if (smoothScrollTween.current) {
@@ -690,23 +808,118 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                 <button 
                   className={styles.circleButton}
                   onClick={(e) => {
-                    e.preventDefault();
                     e.stopPropagation();
-                    // Route per slide index
-                    if (index === 0) {
-                      router.push('/about/vision-statement-read');
-                    } else if (index === 1) {
-                      router.push('/about/origin-story-read');
-                    } else if (index === 2) {
-                      router.push('/about/timeline-milestones-read');
-                    } else if (index === 3) {
-                      router.push('/about/growth-validation-read');
-                    } else if (index === 4) {
-                      router.push('/about/current-partners-read');
-                    } else if (index === 5) {
-                      router.push('/about/nebula-point-read');
-                    } else if (index === 6) {
-                      router.push('/about/horizon-read');
+                    
+                    // Use the current visible slide index instead of the map index
+                    const currentVisibleIndex = currentSlideIndex.current;
+                    const currentSlide = slideData[currentVisibleIndex];
+                    console.log('Button clicked for slide:', currentSlide.title, 'Visible Index:', currentVisibleIndex, 'Map Index:', index);
+                    
+                    // Route based on slide context for more reliable routing
+                    const routeMap: { [key: string]: string } = {
+                      'Vision Statement': '/about/vision-statement-read',
+                      'Origin Story': '/about/origin-story-read',
+                      'Timeline & MileStones': '/about/timeline-milestones-read',
+                      'Growth Validation': '/about/growth-validation-read',
+                      'Current Partners': '/about/current-partners-read',
+                      'Nebula Point': '/about/nebula-point-read',
+                      'Horizon': '/about/horizon-read'
+                    };
+                    
+                    // Try multiple approaches to find the correct route
+                    let targetRoute = routeMap[currentSlide.title] || 
+                                    routeMap[currentSlide.context] || 
+                                    routeMap[currentSlide.subtitle];
+                    
+                    // Fallback to index-based routing if title-based fails
+                    if (!targetRoute) {
+                      const indexRouteMap = [
+                        '/about/vision-statement-read',
+                        '/about/origin-story-read',
+                        '/about/timeline-milestones-read',
+                        '/about/growth-validation-read',
+                        '/about/current-partners-read',
+                        '/about/nebula-point-read',
+                        '/about/horizon-read'
+                      ];
+                      targetRoute = indexRouteMap[currentVisibleIndex];
+                    }
+                    
+                    console.log('Routing to:', targetRoute, 'for slide:', currentSlide.title);
+                    
+                    if (targetRoute) {
+                      // Prevent any scroll interference
+                      const isMobile = window.innerWidth <= 768;
+                      if (isMobile) {
+                        // Immediately disable scroll events on mobile
+                        isDragging.current = false;
+                        if (smoothScrollTween.current) {
+                          smoothScrollTween.current.kill();
+                        }
+                        
+                        // Add a longer delay on mobile to prevent scroll conflicts
+                        setTimeout(() => {
+                          router.push(targetRoute);
+                        }, 100);
+                      } else {
+                        router.push(targetRoute);
+                      }
+                    } else {
+                      console.error('No route found for slide:', currentSlide.title);
+                    }
+                  }}
+                  onTouchStart={(e) => {
+                    // Prevent scroll interference when touching button
+                    e.stopPropagation();
+                  }}
+                  onTouchMove={(e) => {
+                    // Prevent scroll interference when touching button
+                    e.stopPropagation();
+                  }}
+                  onTouchEnd={(e) => {
+                    // Prevent scroll interference when touching button
+                    e.stopPropagation();
+                    
+                    // Ensure click works on mobile by triggering the same logic
+                    const currentVisibleIndex = currentSlideIndex.current;
+                    const currentSlide = slideData[currentVisibleIndex];
+                    
+                    const routeMap: { [key: string]: string } = {
+                      'Vision Statement': '/about/vision-statement-read',
+                      'Origin Story': '/about/origin-story-read',
+                      'Timeline & MileStones': '/about/timeline-milestones-read',
+                      'Growth Validation': '/about/growth-validation-read',
+                      'Current Partners': '/about/current-partners-read',
+                      'Nebula Point': '/about/nebula-point-read',
+                      'Horizon': '/about/horizon-read'
+                    };
+                    
+                    let targetRoute = routeMap[currentSlide.title] || 
+                                    routeMap[currentSlide.context] || 
+                                    routeMap[currentSlide.subtitle];
+                    
+                    if (!targetRoute) {
+                      const indexRouteMap = [
+                        '/about/vision-statement-read',
+                        '/about/origin-story-read',
+                        '/about/timeline-milestones-read',
+                        '/about/growth-validation-read',
+                        '/about/current-partners-read',
+                        '/about/nebula-point-read',
+                        '/about/horizon-read'
+                      ];
+                      targetRoute = indexRouteMap[currentVisibleIndex];
+                    }
+                    
+                    if (targetRoute) {
+                      // Immediately disable scroll events on mobile
+                      isDragging.current = false;
+                      if (smoothScrollTween.current) {
+                        smoothScrollTween.current.kill();
+                      }
+                      
+                      // Navigate immediately on mobile touch
+                      router.push(targetRoute);
                     }
                   }}
                   style={{

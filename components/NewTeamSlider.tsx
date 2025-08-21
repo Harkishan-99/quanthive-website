@@ -5,11 +5,11 @@ import Navbar from "./Navbar";
 
 // You can move this to a separate file if you want
 const sliderData = [
-    { title: "Harkishan", img: "/assets/team-member-one.jpg", url: "https://google.com" },
+    { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://google.com" },
     { title: "Dr Neelesh U", img: "/assets/team-member-two.jpg", url: "https://google.com" },
-    { title: "Mayank J", img: "/assets/team-member-three.jpg", url: "https://google.com" },
-    { title: "Yuvraj", img: "/assets/team-member-four.jpg", url: "https://google.com" },
-    { title: "Vivek", img: "/assets/team-member-five.jpg", url: "https://google.com" },
+    { title: "Mayank J", img: "/assets/team-page/mayank_.webp", url: "https://google.com" },
+    { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://google.com" },
+    { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://google.com" },
     { title: "Chirag", img: "/assets/team-member-six.jpg", url: "https://google.com" },
     { title: "Prajol", img: "/assets/team-member-seven.jpg", url: "https://google.com" },
     { title: "Aishwarya", img: "/assets/team-member-eight.jpg", url: "https://google.com" },
@@ -91,7 +91,19 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
         const slideCenter = slideRect.left + slideRect.width / 2;
         const distanceFromCenter = slideCenter - viewportCenter;
         const parallaxOffset = distanceFromCenter * -0.25;
-        (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) scale(2.25)`;
+        
+        // Apply different scaling for team member images
+        const imgAlt = (img as HTMLImageElement).alt;
+        let scale = 2.25; // default scale
+        
+        if (imgAlt === "Vivek") {
+          scale = 1.2;
+        } else if (imgAlt === "Mayank J") {
+          scale = 1.5;
+        } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
+          scale = 1.8;
+        }
+        (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) scale(${scale})`;
       });
 
       // Moving state for overlay

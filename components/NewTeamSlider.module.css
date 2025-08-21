@@ -68,6 +68,23 @@
   transform: scale(2.25);
   user-select: none;
 }
+
+/* Specific styling for team member images to make them smaller */
+.slide-image img[alt="Vivek"] {
+  transform: scale(1.2);
+}
+
+.slide-image img[alt="Harkishan"] {
+  transform: scale(1.8);
+}
+
+.slide-image img[alt="Mayank J"] {
+  transform: scale(1.5);
+}
+
+.slide-image img[alt="Yuvraj"] {
+  transform: scale(1.8);
+}
 .slide-overlay {
   position: absolute;
   bottom: -1.75rem;
