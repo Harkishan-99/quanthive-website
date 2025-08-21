@@ -187,4 +187,8 @@
     width: 16px;
     height: 16px;
   }
+
+  .slideText {
+    left: 0;
+  }
 }
