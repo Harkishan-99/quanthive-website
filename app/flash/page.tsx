@@ -31,8 +31,11 @@ export default function FlashPage() {
     }
 
     // Randomize float animation timings to avoid sync
-    setLeftAnimVars({ duration: 5.5 + Math.random() * 2.0, delay: Math.random() * 1.5 });
-    setRightAnimVars({ duration: 6.0 + Math.random() * 2.5, delay: Math.random() * 1.2 });
+    // Only animate if screen width is greater than 768px (not mobile)
+    if (window.innerWidth > 768) {
+      setLeftAnimVars({ duration: 5.5 + Math.random() * 2.0, delay: Math.random() * 1.5 });
+      setRightAnimVars({ duration: 6.0 + Math.random() * 2.5, delay: Math.random() * 1.2 });
+    }
 
     let animationFrameId = 0;
     let targetLeft = { x: 0, y: 0 };
