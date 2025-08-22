@@ -19,11 +19,17 @@ const AnimatedWord: React.FC<AnimatedWordProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const [shouldCenter, setShouldCenter] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLSpanElement>(null);
 
   // Calculate the width needed for the longest word and check if we should center
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Check if mobile
+      const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      
       const tempSpan = document.createElement('span');
       tempSpan.style.visibility = 'hidden';
       tempSpan.style.position = 'absolute';
@@ -52,6 +58,8 @@ const AnimatedWord: React.FC<AnimatedWordProps> = ({
       if (onWordChange) {
         onWordChange(words[currentIndex], needsCentering);
       }
+      
+      return () => window.removeEventListener('resize', checkMobile);
     }
   }, [words, currentIndex]);
 
@@ -136,8 +144,10 @@ const AnimatedWord: React.FC<AnimatedWordProps> = ({
             style={{
               height: "1.2em",
               lineHeight: "1.2em",
-              verticalAlign: "text-bottom",
+              verticalAlign: "baseline",
               width: "max-content",
+              display: "inline-block",
+              transform: isMobile ? "translateY(3px)" : "translateY(12px)", // Reduced gap on mobile
             }}
           >
         <div

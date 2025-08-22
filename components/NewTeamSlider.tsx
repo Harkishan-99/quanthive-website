@@ -11,8 +11,8 @@ const sliderData = [
     { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://google.com" },
     { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://google.com" },
     { title: "Chirag", img: "/assets/team-member-six.jpg", url: "https://google.com" },
-    // { title: "Prajol", img: "/assets/team-member-seven.jpg", url: "https://google.com" },
-    // { title: "Aishwarya", img: "/assets/team-member-eight.jpg", url: "https://google.com" },
+    { title: "Prajol", img: "/assets/team-member-seven.jpg", url: "https://google.com" },
+    { title: "Aishwarya", img: "/assets/team-member-eight.jpg", url: "https://google.com" },
   ];
 
 const COPIES = 6;
