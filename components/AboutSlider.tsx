@@ -33,33 +33,33 @@ const slideData = [
     context: "Timeline & MileStones"
   },
   {
-    imageIndex: 4, // img4.jpg
-    title: "Growth Validation",
-    description: "QuantHive",
-    subtitle: "Growth Validation",
-    context: "Growth Validation"
-  },
-  {
     imageIndex: 5, // img5.jpg
     title: "Current Partners",
     description: "QuantHive",
     subtitle: "Current Partners",
     context: "Current Partners"
   },
-  {
-    imageIndex: 6, // img6.jpg
-    title: "Nebula Point",
-    description: "QuantHive",
-    subtitle: "Cosmic Journey",
-    context: "Nebula Point"
-  },
-  {
-    imageIndex: 7, // img7.jpg
-    title: "Horizon",
-    description: "QuantHive",
-    subtitle: "Future Visions",
-    context: "Horizon"
-  },
+  // {
+  //   imageIndex: 4, // img4.jpg
+  //   title: "Growth Validation",
+  //   description: "QuantHive",
+  //   subtitle: "Growth Validation",
+  //   context: "Growth Validation"
+  // },
+  // {
+  //   imageIndex: 6, // img6.jpg
+  //   title: "Nebula Point",
+  //   description: "QuantHive",
+  //   subtitle: "Cosmic Journey",
+  //   context: "Nebula Point"
+  // },
+  // {
+  //   imageIndex: 7, // img7.jpg
+  //   title: "Horizon",
+  //   description: "QuantHive",
+  //   subtitle: "Future Visions",
+  //   context: "Horizon"
+  // },
 ];
 
 const slideTitles = slideData.map(slide => slide.title);
@@ -306,7 +306,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
       const parentGeometry = createGeometry();
 
-      const totalSlides = 7;
+      const totalSlides = 4;
       let cycleHeight = totalSlides * (dimensions.slideHeight + dimensions.gap);
 
       const textureCanvas = document.createElement("canvas");
@@ -820,10 +820,10 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                       'Vision Statement': '/about/vision-statement-read',
                       'Origin Story': '/about/origin-story-read',
                       'Timeline & MileStones': '/about/timeline-milestones-read',
-                      'Growth Validation': '/about/growth-validation-read',
+                      // 'Growth Validation': '/about/growth-validation-read',
                       'Current Partners': '/about/current-partners-read',
-                      'Nebula Point': '/about/nebula-point-read',
-                      'Horizon': '/about/horizon-read'
+                      // 'Nebula Point': '/about/nebula-point-read',
+                      // 'Horizon': '/about/horizon-read'
                     };
                     
                     // Try multiple approaches to find the correct route
@@ -837,10 +837,10 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                         '/about/vision-statement-read',
                         '/about/origin-story-read',
                         '/about/timeline-milestones-read',
-                        '/about/growth-validation-read',
+                        // '/about/growth-validation-read',
                         '/about/current-partners-read',
-                        '/about/nebula-point-read',
-                        '/about/horizon-read'
+                        // '/about/nebula-point-read',
+                        // '/about/horizon-read'
                       ];
                       targetRoute = indexRouteMap[currentVisibleIndex];
                     }
@@ -888,10 +888,10 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                       'Vision Statement': '/about/vision-statement-read',
                       'Origin Story': '/about/origin-story-read',
                       'Timeline & MileStones': '/about/timeline-milestones-read',
-                      'Growth Validation': '/about/growth-validation-read',
+                      // 'Growth Validation': '/about/growth-validation-read',
                       'Current Partners': '/about/current-partners-read',
-                      'Nebula Point': '/about/nebula-point-read',
-                      'Horizon': '/about/horizon-read'
+                      // 'Nebula Point': '/about/nebula-point-read',
+                      // 'Horizon': '/about/horizon-read'
                     };
                     
                     let targetRoute = routeMap[currentSlide.title] || 
@@ -903,10 +903,10 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                         '/about/vision-statement-read',
                         '/about/origin-story-read',
                         '/about/timeline-milestones-read',
-                        '/about/growth-validation-read',
+                        // '/about/growth-validation-read',
                         '/about/current-partners-read',
-                        '/about/nebula-point-read',
-                        '/about/horizon-read'
+                        // '/about/nebula-point-read',
+                        // '/about/horizon-read'
                       ];
                       targetRoute = indexRouteMap[currentVisibleIndex];
                     }

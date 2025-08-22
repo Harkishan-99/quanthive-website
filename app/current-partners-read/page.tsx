@@ -127,7 +127,7 @@ export default function CurrentPartnersReadPage() {
 
       <section className={styles.nextSection}>
         <p className={styles.nextLabel}>Next slide</p>
-        <h2 className={styles.nextTitle}>Nebula Point</h2>
+        <h2 className={styles.nextTitle}>Vision Statement</h2>
         <button
           aria-label="Open next slide"
           className={styles.nextCircleButton}
@@ -136,7 +136,7 @@ export default function CurrentPartnersReadPage() {
               opacity: 0,
               duration: 0.4,
               ease: "power2.out",
-              onComplete: () => router.push("/about/nebula-point-read"),
+              onComplete: () => router.push("/about/vision-statement-read"),
             });
           }}
         >
