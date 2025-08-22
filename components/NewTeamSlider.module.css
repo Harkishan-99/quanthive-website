@@ -85,6 +85,20 @@
 .slide-image img[alt="Yuvraj"] {
   transform: scale(1.8);
 }
+
+/* Apply black and white filter to all team member images except Vivek and Neelesh */
+.slide-image img {
+  filter: grayscale(100%);
+}
+
+/* Remove grayscale filter for Vivek and Neelesh */
+.slide-image img[alt="Vivek"] {
+  filter: none;
+}
+
+.slide-image img[alt="Dr Neelesh U"] {
+  filter: none;
+}
 .slide-overlay {
   position: absolute;
   bottom: -1.75rem;

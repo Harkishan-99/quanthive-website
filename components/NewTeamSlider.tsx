@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 // You can move this to a separate file if you want
 const sliderData = [
     { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://google.com" },
-    { title: "Dr Neelesh U", img: "/assets/team-member-two.jpg", url: "https://google.com" },
+    { title: "Dr Neelesh U", img: "/assets/team-page/neelesh_.webp", url: "https://google.com" },
     { title: "Mayank J", img: "/assets/team-page/mayank_.webp", url: "https://google.com" },
     { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://google.com" },
     { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://google.com" },
@@ -95,6 +95,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
         // Apply different scaling for team member images
         const imgAlt = (img as HTMLImageElement).alt;
         let scale = 2.25; // default scale
+        let verticalOffset = 0; // default vertical offset
         
         if (imgAlt === "Vivek") {
           scale = 1.2;
@@ -102,8 +103,11 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
           scale = 1.5;
         } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
           scale = 1.8;
+        } else if (imgAlt === "Dr Neelesh U") {
+          scale = 1.8; // Reduced scale for Neelesh to fix zoom issue
+          verticalOffset = 200; // Move Neelesh's image down by 20px
         }
-        (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) scale(${scale})`;
+        (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) translateY(${verticalOffset}px) scale(${scale})`;
       });
 
       // Moving state for overlay
