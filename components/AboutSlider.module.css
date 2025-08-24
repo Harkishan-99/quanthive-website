@@ -1,0 +1,359 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    font-family: "Inter", sans-serif;
+    background-color: #000;
+    color: #fff;
+    position: relative;
+  }
+  
+  .gradientTop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+    pointer-events: none;
+    z-index: 5;
+  }
+  
+  .gradientBottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+    pointer-events: none;
+    z-index: 5;
+  }
+  
+  .logo {
+    opacity: 1;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  
+  .nav {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  padding: 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2em;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  padding: 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 1.5em;
+  }
+  
+  .navLinks {
+    gap: 1.5em;
+  }
+  
+  .footer {
+    padding: 1.5em;
+  }
+  
+  .logo {
+    font-size: 11px;
+  }
+  
+  .sliderWrapper {
+    /* Allow natural mobile touch scrolling */
+    touch-action: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
+  }
+  
+  .container {
+    /* Allow natural scrolling on mobile */
+    overflow: visible;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+  }
+}
+  
+  .sliderWrapper {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  /* Allow natural touch scrolling on mobile */
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+}
+  
+  .sliderWrapper canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0) 75%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  z-index: 1;
+}
+
+.textOverlays {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideText {
+  position: fixed; /* lock to viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0); /* avoid sub‑pixel drift */
+  text-align: center;
+  color: white;
+  opacity: 0;
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 2rem;
+  will-change: opacity, transform;
+  /* Ensure proper centering on all devices */
+  margin: 0 auto;
+  /* Force centering on desktop */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.textContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+.description {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+  font-family: "Inter", sans-serif;
+}
+
+.title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  font-family: "Inter", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.circleButton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 1);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: none;
+  pointer-events: auto;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  /* Prevent touch interference on mobile */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circleButton svg {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .description {
+    font-size: 10px;
+    margin-bottom: 0.8rem;
+  }
+  
+  .title {
+    font-size: clamp(2rem, 12vw, 4rem);
+    margin-bottom: 1.5rem;
+  }
+  
+  .circleButton {
+    width: 50px;
+    height: 50px;
+    /* Enhanced mobile touch handling */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .circleButton svg {
+    width: 16px;
+    height: 16px;
+    pointer-events: none; /* Prevent SVG from interfering with button clicks */
+  }
+
+  .slideText {
+    /* Force proper centering on mobile with !important */
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    padding: 0 1rem !important;
+    max-width: 90vw !important;
+    width: auto !important;
+    position: fixed !important;
+  }
+  
+  .textOverlays {
+    /* Ensure proper centering container */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .textContent {
+    /* Ensure text content is properly centered */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+}
+
+/* Additional mobile breakpoint for very small screens */
+@media (max-width: 480px) {
+  .slideText {
+    padding: 0 0.5rem !important;
+    max-width: 95vw !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+  }
+  
+  .title {
+    font-size: clamp(1.5rem, 10vw, 3rem);
+    margin-bottom: 1rem;
+  }
+  
+  .description {
+    font-size: 9px;
+    margin-bottom: 0.6rem;
+  }
+  
+  .circleButton {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .circleButton svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Force mobile centering for all screen sizes under 768px */
+@media screen and (max-width: 768px) {
+  .container .textOverlays .slideText {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    position: fixed !important;
+    display: block !important;
+    text-align: center !important;
+  }
+  
+  .container .textOverlays .slideText .textContent {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}
+
+/* Ensure proper centering on desktop screens */
+@media screen and (min-width: 769px) {
+  .container .textOverlays .slideText {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+    position: fixed !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    max-width: 800px !important;
+  }
+  
+  .container .textOverlays .slideText .textContent {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+  
+  .container .textOverlays .slideText .circleButton {
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
