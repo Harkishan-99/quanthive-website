@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./NewTeamSlider.module.css";
 import Navbar from "./Navbar";
 
-// You can move this to a separate file if you want
+// Updated team data with current images
 const sliderData = [
     { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "#" },
     { title: "Dr Neelesh U", img: "/assets/team-page/neelesh_.webp", url: "#" },
@@ -11,11 +11,9 @@ const sliderData = [
     { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "#" },
     { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "#" },
     { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "#" },
-    // { title: "Prajol", img: "/assets/team-member-seven.jpg", url: "https://google.com" },
-    // { title: "Aishwarya", img: "/assets/team-member-eight.jpg", url: "https://google.com" },
   ];
 
-const COPIES = 4; // Reduced from 6 to 4 for better mobile performance
+const COPIES = 6;
 
 type NewTeamSliderProps = {
   open: boolean;
@@ -41,7 +39,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
 
   // Set slide width based on device
   useEffect(() => {
-    setSlideWidth(isMobile ? 180 : 390); // Reduced mobile slide width for better performance
+    setSlideWidth(isMobile ? 215 : 390);
   }, [isMobile]);
 
   // Infinite slider logic
@@ -69,7 +67,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
     // Animate
     function animate() {
       if (!track) return;
-      currentX += (targetX - currentX) * (isMobile ? 0.08 : 0.05); // Faster animation on mobile
+      currentX += (targetX - currentX) * 0.05;
 
       // Infinite loop logic
       if (currentX > -sequenceWidth * 1) {
@@ -81,40 +79,34 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       }
       track.style.transform = `translate3d(${currentX}px, 0, 0)`;
 
-      // Optimized parallax for mobile
+      // Parallax
       const viewportCenter = window.innerWidth / 2;
-      const children = Array.from(track.children);
-      
-      // Only process visible slides on mobile for better performance
-      const visibleSlides = isMobile ? 
-        children.filter(slide => {
-          const slideRect = (slide as HTMLElement).getBoundingClientRect();
-          return slideRect.right > -200 && slideRect.left < window.innerWidth + 200;
-        }) : 
-        children;
-
-      visibleSlides.forEach((slide) => {
+      Array.from(track.children).forEach((slide) => {
         const img = (slide as HTMLElement).querySelector("img");
         if (!img) return;
         const slideRect = (slide as HTMLElement).getBoundingClientRect();
+        if (slideRect.right < -500 || slideRect.left > window.innerWidth + 500) return;
         const slideCenter = slideRect.left + slideRect.width / 2;
         const distanceFromCenter = slideCenter - viewportCenter;
-        const parallaxOffset = distanceFromCenter * (isMobile ? -0.15 : -0.25); // Reduced parallax on mobile
+        const parallaxOffset = distanceFromCenter * -0.25;
         
         // Apply different scaling for team member images
         const imgAlt = (img as HTMLImageElement).alt;
-        let scale = isMobile ? 1.8 : 2.25; // Reduced default scale on mobile
+        let scale = 2.25; // default scale
         let verticalOffset = 0; // default vertical offset
         
         if (imgAlt === "Vivek") {
-          scale = isMobile ? 1.0 : 1.2;
+          scale = 1.2;
         } else if (imgAlt === "Mayank J") {
-          scale = isMobile ? 1.3 : 1.5;
+          scale = 1.5;
         } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
-          scale = isMobile ? 1.5 : 1.8;
+          scale = 1.8;
         } else if (imgAlt === "Dr Neelesh U") {
-          scale = isMobile ? 1.5 : 1.8; // Reduced scale for Neelesh to fix zoom issue
-          verticalOffset = isMobile ? 125 : 200; // Increased vertical offset to bring image down
+          scale = 1.8; // Reduced scale for Neelesh to fix zoom issue
+          verticalOffset = 200; // Move Neelesh's image down by 20px
+        } else if (imgAlt === "Chirag") {
+          scale = 1.5; // Reduced scale for Chirag to fix zoom issue
+          verticalOffset = 30; // Vertical offset for Chirag
         }
         (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) translateY(${verticalOffset}px) scale(${scale})`;
       });
@@ -122,8 +114,8 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       // Moving state for overlay
       velocity = Math.abs(currentX - lastCurrentX);
       lastCurrentX = currentX;
-      const isSlowEnough = velocity < (isMobile ? 0.2 : 0.1); // More lenient on mobile
-      const hasBeenStillLongEnough = Date.now() - lastScrollTime > (isMobile ? 150 : 200); // Faster on mobile
+      const isSlowEnough = velocity < 0.1;
+      const hasBeenStillLongEnough = Date.now() - lastScrollTime > 200;
       const isMoving = hasActuallyDragged || !isSlowEnough || !hasBeenStillLongEnough;
       document.documentElement.style.setProperty("--slider-moving", isMoving ? "1" : "0");
 
@@ -137,8 +129,8 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       e.preventDefault();
       lastScrollTime = Date.now();
-      const scrollDelta = e.deltaY * (isMobile ? 1.2 : 1.75); // Reduced sensitivity on mobile
-      targetX -= Math.max(Math.min(scrollDelta, isMobile ? 100 : 150), isMobile ? -100 : -150);
+      const scrollDelta = e.deltaY * 1.75;
+      targetX -= Math.max(Math.min(scrollDelta, 150), -150);
     }
 
     function handleTouchStart(e: TouchEvent) {
@@ -151,7 +143,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
     }
     function handleTouchMove(e: TouchEvent) {
       if (!isDragging) return;
-      const deltaX = (e.touches[0].clientX - startX) * (isMobile ? 1.2 : 1.5); // Reduced sensitivity on mobile
+      const deltaX = (e.touches[0].clientX - startX) * 1.5;
       targetX = lastX + deltaX;
       dragDistance = Math.abs(deltaX);
       if (dragDistance > 5) hasActuallyDragged = true;
@@ -174,7 +166,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
     function handleMouseMove(e: MouseEvent) {
       if (!isDragging) return;
       e.preventDefault();
-      const deltaX = (e.clientX - lastMouseX) * (isMobile ? 1.5 : 2); // Reduced sensitivity on mobile
+      const deltaX = (e.clientX - lastMouseX) * 2;
       targetX += deltaX;
       lastMouseX = e.clientX;
       dragDistance += Math.abs(deltaX);
@@ -231,8 +223,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
             src={data.img}
             alt={data.title}
             draggable={false}
-            loading="lazy"
-            style={{ transform: isMobile ? "scale(1.8)" : "scale(2.25)" }}
+            style={{ transform: "scale(2.25)" }}
           />
         </div>
         <div className={styles["slide-overlay"]}>
