@@ -3,8 +3,85 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+// Simple Dialog component
+function EmailDialog({ open, onClose, onSubmit, loading, error }: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (email: string) => void;
+  loading: boolean;
+  error: string;
+}) {
+  const [email, setEmail] = useState("");
+  useEffect(() => { if (!open) setEmail(""); }, [open]);
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            style={{ background: '#18181b', borderRadius: 14, padding: 32, minWidth: 320, boxShadow: '0 8px 32px rgba(0,0,0,0.32)', color: '#fff', border: '1px solid #232329' }}
+          >
+            <h2 style={{ fontWeight: 700, fontSize: 21, marginBottom: 16, color: '#fff' }}>Get Notified</h2>
+            <p style={{ fontSize: 15, marginBottom: 18, color: '#cbd5e1' }}>Enter your email to get notified about Flash.</p>
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={{ width: '100%', padding: 11, fontSize: 15, borderRadius: 7, border: '1px solid #333', marginBottom: 13, background: '#232329', color: '#fff', outline: 'none' }}
+              disabled={loading}
+            />
+            {error && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 8 }}>{error}</div>}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 2 }}>
+              <button onClick={onClose} style={{ padding: '7px 18px', borderRadius: 7, border: 'none', background: '#232329', color: '#cbd5e1', fontWeight: 500, transition: 'background 0.2s' }} disabled={loading}>Cancel</button>
+              <button onClick={() => onSubmit(email)} style={{ padding: '7px 18px', borderRadius: 7, border: 'none', background: '#fff', color: '#18181b', fontWeight: 600, transition: 'background 0.2s' }} disabled={loading || !email}>Notify Me</button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function FlashPage() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogLoading, setDialogLoading] = useState(false);
+  const [dialogError, setDialogError] = useState("");
+  // Email submit handler
+  async function handleDialogSubmit(email: string) {
+    setDialogLoading(true);
+    setDialogError("");
+    // Basic email validation
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setDialogError("Please enter a valid email address.");
+      setDialogLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/notify-flash", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      if (!res.ok) throw new Error("Failed to send notification");
+      setDialogOpen(false);
+      setTimeout(() => alert("Thank you! You'll be notified."), 100);
+    } catch (e) {
+      setDialogError("Failed to send. Please try again later.");
+    } finally {
+      setDialogLoading(false);
+    }
+  }
   const leftTooltipRef = useRef<HTMLDivElement>(null!);
   const rightTooltipRef = useRef<HTMLDivElement>(null!);
   const [leftOffset, setLeftOffset] = useState({ x: 0, y: 0 });
@@ -172,13 +249,14 @@ export default function FlashPage() {
            </div>
          </div>
                  <div className={`absolute left-1/2 -translate-x-1/2 z-0 ${isMobile ? 'top-[55%]' : 'top-[68%] md:top-[66%] lg:top-[64%]'}`}>
-           <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer">
+           <div ref={getNotifiedRef} className="get-notified-btn cursor-pointer" onClick={() => setDialogOpen(true)}>
              <img
                src="/assets/get_notified.svg"
                alt="Get Notified"
                className={isMobile ? "w-[120px] h-auto" : "w-[104px] md:w-[127px] lg:w-[146px] h-auto"}
              />
            </div>
+  <EmailDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSubmit={handleDialogSubmit} loading={dialogLoading} error={dialogError} />
          </div>
       </main>
       
