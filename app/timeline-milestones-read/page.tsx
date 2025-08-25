@@ -128,7 +128,7 @@ export default function TimelineMilestonesReadPage() {
       {/* Next Slide Section */}
       <section className={styles.nextSection}>
         <p className={styles.nextLabel}>Next slide</p>
-        <h2 className={styles.nextTitle}>Current Partners</h2>
+        <h2 className={styles.nextTitle}>Growth Validation</h2>
         <button
           aria-label="Open next slide"
           className={styles.nextCircleButton}
@@ -137,7 +137,7 @@ export default function TimelineMilestonesReadPage() {
               opacity: 0,
               duration: 0.4,
               ease: "power2.out",
-              onComplete: () => router.push("/about/current-partners-read"),
+              onComplete: () => router.push("/about/growth-validation-read"),
             });
           }}
         >
@@ -147,4 +147,3 @@ export default function TimelineMilestonesReadPage() {
     </div>
   );
 }
-

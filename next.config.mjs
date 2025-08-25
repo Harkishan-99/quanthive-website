@@ -55,8 +55,7 @@ const nextConfig = {
       { source: '/timeline-milestones-read', destination: '/about/timeline-milestones-read', permanent: false },
       { source: '/growth-validation-read', destination: '/about/growth-validation-read', permanent: false },
       { source: '/current-partners-read', destination: '/about/current-partners-read', permanent: false },
-      { source: '/nebula-point-read', destination: '/about/nebula-point-read', permanent: false },
-      { source: '/horizon-read', destination: '/about/horizon-read', permanent: false },
+
     ];
   },
   async rewrites() {

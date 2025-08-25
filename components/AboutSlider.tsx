@@ -33,33 +33,19 @@ const slideData = [
     context: "Timeline & MileStones"
   },
   {
+    imageIndex: 4, // img4.jpg
+    title: "Growth Validation",
+    description: "QuantHive",
+    subtitle: "Growth Validation",
+    context: "Growth Validation"
+  },
+  {
     imageIndex: 5, // img5.jpg
     title: "Current Partners",
     description: "QuantHive",
     subtitle: "Current Partners",
     context: "Current Partners"
   },
-  // {
-  //   imageIndex: 4, // img4.jpg
-  //   title: "Growth Validation",
-  //   description: "QuantHive",
-  //   subtitle: "Growth Validation",
-  //   context: "Growth Validation"
-  // },
-  // {
-  //   imageIndex: 6, // img6.jpg
-  //   title: "Nebula Point",
-  //   description: "QuantHive",
-  //   subtitle: "Cosmic Journey",
-  //   context: "Nebula Point"
-  // },
-  // {
-  //   imageIndex: 7, // img7.jpg
-  //   title: "Horizon",
-  //   description: "QuantHive",
-  //   subtitle: "Future Visions",
-  //   context: "Horizon"
-  // },
 ];
 
 const slideTitles = slideData.map(slide => slide.title);
@@ -306,7 +292,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
       const parentGeometry = createGeometry();
 
-      const totalSlides = 4;
+      const totalSlides = 5;
       let cycleHeight = totalSlides * (dimensions.slideHeight + dimensions.gap);
 
       const textureCanvas = document.createElement("canvas");
@@ -341,21 +327,21 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         parentMesh.rotation.x = THREE.MathUtils.degToRad(-8);
         parentMesh.rotation.y = THREE.MathUtils.degToRad(5);
         
-        const distance = 12; // Closer camera for smaller content
-        const heightOffset = 1.5;
+        const distance = 16; // Moved camera further away
+        const heightOffset = 2;
         const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(5));
         const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(5));
         
         camera.position.set(offsetX, heightOffset, offsetZ);
         camera.lookAt(0, -0.5, 0);
-        camera.rotation.z = THREE.MathUtils.degToRad(-1);
+        camera.rotation.z = THREE.MathUtils.degToRad(0);
       } else {
         // Desktop: Original perspective view
         parentMesh.rotation.x = THREE.MathUtils.degToRad(-20);
         parentMesh.rotation.y = THREE.MathUtils.degToRad(20);
         
-        const distance = 17.5;
-        const heightOffset = 5;
+        const distance = 22; // Moved camera further away
+        const heightOffset = 6;
         const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(20));
         const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(20));
         
@@ -437,7 +423,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
 
       // Throttle rendering on mobile for better performance
       let lastRenderTime = 0;
-      const renderThrottle = dimensions.isMobile ? 50 : 16; // 20fps on mobile, 60fps on desktop
+      const renderThrottle = dimensions.isMobile ? 42 : 33; // 24fps on mobile, 30fps on desktop
       
       function render() {
         const now = Date.now();
@@ -498,8 +484,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
             parentMesh.rotation.x = THREE.MathUtils.degToRad(-8);
             parentMesh.rotation.y = THREE.MathUtils.degToRad(5);
             
-            const distance = 12; // Closer camera for smaller content
-            const heightOffset = 1.5;
+            const distance = 16; // Moved camera further away
+            const heightOffset = 2;
             const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(5));
             const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(5));
             
@@ -511,7 +497,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
             parentMesh.rotation.x = THREE.MathUtils.degToRad(-20);
             parentMesh.rotation.y = THREE.MathUtils.degToRad(20);
             
-            const distance = 17.5;
+            const distance = 16; // Moved camera further away
             const heightOffset = 5;
             const offsetX = distance * Math.sin(THREE.MathUtils.degToRad(20));
             const offsetZ = distance * Math.cos(THREE.MathUtils.degToRad(20));
@@ -820,10 +806,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                       'Vision Statement': '/about/vision-statement-read',
                       'Origin Story': '/about/origin-story-read',
                       'Timeline & MileStones': '/about/timeline-milestones-read',
-                      // 'Growth Validation': '/about/growth-validation-read',
-                      'Current Partners': '/about/current-partners-read',
-                      // 'Nebula Point': '/about/nebula-point-read',
-                      // 'Horizon': '/about/horizon-read'
+                      'Growth Validation': '/about/growth-validation-read',
+                      'Current Partners': '/about/current-partners-read'
                     };
                     
                     // Try multiple approaches to find the correct route
@@ -837,10 +821,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                         '/about/vision-statement-read',
                         '/about/origin-story-read',
                         '/about/timeline-milestones-read',
-                        // '/about/growth-validation-read',
-                        '/about/current-partners-read',
-                        // '/about/nebula-point-read',
-                        // '/about/horizon-read'
+                        '/about/growth-validation-read',
+                        '/about/current-partners-read'
                       ];
                       targetRoute = indexRouteMap[currentVisibleIndex];
                     }
@@ -888,10 +870,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                       'Vision Statement': '/about/vision-statement-read',
                       'Origin Story': '/about/origin-story-read',
                       'Timeline & MileStones': '/about/timeline-milestones-read',
-                      // 'Growth Validation': '/about/growth-validation-read',
-                      'Current Partners': '/about/current-partners-read',
-                      // 'Nebula Point': '/about/nebula-point-read',
-                      // 'Horizon': '/about/horizon-read'
+                      'Growth Validation': '/about/growth-validation-read',
+                      'Current Partners': '/about/current-partners-read'
                     };
                     
                     let targetRoute = routeMap[currentSlide.title] || 
@@ -903,10 +883,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                         '/about/vision-statement-read',
                         '/about/origin-story-read',
                         '/about/timeline-milestones-read',
-                        // '/about/growth-validation-read',
-                        '/about/current-partners-read',
-                        // '/about/nebula-point-read',
-                        // '/about/horizon-read'
+                        '/about/growth-validation-read',
+                        '/about/current-partners-read'
                       ];
                       targetRoute = indexRouteMap[currentVisibleIndex];
                     }
@@ -923,7 +901,7 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
                     }
                   }}
                   style={{
-                    cursor: index <= 6 ? 'pointer' : 'default',
+                    cursor: index <= 4 ? 'pointer' : 'default',
                     zIndex: 10,
                   }}
                   onMouseEnter={(e) => {
