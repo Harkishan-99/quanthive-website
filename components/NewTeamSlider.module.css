@@ -86,6 +86,7 @@
   transform: scale(1.8);
 }
 
+
 /* Apply black and white filter to all team member images except Vivek and Neelesh */
 .slide-image img {
   filter: grayscale(100%);
@@ -110,7 +111,7 @@
   pointer-events: none;
   z-index: 10;
   transition: opacity 0.3s ease;
-  opacity: 0;
+  opacity: 1;
 }
 .slide:hover .slide-overlay {
   opacity: calc(1 - var(--slider-moving, 1));
