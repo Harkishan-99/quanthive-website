@@ -102,7 +102,7 @@ export default function TimelineMilestonesReadPage() {
         <section ref={mainImageRef} className={styles.mainImage}>
           <div className={styles.imageWrapper}>
             <img
-              src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2012&q=80"
+              src="/assets/img1.webp"
               alt="Timeline & Milestones"
               loading="eager"
               referrerPolicy="no-referrer"
@@ -112,6 +112,31 @@ export default function TimelineMilestonesReadPage() {
                 img.src = "https://images.unsplash.com/photo-1517816428104-797678c7cf9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2012&q=80";
               }}
             />
+          </div>
+        </section>
+
+        {/* Timeline Section */}
+        <section className={styles.timelineSection}>
+          <div className={styles.timelineWrapper}>
+            <h2 className={styles.timelineTitle}>Key Milestones</h2>
+            <div className={styles.timelineGrid}>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Incorporated</span>
+                <span className={styles.timelineDate}>15 April 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Office Setup</span>
+                <span className={styles.timelineDate}>20 April 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Team Formation</span>
+                <span className={styles.timelineDate}>24 April 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Operations Begin</span>
+                <span className={styles.timelineDate}>28 April 2025</span>
+              </div>
+            </div>
           </div>
         </section>
 

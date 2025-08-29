@@ -13,6 +13,46 @@ type FooterGroup = {
 const Footer = (): React.ReactElement => {
   const groups: FooterGroup[] = [...footerItems.left, ...footerItems.right];
 
+  const renderLink = (link: { title: string; href: string }) => {
+    const isExternal = link.href.startsWith('http') || link.href.startsWith('mailto');
+    const isLocation = link.title === "Location";
+    
+    if (isLocation) {
+      return (
+        <a
+          href="https://maps.app.goo.gl/dCxzm8BNZHZP9RTD9"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[15px] text-gray-100 hover:text-gray-300 transition-colors"
+        >
+          Location
+        </a>
+      );
+    }
+    
+    if (isExternal) {
+      return (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[15px] text-gray-100 hover:text-gray-300 transition-colors"
+        >
+          {link.title}
+        </a>
+      );
+    }
+    
+    return (
+      <Link
+        href={link.href}
+        className="text-[15px] text-gray-100 hover:text-gray-300 transition-colors"
+      >
+        {link.title}
+      </Link>
+    );
+  };
+
   return (
     <footer className="bg-[#0F0F0F] text-white relative z-10">
       <div className="mx-auto w-full max-w-7xl px-6 py-8">
@@ -25,12 +65,7 @@ const Footer = (): React.ReactElement => {
               <ul className="space-y-3">
                 {(group.items || []).map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    <Link
-                      href={link.href}
-                      className="text-[15px] text-gray-100 hover:text-gray-300 transition-colors"
-                    >
-                      {link.title}
-                    </Link>
+                    {renderLink(link)}
                   </li>
                 ))}
               </ul>
@@ -42,10 +77,10 @@ const Footer = (): React.ReactElement => {
           <p className="text-sm text-gray-400">&copy; 2025 QuantHive</p>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link href="#" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Cookies Policy</Link>
-            <Link href="#" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">License</Link>
-            <Link href="#" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Terms of Use</Link>
-            <Link href="#" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Privacy Policy</Link>
+            <Link href="/legal/cookies" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Cookies Policy</Link>
+            <Link href="/legal/license" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">License</Link>
+            <Link href="/legal/terms" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Terms of Use</Link>
+            <Link href="/legal/privacy" className="text-sm text-gray-200 hover:text-gray-400 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </div>

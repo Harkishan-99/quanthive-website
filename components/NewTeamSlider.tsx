@@ -5,12 +5,12 @@ import Navbar from "./Navbar";
 
 // Updated team data with current images
 const sliderData = [
-    { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "#" },
-    { title: "Dr Neelesh U", img: "/assets/team-page/neelesh_.webp", url: "#" },
-    { title: "Mayank J", img: "/assets/team-page/mayank_.webp", url: "#" },
-    { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "#" },
-    { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "#" },
-    { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "#" },
+    { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://www.linkedin.com/in/harkishan/" },
+    { title: "Dr Neelesh U", img: "/assets/team-page/neelesh_.webp", url: "https://www.linkedin.com/in/neelesh-upadhye-3b031956" },
+    { title: "Mayank J", img: "/assets/team-page/mayank_.webp", url: "https://www.linkedin.com/in/mayank-js" },
+    { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://www.linkedin.com/in/yuvishere" },
+    { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://www.linkedin.com/in/vivek-vibhuti" },
+    { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "https://www.linkedin.com/in/chirag-jalade" },
   ];
 
 const COPIES = 6;
@@ -96,17 +96,18 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
         let verticalOffset = 0; // default vertical offset
         
         if (imgAlt === "Vivek") {
-          scale = 1.2;
+          scale = 1.7; // Slightly more zoom in for Vivek
         } else if (imgAlt === "Mayank J") {
-          scale = 1.5;
+          scale = 1.8; // Keep zoom the same
+          verticalOffset = 105; // Bring Mayank slightly more down
         } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
-          scale = 1.8;
+          scale = 1.8; // Slightly more zoom out for Harkishan
         } else if (imgAlt === "Dr Neelesh U") {
           scale = 1.8; // Reduced scale for Neelesh to fix zoom issue
           verticalOffset = 200; // Move Neelesh's image down by 20px
         } else if (imgAlt === "Chirag") {
-          scale = 1.5; // Reduced scale for Chirag to fix zoom issue
-          verticalOffset = 30; // Vertical offset for Chirag
+          scale = 2; // Slightly more zoom in for Chirag
+          verticalOffset = 30; // Keep slight vertical offset for Chirag
         }
         (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) translateY(${verticalOffset}px) scale(${scale})`;
       });

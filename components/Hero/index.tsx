@@ -67,7 +67,7 @@ const Hero = () => {
               ease: "easeOut",
             }}
           >
-            We make AI{" "}
+            <span className="block md:inline">We make AI</span>{" "}
             <AnimatedWord 
               words={["Accelerated", "Explainable", "Streamlined", "Responsible"]}
               interval={2000}
