@@ -86,7 +86,7 @@ export default function LicensePage(): React.ReactElement {
           <h2 className="text-xl md:text-2xl font-medium pt-2">9. Contact</h2>
           <div>
             <p className="font-medium">QuantHive Research Technologies Pvt Ltd</p>
-            <p>IITM Research Park, 1FA, I Floor, Kanagam Road</p>
+            <p>3rd floor, D Block, IITM Research Park</p>
             <p>Taramani, Chennai, Tamil Nadu – 600113</p>
             <p>Email: <a className="underline" href="mailto:contact@quanthive.in">contact@quanthive.in</a></p>
           </div>

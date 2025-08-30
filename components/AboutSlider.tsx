@@ -112,87 +112,63 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       }
     }
     
+    // Only update if the center slide has actually changed to prevent unnecessary updates
     if (centerSlideIndex !== currentSlideIndex.current) {
+      const previousIndex = currentSlideIndex.current;
       currentSlideIndex.current = centerSlideIndex;
       
-      // Animate text elements
+      // Animate text elements with efficient overlap prevention
       const textElements = textOverlaysRef.current?.querySelectorAll('.slide-text');
       if (textElements) {
-        textElements.forEach((element, index) => {
-          if (index === centerSlideIndex) {
-            // Show current slide text
-            (element as HTMLElement).style.display = 'block';
-            // Reset transforms but maintain centering positioning
-            // Ensure proper positioning for both mobile and desktop
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-              gsap.set(element, { 
-                x: 0, 
-                y: 0, 
-                scale: 1,
-                rotation: 0,
-                left: '50%',
-                top: '50%',
-                transform: 'translate3d(-50%, -50%, 0)'
-              });
-            } else {
-              gsap.set(element, { 
-                x: 0, 
-                y: 0, 
-                scale: 1,
-                rotation: 0,
-                left: '50%',
-                top: '50%',
-                transform: 'translate3d(-50%, -50%, 0)'
-              });
-            }
-            gsap.fromTo(
-              element,
-              { opacity: 0, scale: 0.98 },
-              {
-                opacity: 1,
-                scale: 1,
-                duration: 0.6,
-                ease: 'power2.out',
-                transformOrigin: 'center center'
-              }
-            );
-          } else {
-            // Hide other slide texts
-            gsap.to(element, {
-              opacity: 0,
-              scale: 0.98,
-              duration: 0.3,
-              ease: 'power2.in',
-              onComplete: () => {
-                (element as HTMLElement).style.display = 'none';
-                // Reset transforms after hiding but maintain centering
-                const isMobile = window.innerWidth <= 768;
-                if (isMobile) {
-                  gsap.set(element, { 
-                    x: 0, 
-                    y: 0, 
-                    scale: 1,
-                    rotation: 0,
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate3d(-50%, -50%, 0)'
-                  });
-                } else {
-                  gsap.set(element, { 
-                    x: 0, 
-                    y: 0, 
-                    scale: 1,
-                    rotation: 0,
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate3d(-50%, -50%, 0)'
-                  });
-                }
-              }
-            });
-          }
-        });
+                 // Hide the previous slide text quickly and smoothly
+         if (previousIndex >= 0 && previousIndex < textElements.length) {
+           const previousElement = textElements[previousIndex] as HTMLElement;
+           if (previousElement) {
+             gsap.to(previousElement, {
+               opacity: 0,
+               scale: 0.98,
+               y: -15,
+               duration: 0.2,
+               ease: 'power2.out',
+               onComplete: () => {
+                 previousElement.style.display = 'none';
+                 previousElement.style.visibility = 'hidden';
+                 previousElement.style.pointerEvents = 'none';
+               }
+             });
+           }
+         }
+        
+        // Show the current slide text
+        const currentElement = textElements[centerSlideIndex] as HTMLElement;
+        if (currentElement) {
+          // Reset positioning and show element
+          const isMobile = window.innerWidth <= 768;
+          gsap.set(currentElement, { 
+            x: 0, 
+            y: 0, 
+            scale: 1,
+            rotation: 0,
+            left: '50%',
+            top: '50%',
+            transform: 'translate3d(-50%, -50%, 0)',
+            display: 'block',
+            opacity: 0,
+            pointerEvents: 'auto',
+            visibility: 'visible',
+            zIndex: 10
+          });
+          
+                     // Quick and smooth fade-in animation
+           gsap.to(currentElement, {
+             opacity: 1,
+             scale: 1,
+             y: 0,
+             duration: 0.4,
+             ease: 'power2.out',
+             transformOrigin: 'center center'
+           });
+        }
       }
     }
   };
@@ -738,6 +714,8 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       if (smoothScrollTween.current) {
         smoothScrollTween.current.kill();
       }
+      
+
     };
   }, [open]);
 

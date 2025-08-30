@@ -21,7 +21,7 @@ export default function PrivacyPage(): React.ReactElement {
           <p><strong>Effective Date:</strong> May 15, 2025</p>
           <p><strong>Company:</strong> QuantHive Research Technologies Pvt Ltd</p>
           <p>
-            <strong>Registered Office:</strong> IITM Research Park, 1FA, I Floor, Kanagam Road, Taramani, Chennai,
+            <strong>Registered Office:</strong> 3rd floor, D Block, IITM Research Park, Taramani, Chennai,
             Tamil Nadu – 600113, India
           </p>
           <p><strong>Incubation:</strong> IIT Madras Incubation Cell</p>
@@ -107,7 +107,7 @@ export default function PrivacyPage(): React.ReactElement {
           <h2 className="text-xl md:text-2xl font-medium pt-2">11. Contact Us</h2>
           <div>
             <p className="font-medium">QuantHive Research Technologies Pvt Ltd</p>
-            <p>IITM Research Park, 1FA, I Floor, Kanagam Road</p>
+            <p>3rd floor, D Block, IITM Research Park</p>
             <p>Taramani, Chennai, Tamil Nadu – 600113</p>
             <p>Email: <a className="underline" href="mailto:contact@quanthive.in">contact@quanthive.in</a></p>
           </div>

@@ -13,7 +13,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function TimelineMilestonesReadPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const projectDetailsRef = useRef<HTMLElement>(null);
-  const mainImageRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function TimelineMilestonesReadPage() {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
 
-    [projectDetailsRef.current, mainImageRef.current]
+    [projectDetailsRef.current]
       .filter(Boolean)
       .forEach((el) => observer.observe(el as Element));
 
@@ -99,21 +98,7 @@ export default function TimelineMilestonesReadPage() {
           </div>
         </section>
 
-        <section ref={mainImageRef} className={styles.mainImage}>
-          <div className={styles.imageWrapper}>
-            <img
-              src="/assets/img1.webp"
-              alt="Timeline & Milestones"
-              loading="eager"
-              referrerPolicy="no-referrer"
-              className={styles.projectImage}
-              onError={(e) => {
-                const img = e.currentTarget as HTMLImageElement;
-                img.src = "https://images.unsplash.com/photo-1517816428104-797678c7cf9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2012&q=80";
-              }}
-            />
-          </div>
-        </section>
+
 
         {/* Timeline Section */}
         <section className={styles.timelineSection}>
@@ -121,20 +106,20 @@ export default function TimelineMilestonesReadPage() {
             <h2 className={styles.timelineTitle}>Key Milestones</h2>
             <div className={styles.timelineGrid}>
               <div className={styles.timelineItem}>
-                <span className={styles.timelineEvent}>Incorporated</span>
-                <span className={styles.timelineDate}>15 April 2025</span>
+                <span className={styles.timelineEvent}>IITM IC Incubation</span>
+                <span className={styles.timelineDate}>Apr 2025</span>
               </div>
               <div className={styles.timelineItem}>
-                <span className={styles.timelineEvent}>Office Setup</span>
-                <span className={styles.timelineDate}>20 April 2025</span>
+                <span className={styles.timelineEvent}>QuantHive Incorporated</span>
+                <span className={styles.timelineDate}>May 2025</span>
               </div>
               <div className={styles.timelineItem}>
-                <span className={styles.timelineEvent}>Team Formation</span>
-                <span className={styles.timelineDate}>24 April 2025</span>
+                <span className={styles.timelineEvent}>Grant from Exception Raised</span>
+                <span className={styles.timelineDate}>Jul 2025</span>
               </div>
               <div className={styles.timelineItem}>
-                <span className={styles.timelineEvent}>Operations Begin</span>
-                <span className={styles.timelineDate}>28 April 2025</span>
+                <span className={styles.timelineEvent}>Nasscom Gen AI Foundry</span>
+                <span className={styles.timelineDate}>Aug 2025</span>
               </div>
             </div>
           </div>

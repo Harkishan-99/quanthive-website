@@ -6,8 +6,8 @@ import Navbar from "./Navbar";
 // Updated team data with current images
 const sliderData = [
     { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://www.linkedin.com/in/harkishan/" },
-    { title: "Dr Neelesh U", img: "/assets/team-page/neelesh_.webp", url: "https://www.linkedin.com/in/neelesh-upadhye-3b031956" },
-    { title: "Mayank J", img: "/assets/team-page/mayank_.webp", url: "https://www.linkedin.com/in/mayank-js" },
+    { title: "Dr. Neelesh", img: "/assets/team-page/neelesh_.webp", url: "https://www.linkedin.com/in/neelesh-upadhye-3b031956" },
+    { title: "Mayank", img: "/assets/team-page/mayank_.webp", url: "https://www.linkedin.com/in/mayank-js" },
     { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://www.linkedin.com/in/yuvishere" },
     { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://www.linkedin.com/in/vivek-vibhuti" },
     { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "https://www.linkedin.com/in/chirag-jalade" },
@@ -97,12 +97,12 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
         
         if (imgAlt === "Vivek") {
           scale = 1.7; // Slightly more zoom in for Vivek
-        } else if (imgAlt === "Mayank J") {
+        } else if (imgAlt === "Mayank") {
           scale = 1.8; // Keep zoom the same
           verticalOffset = 105; // Bring Mayank slightly more down
         } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
           scale = 1.8; // Slightly more zoom out for Harkishan
-        } else if (imgAlt === "Dr Neelesh U") {
+        } else if (imgAlt === "Dr. Neelesh") {
           scale = 1.8; // Reduced scale for Neelesh to fix zoom issue
           verticalOffset = 200; // Move Neelesh's image down by 20px
         } else if (imgAlt === "Chirag") {

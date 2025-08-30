@@ -56,8 +56,8 @@ const footerItems = {
           href: "https://www.linkedin.com/company/quanthive/",
         },
         {
-          title: "Twitter",
-          href: "#",
+          title: "X/Twitter",
+          href: "https://x.com/QuantHiveTeam",
         },
         {
           title: "YouTube",
