@@ -151,8 +151,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
             min-height: 3.5rem;
           }
           .logo-mobile {
-            width: 1.75rem !important;
-            height: 1.75rem !important;
+            width: 1.2rem !important;
+            height: 1.2rem !important;
             margin-right: 1rem !important;
           }
           .navbar-item-mobile {

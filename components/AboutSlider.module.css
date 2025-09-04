@@ -163,6 +163,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  /* CRITICAL: Prevent overlap by ensuring only one is visible */
+  z-index: 10;
+  pointer-events: none;
+  /* Quick and smooth transitions for text changes */
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  /* Additional overlap prevention */
+  visibility: hidden;
+  /* Force single element display */
+  isolation: isolate;
+}
+
+/* Ensure proper text overlay visibility with quick transitions */
+.slideText {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .textContent {
@@ -173,6 +187,8 @@
   justify-content: center;
   width: 100%;
   text-align: center;
+  /* Ensure text content is properly interactive when visible */
+  pointer-events: auto;
 }
 
 .description {

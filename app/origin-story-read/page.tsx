@@ -112,7 +112,7 @@ export default function OriginStoryReadPage() {
         <section ref={mainImageRef} className={styles.mainImage}>
           <div className={styles.imageWrapper}>
             <img
-              src="https://cdn.mos.cms.futurecdn.net/YxRYisJDPmj5yTaof6wPda.jpg"
+              src="/assets/team pic.jpg"
               alt="Origin Story"
               className={styles.projectImage}
             />

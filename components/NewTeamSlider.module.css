@@ -71,19 +71,24 @@
 
 /* Specific styling for team member images to make them smaller */
 .slide-image img[alt="Vivek"] {
-  transform: scale(1.2);
+  transform: scale(1.4);
 }
 
 .slide-image img[alt="Harkishan"] {
-  transform: scale(1.8);
+  transform: scale(1.5);
 }
 
 .slide-image img[alt="Mayank J"] {
-  transform: scale(1.5);
+  transform: translateY(30px) scale(1.5);
 }
 
 .slide-image img[alt="Yuvraj"] {
   transform: scale(1.8);
+}
+
+/* Slight zoom in for Chirag */
+.slide-image img[alt="Chirag"] {
+  transform: translateY(30px) scale(1.8);
 }
 
 

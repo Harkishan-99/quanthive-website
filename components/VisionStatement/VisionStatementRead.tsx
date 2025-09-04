@@ -149,7 +149,7 @@ const VisionStatementRead: React.FC<VisionStatementReadProps> = ({
         <section ref={mainImageRef} className={styles.mainImage}>
           <div className={styles.imageWrapper}>
             <img 
-              src="/assets/vision-statement.webp" 
+              src="https://cdn.mos.cms.futurecdn.net/YxRYisJDPmj5yTaof6wPda.jpg" 
               alt="Stary Night Image" 
               className={styles.projectImage}
             />

@@ -53,15 +53,15 @@ const footerItems = {
       items: [
         {
           title: "LinkedIn",
-          href: "#",
+          href: "https://www.linkedin.com/company/quanthive/",
         },
         {
-          title: "Twitter",
-          href: "#",
+          title: "X/Twitter",
+          href: "https://x.com/QuantHiveTeam",
         },
         {
           title: "YouTube",
-          href: "#",
+          href: "https://www.youtube.com/@quanthive",
         },
       ],
     },
@@ -73,15 +73,11 @@ const footerItems = {
       items: [
         {
           title: "Open Positions",
-          href: "#",
-        },
-        {
-          title: "Benefits & Perks",
-          href: "#",
+          href: "/careers/open-positions",
         },
         {
           title: "Internships",
-          href: "#",
+          href: "/careers/internships",
         },
       ],
     },
@@ -91,7 +87,7 @@ const footerItems = {
       items: [
         {
           title: "Mail",
-          href: "#",
+          href: "mailto:mail@quanthive.in",
         },
         {
           title: "Location",

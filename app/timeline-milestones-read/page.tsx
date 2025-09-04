@@ -13,7 +13,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function TimelineMilestonesReadPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const projectDetailsRef = useRef<HTMLElement>(null);
-  const mainImageRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function TimelineMilestonesReadPage() {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
 
-    [projectDetailsRef.current, mainImageRef.current]
+    [projectDetailsRef.current]
       .filter(Boolean)
       .forEach((el) => observer.observe(el as Element));
 
@@ -99,19 +98,30 @@ export default function TimelineMilestonesReadPage() {
           </div>
         </section>
 
-        <section ref={mainImageRef} className={styles.mainImage}>
-          <div className={styles.imageWrapper}>
-            <img
-              src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2012&q=80"
-              alt="Timeline & Milestones"
-              loading="eager"
-              referrerPolicy="no-referrer"
-              className={styles.projectImage}
-              onError={(e) => {
-                const img = e.currentTarget as HTMLImageElement;
-                img.src = "https://images.unsplash.com/photo-1517816428104-797678c7cf9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2012&q=80";
-              }}
-            />
+
+
+        {/* Timeline Section */}
+        <section className={styles.timelineSection}>
+          <div className={styles.timelineWrapper}>
+            <h2 className={styles.timelineTitle}>Key Milestones</h2>
+            <div className={styles.timelineGrid}>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>IITM IC Incubation</span>
+                <span className={styles.timelineDate}>Apr 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>QuantHive Incorporated</span>
+                <span className={styles.timelineDate}>May 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Grant from Exception Raised</span>
+                <span className={styles.timelineDate}>Jul 2025</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineEvent}>Nasscom Gen AI Foundry</span>
+                <span className={styles.timelineDate}>Aug 2025</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -128,7 +138,7 @@ export default function TimelineMilestonesReadPage() {
       {/* Next Slide Section */}
       <section className={styles.nextSection}>
         <p className={styles.nextLabel}>Next slide</p>
-        <h2 className={styles.nextTitle}>Current Partners</h2>
+        <h2 className={styles.nextTitle}>Growth Validation</h2>
         <button
           aria-label="Open next slide"
           className={styles.nextCircleButton}
@@ -137,7 +147,7 @@ export default function TimelineMilestonesReadPage() {
               opacity: 0,
               duration: 0.4,
               ease: "power2.out",
-              onComplete: () => router.push("/about/current-partners-read"),
+              onComplete: () => router.push("/about/growth-validation-read"),
             });
           }}
         >
@@ -147,4 +157,3 @@ export default function TimelineMilestonesReadPage() {
     </div>
   );
 }
-
