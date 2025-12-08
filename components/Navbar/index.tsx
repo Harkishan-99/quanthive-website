@@ -91,85 +91,91 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick, onTeamClick }) => {
   );
 
   return (
-    <div className="pt-10 relative flex flex-row items-center justify-center">
+    <div className="z-50">
       <div
-        ref={dialogRef}
-        className="w-fit flex flex-row items-center justify-center"
+        className="fixed top-0 left-1/2 -translate-x-1/2 z-50"
       >
-        <motion.nav
-          initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
-          animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
-          transition={{
-            duration: 0.3,
-            ease: "easeInOut",
-            opacity: { duration: 0.2 },
-            scale: { duration: 0.3 },
-          }}
-          style={{ transformOrigin: "center" }}
-          className={`navbar-mobile ${
-            isOpen ? "scale-105" : "hover:scale-105"
-          } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none ${styles['navbar-font']}`}
-        >
-          <div className={`logo-mobile w-4 h-4 md:w-7 md:h-7 mr-2 md:mr-3 mt-0.5 md:mt-1 flex items-center justify-center ${styles['logo-mobile']}`}>
-            <Link href="/">
-              <span className="inline-flex items-center justify-center" aria-label="Home">
-                <Logo />
-              </span>
-            </Link>
-          </div>
-
-          {/* Pass onAboutClick to NavbarItems */}
-          <NavbarItems />
-
-          <button
-            onClick={() => {
-              isOpen ? setIsOpen(false) : setIsOpen(true);
-            }}
-            className={`text-foreground text-lg ml-1.5 ${
-              isOpen ? "scale-125" : "hover:scale-125"
-            } transition-all duration-300 ${isOpen ? "rotate-180" : ""} navbar-dropdown-mobile`}
+        <div className="pt-4 relative flex flex-row items-center justify-center">
+          <div
+            ref={dialogRef}
+            className="w-fit flex flex-row items-center justify-center"
           >
-            <ChevronDown
-              strokeWidth={"2.5"}
-              size={isMobile ? 28 : 24} // Larger on mobile
-            />
-          </button>
-        </motion.nav>
+            <motion.nav
+              initial={{ opacity: 0, scaleX: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+                opacity: { duration: 0.2 },
+                scale: { duration: 0.3 },
+              }}
+              style={{ transformOrigin: "center" }}
+              className={`navbar-mobile ${
+                isOpen ? "scale-105" : "hover:scale-105"
+              } transition-all duration-300 flex items-center justify-center bg-[#0A0A0A] rounded-full border-2 border-muted-foreground py-1 px-[14px] md:py-2 md:px-5 select-none lg:border-b lg:border-white/10 ${styles['navbar-font']}`}
+            >
+              <div className={`logo-mobile w-4 h-4 md:w-7 md:h-7 mr-2 md:mr-3 mt-0.5 md:mt-1 flex items-center justify-center ${styles['logo-mobile']}`}>
+                <Link href="/">
+                  <span className="inline-flex items-center justify-center" aria-label="Home">
+                    <Logo />
+                  </span>
+                </Link>
+              </div>
 
-        {/* Pass onTeamClick to Menu */}
-        <AnimatePresence>
-          {isOpen && <Menu onTeamClick={onTeamClick} />}
-        </AnimatePresence>
+              {/* Pass onAboutClick to NavbarItems */}
+              <NavbarItems />
+
+              <button
+                onClick={() => {
+                  isOpen ? setIsOpen(false) : setIsOpen(true);
+                }}
+                className={`text-foreground text-lg ml-1.5 ${
+                  isOpen ? "scale-125" : "hover:scale-125"
+                } transition-all duration-300 ${isOpen ? "rotate-180" : ""} navbar-dropdown-mobile`}
+              >
+                <ChevronDown
+                  strokeWidth={"2.5"}
+                  size={isMobile ? 28 : 24} // Larger on mobile
+                />
+              </button>
+            </motion.nav>
+
+            {/* Pass onTeamClick to Menu */}
+            <AnimatePresence>
+              {isOpen && <Menu onTeamClick={onTeamClick} />}
+            </AnimatePresence>
+          </div>
+          <style jsx>{`
+            @media (max-width: 640px) {
+              .navbar-mobile {
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+                min-height: 3.5rem;
+              }
+              .logo-mobile {
+                width: 1.2rem !important;
+                height: 1.2rem !important;
+                margin-right: 1rem !important;
+              }
+              .navbar-item-mobile {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+              }
+              .navbar-item-text-mobile {
+                font-size: 1.45rem !important; /* 20px */
+              }
+              .navbar-dropdown-mobile svg {
+                width: 2rem !important;
+                height: 2rem !important;
+              }
+            }
+          `}</style>
+        </div>
       </div>
-      <style jsx>{`
-        @media (max-width: 640px) {
-          .navbar-mobile {
-            padding-top: 0.75rem !important;
-            padding-bottom: 0.75rem !important;
-            padding-left: 1.5rem !important;
-            padding-right: 1.5rem !important;
-            min-height: 3.5rem;
-          }
-          .logo-mobile {
-            width: 1.2rem !important;
-            height: 1.2rem !important;
-            margin-right: 1rem !important;
-          }
-          .navbar-item-mobile {
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
-            padding-top: 0.5rem !important;
-            padding-bottom: 0.5rem !important;
-          }
-          .navbar-item-text-mobile {
-            font-size: 1.45rem !important; /* 20px */
-          }
-          .navbar-dropdown-mobile svg {
-            width: 2rem !important;
-            height: 2rem !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

@@ -15,6 +15,7 @@ const config: Config = {
         luxe_uno: ["var(--font-luxe_uno)"],
         title: ["var(--font-space-grotesk)"],
         content: ["var(--font-roboto-serif)"],
+        mono: ["'JetBrains Mono'", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

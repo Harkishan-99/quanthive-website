@@ -24,10 +24,17 @@ const menuItems = [
         image: "/images/webp/menu-about-us-2.webp",
       },
       {
+        title: "Blog",
+        hasTradeMark: false,
+        href: "/blog",
+        number: "03",
+        image: "/assets/blog-card-img.webp",
+      },
+      {
         title: "Contact",
         hasTradeMark: false,
         href: "/contact",
-        number: "03",
+        number: "04",
         image: "/images/webp/menu-about-us-3.webp",
       },
     ],
