@@ -46,11 +46,14 @@ const Menu: React.FC<MenuProps> = ({ onTeamClick }) => {
   return (
     <motion.menu
       key="menu"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -20, x: '-50%' }}
+      animate={{ opacity: 1, y: 0, x: '-50%' }}
+      exit={{ opacity: 0, y: -20, x: '-50%' }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="font-luxe_uno absolute lg:max-w-[984px] md:max-w-[724px] sm:max-w-[600px] max-sm:left-6 max-sm:right-6 max-sm:w-auto w-full top-full mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-50 backdrop-blur-[18px]"
+      style={{ 
+        left: '50%',
+      }}
+      className="font-luxe_uno fixed max-sm:w-[calc(100vw-3rem)] sm:w-[600px] md:w-[724px] lg:w-[984px] max-w-[calc(100vw-2rem)] top-20 mt-6 bg-card border-2 border-card-foreground rounded-xl pt-5 md:pt-10 px-7 pb-10 md:px-9 md:pb-14 z-50 backdrop-blur-[18px]"
     >
       <input
         type="text"
