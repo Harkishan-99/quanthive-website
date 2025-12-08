@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BlogPost } from '@/lib/blog/types';
@@ -66,6 +66,8 @@ interface BlogPostPageProps {
 
 const BlogPostPage: React.FC<BlogPostPageProps> = ({ post }) => {
   const router = useRouter();
+  const [processedContent, setProcessedContent] = useState(post.content || '');
+  const [sections, setSections] = useState<Section[]>([]);
   
   // Function to create slug from title
   const createSlug = (title: string): string => {
@@ -75,13 +77,19 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({ post }) => {
       .replace(/(^-|-$)/g, '');
   };
 
-  // Process content to extract sections and add IDs to headings
-  const { processedContent, sections } = useMemo(() => {
-    if (!post.content) return { processedContent: post.content || '', sections: [] };
-    const parser = new DOMParser();
+  // Process content to extract sections and add IDs to headings (client only)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !post.content) {
+      setProcessedContent(post.content || '');
+      setSections([]);
+      return;
+    }
+
+    const parser = new window.DOMParser();
     const doc = parser.parseFromString(post.content, 'text/html');
     const headings = doc.querySelectorAll('h2, h3');
     const extractedSections: Section[] = [];
+
     headings.forEach((heading) => {
       const text = heading.textContent || '';
       const slug = createSlug(text);
@@ -99,10 +107,9 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({ post }) => {
         });
       }
     });
-    return {
-      processedContent: doc.body.innerHTML,
-      sections: extractedSections
-    };
+
+    setProcessedContent(doc.body.innerHTML);
+    setSections(extractedSections);
   }, [post.content]);
 
   useEffect(() => {
