@@ -174,6 +174,15 @@ export const DEFAULT_FEATURED_POST: BlogPost = {
       <p class="mb-6">The system abstains when confidence falls below threshold, ensuring professionals receive reliable answers or honest uncertainty, never fabricated confidence. The project is currently in progress and expected to be live for by Q2 of 2026 for our first waitlist cohort. If you are interested to try it out you can join the waitlist here.</p>
     </div>
 
+    <div class="mt-6 flex justify-center">
+      <a
+        href="/flash?waitlist=true"
+        class="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-semibold uppercase tracking-widest text-sm hover:bg-neutral-200 transition-colors duration-200 shadow-lg shadow-white/5"
+      >
+        Join Waitlist
+      </a>
+    </div>
+
     <div class="mt-12 pt-8 border-t border-white/10">
       <h3 class="text-xl font-medium mb-4">References</h3>
       <ol class="list-decimal list-inside space-y-2 text-sm text-neutral-400">
