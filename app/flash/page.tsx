@@ -67,6 +67,16 @@ export default function FlashPage() {
     }
   };
 
+  // Auto-open the waitlist form when the query param is present
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const waitlistParam = params.get("waitlist");
+    if (waitlistParam && waitlistParam.toLowerCase() !== "false") {
+      setShowForm(true);
+    }
+  }, []);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
