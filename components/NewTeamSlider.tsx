@@ -5,13 +5,11 @@ import Navbar from "./Navbar";
 
 // Updated team data with current images
 const sliderData = [
-    { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://www.linkedin.com/in/harkishan/" },
-    { title: "Dr. Neelesh", img: "/assets/team-page/neelesh_.webp", url: "https://www.linkedin.com/in/neelesh-upadhye-3b031956" },
-    { title: "Mayank", img: "/assets/team-page/mayank_.webp", url: "https://www.linkedin.com/in/mayank-js" },
-    { title: "Yuvraj", img: "/assets/team-page/yuvraj_.webp", url: "https://www.linkedin.com/in/yuvishere" },
-    { title: "Vivek", img: "/assets/team-page/vivek_.webp", url: "https://www.linkedin.com/in/vivek-vibhuti" },
-    { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "https://www.linkedin.com/in/chirag-jalade" },
-  ];
+  { title: "Harkishan", img: "/assets/team-page/harkishan_.webp", url: "https://www.linkedin.com/in/harkishan/" },
+  { title: "Dr. Neelesh", img: "/assets/team-page/neelesh_.webp", url: "https://www.linkedin.com/in/neelesh-upadhye-3b031956" },
+  { title: "Mahati", img: "/assets/team-page/mahati_.webp", url: "https://www.linkedin.com/in/mahatikuppa/" },
+  { title: "Chirag", img: "/assets/team-page/chirag_.webp", url: "https://www.linkedin.com/in/chirag-jalade" },
+];
 
 const COPIES = 6;
 
@@ -26,8 +24,8 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
   const [slideWidth, setSlideWidth] = useState(390);
 
   // Handler stubs for Navbar
-  const handleAboutClick = () => {};
-  const handleTeamClick = () => {};
+  const handleAboutClick = () => { };
+  const handleTeamClick = () => { };
 
   // Responsive check
   useEffect(() => {
@@ -39,7 +37,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
 
   // Set slide width based on device
   useEffect(() => {
-    setSlideWidth(isMobile ? 215 : 390);
+    setSlideWidth(isMobile ? 300 : 390);
   }, [isMobile]);
 
   // Infinite slider logic
@@ -49,7 +47,9 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
     const track = trackRef.current;
     if (!track) return;
 
-    let currentX = -(sliderData.length * slideWidth * 2);
+    // On mobile, add small left margin so first card is fully visible with next card peeking
+    const mobileLeftMargin = isMobile ? 20 : 0;
+    let currentX = -(sliderData.length * slideWidth * 2) + mobileLeftMargin;
     let targetX = currentX;
     let isDragging = false;
     let startX = 0;
@@ -60,6 +60,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
     let velocity = 0;
     let lastCurrentX = 0;
     let lastScrollTime = Date.now();
+    let animationFrameId: number;
 
     const sequenceWidth = slideWidth * sliderData.length;
     const totalSlides = sliderData.length * COPIES;
@@ -69,11 +70,14 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       if (!track) return;
       currentX += (targetX - currentX) * 0.05;
 
-      // Infinite loop logic
-      if (currentX > -sequenceWidth * 1) {
+      // Infinite loop logic - wrap around based on middle sections
+      const minBound = -sequenceWidth * (COPIES - 2); // Left boundary (scrolling right)
+      const maxBound = -sequenceWidth * 1; // Right boundary (scrolling left)
+
+      if (currentX > maxBound) {
         currentX -= sequenceWidth;
         targetX -= sequenceWidth;
-      } else if (currentX < -sequenceWidth * 4) {
+      } else if (currentX < minBound) {
         currentX += sequenceWidth;
         targetX += sequenceWidth;
       }
@@ -89,25 +93,26 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
         const slideCenter = slideRect.left + slideRect.width / 2;
         const distanceFromCenter = slideCenter - viewportCenter;
         const parallaxOffset = distanceFromCenter * -0.25;
-        
+
         // Apply different scaling for team member images
         const imgAlt = (img as HTMLImageElement).alt;
         let scale = 2.25; // default scale
         let verticalOffset = 0; // default vertical offset
-        
-        if (imgAlt === "Vivek") {
-          scale = 1.7; // Slightly more zoom in for Vivek
-        } else if (imgAlt === "Mayank") {
+
+        if (imgAlt === "Mayank") {
           scale = 1.8; // Keep zoom the same
           verticalOffset = 105; // Bring Mayank slightly more down
-        } else if (imgAlt === "Harkishan" || imgAlt === "Yuvraj") {
+        } else if (imgAlt === "Harkishan") {
           scale = 1.8; // Slightly more zoom out for Harkishan
         } else if (imgAlt === "Dr. Neelesh") {
-          scale = 1.8; // Reduced scale for Neelesh to fix zoom issue
-          verticalOffset = 200; // Move Neelesh's image down by 20px
+          scale = 1.7; // Adjusted zoom based on feedback
+          verticalOffset = 155; // Adjusted offset to fix cropping
         } else if (imgAlt === "Chirag") {
           scale = 2; // Slightly more zoom in for Chirag
           verticalOffset = 30; // Keep slight vertical offset for Chirag
+        } else if (imgAlt === "Mahati") {
+          scale = 1.85; // Zoom out for Mahati
+          verticalOffset = 70; // Center Mahati's image vertically
         }
         (img as HTMLElement).style.transform = `translateX(${parallaxOffset}px) translateY(${verticalOffset}px) scale(${scale})`;
       });
@@ -120,7 +125,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       const isMoving = hasActuallyDragged || !isSlowEnough || !hasBeenStillLongEnough;
       document.documentElement.style.setProperty("--slider-moving", isMoving ? "1" : "0");
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
 
     animate();
@@ -201,6 +206,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
 
     // Cleanup
     return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       track.parentElement?.removeEventListener("wheel", handleWheel);
       track.parentElement?.removeEventListener("touchstart", handleTouchStart);
       track.parentElement?.removeEventListener("touchmove", handleTouchMove);
@@ -210,7 +216,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [slideWidth, open]);
+  }, [slideWidth, open, isMobile]);
 
   // Render slides
   const slides = [];
@@ -284,7 +290,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
                 {slides}
               </div>
             </div>
-            
+
             {/* Footer Links and Copyright */}
             <div style={{
               position: "absolute",
@@ -307,7 +313,7 @@ const NewTeamSlider: React.FC<NewTeamSliderProps> = ({ open, onClose }) => {
                   <a href="#" style={{ color: "#E5E7EB", fontSize: "15px", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#D1D5DB"} onMouseLeave={(e) => e.currentTarget.style.color = "#E5E7EB"}>Phone</a>
                 </div>
               </div>
-              
+
               {/* Right side - Copyright */}
               <div style={{ textAlign: "right" }}>
                 <p style={{ color: "#9CA3AF", fontSize: "14px", margin: 0 }}>&copy; 2025 QuantHive</p>
