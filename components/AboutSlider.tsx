@@ -1,13 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import * as THREE from "three";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
 import styles from "./AboutSlider.module.css";
 import Navbar from "./Navbar";
 import { ArrowUpRight } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 // Each image corresponds to its respective text overlay context
 const slideData = [
@@ -79,99 +76,79 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
     render?: () => void;
   }>({});
 
+  // Pre-rendered slide canvases for performance optimization
+  const preRenderedSlides = useRef<HTMLCanvasElement[]>([]);
+
+  // RAF throttling for scroll updates
+  const lastUpdateTime = useRef(0);
+  const pendingRAF = useRef<number | null>(null);
+
   const handleAboutClick = () => {};
   const handleTeamClick = () => {
     onOpenTeam();
   };
 
-  // Function to update text overlays and trigger animations
+  // Function to update text overlays using CSS transitions (optimized - no GSAP per-frame)
   // This ensures that when a specific card reaches the vertical center,
   // only its corresponding text overlay appears with the correct context/title
-  const updateTextOverlays = (offset: number) => {
+  const updateTextOverlays = useCallback((offset: number) => {
     const totalSlides = slideData.length;
     const slideHeight = 15;
     const gap = 0.5;
     const cycleHeight = totalSlides * (slideHeight + gap);
-    
-    // Use the same logic as the texture rendering to find the center slide
+
     // Find which slide is closest to the center of the viewport
     let centerSlideIndex = 0;
     let minDistance = Infinity;
-    
+
     for (let i = 0; i < totalSlides; i++) {
-      // Calculate slide position using the same formula as texture rendering
       let slideY = -i * (slideHeight + gap);
       slideY += offset * cycleHeight;
-      
-      // The center of the viewport is at y = 0
-      // Find the slide closest to center
       const distance = Math.abs(slideY);
       if (distance < minDistance) {
         minDistance = distance;
         centerSlideIndex = i;
       }
     }
-    
-    // Only update if the center slide has actually changed to prevent unnecessary updates
+
+    // Only update if the center slide has actually changed
     if (centerSlideIndex !== currentSlideIndex.current) {
       const previousIndex = currentSlideIndex.current;
       currentSlideIndex.current = centerSlideIndex;
-      
-      // Animate text elements with efficient overlap prevention
+
       const textElements = textOverlaysRef.current?.querySelectorAll('.slide-text');
       if (textElements) {
-                 // Hide the previous slide text quickly and smoothly
-         if (previousIndex >= 0 && previousIndex < textElements.length) {
-           const previousElement = textElements[previousIndex] as HTMLElement;
-           if (previousElement) {
-             gsap.to(previousElement, {
-               opacity: 0,
-               scale: 0.98,
-               y: -15,
-               duration: 0.2,
-               ease: 'power2.out',
-               onComplete: () => {
-                 previousElement.style.display = 'none';
-                 previousElement.style.visibility = 'hidden';
-                 previousElement.style.pointerEvents = 'none';
-               }
-             });
-           }
-         }
-        
-        // Show the current slide text
+        // Hide the previous slide text using CSS classes (no GSAP)
+        if (previousIndex >= 0 && previousIndex < textElements.length) {
+          const previousElement = textElements[previousIndex] as HTMLElement;
+          if (previousElement) {
+            previousElement.classList.remove(styles.slideTextActive);
+            previousElement.classList.add(styles.slideTextHidden);
+            // Use requestAnimationFrame for cleanup after transition
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                previousElement.style.display = 'none';
+                previousElement.style.visibility = 'hidden';
+                previousElement.style.pointerEvents = 'none';
+              }, 200);
+            });
+          }
+        }
+
+        // Show the current slide text using CSS classes (no GSAP)
         const currentElement = textElements[centerSlideIndex] as HTMLElement;
         if (currentElement) {
-          // Reset positioning and show element
-          const isMobile = window.innerWidth <= 768;
-          gsap.set(currentElement, { 
-            x: 0, 
-            y: 0, 
-            scale: 1,
-            rotation: 0,
-            left: '50%',
-            top: '50%',
-            transform: 'translate3d(-50%, -50%, 0)',
-            display: 'block',
-            opacity: 0,
-            pointerEvents: 'auto',
-            visibility: 'visible',
-            zIndex: 10
-          });
-          
-                     // Quick and smooth fade-in animation
-           gsap.to(currentElement, {
-             opacity: 1,
-             scale: 1,
-             y: 0,
-             duration: 0.4,
-             ease: 'power2.out',
-             transformOrigin: 'center center'
-           });
+          currentElement.style.display = 'block';
+          currentElement.style.visibility = 'visible';
+          currentElement.style.pointerEvents = 'auto';
+          currentElement.classList.remove(styles.slideTextHidden);
+          // Force reflow then add active class for transition
+          void currentElement.offsetHeight;
+          currentElement.classList.add(styles.slideTextActive);
         }
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -205,21 +182,22 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
     function initializeScene() {
       if (!canvasRef.current) return;
       
-      // Function to get responsive dimensions
+      // Function to get responsive dimensions (BALANCED: Quality + Performance)
       const getResponsiveDimensions = () => {
         const isMobile = window.innerWidth <= 768;
         return {
-          parentWidth: isMobile ? 8 : 20, // Smaller width on mobile
-          parentHeight: isMobile ? 30 : 75, // Much smaller height on mobile
-          curvature: isMobile ? 15 : 35, // Less curvature on mobile
-          slideHeight: isMobile ? 6 : 15, // Smaller slide height on mobile
-          gap: isMobile ? 0.2 : 0.5, // Smaller gap on mobile
+          parentWidth: isMobile ? 8 : 20,
+          parentHeight: isMobile ? 30 : 75,
+          curvature: isMobile ? 15 : 35,
+          slideHeight: isMobile ? 6 : 15,
+          gap: isMobile ? 0.2 : 0.5,
           isMobile,
-          // Mobile-specific optimizations
-          segmentsX: isMobile ? 30 : 200, // Further reduce geometry complexity on mobile
-          segmentsY: isMobile ? 30 : 200,
-          textureWidth: isMobile ? 512 : 2048, // Much lower texture resolution on mobile
-          textureHeight: isMobile ? 2048 : 8192 // Much lower texture height on mobile
+          // BALANCED: Good curve quality (1,600 vertices vs original 40,000)
+          segmentsX: isMobile ? 20 : 40,
+          segmentsY: isMobile ? 20 : 40,
+          // BALANCED: Good texture quality for sharp images
+          textureWidth: isMobile ? 512 : 1024,
+          textureHeight: isMobile ? 2048 : 4096
         };
       };
 
@@ -233,18 +211,21 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
         1000
       );
 
+      // CPU-ONLY: Minimal WebGL settings for software rendering
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current,
-        antialias: !dimensions.isMobile, // Disable antialiasing on mobile for performance
-        powerPreference: "high-performance",
+        antialias: false, // Disabled - expensive on CPU
+        powerPreference: "low-power", // Prefer integrated/software renderer
         alpha: false,
         stencil: false,
-        depth: true,
+        depth: false, // Disabled - not needed for flat plane
+        precision: "lowp", // Lower precision for CPU
+        preserveDrawingBuffer: false,
       });
 
       renderer.setSize(window.innerWidth, window.innerHeight);
-      // Reduce pixel ratio on mobile for better performance
-      renderer.setPixelRatio(dimensions.isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
+      // BALANCED: Cap pixel ratio for performance while maintaining sharpness
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setClearColor(0x000000);
 
       // Function to create geometry with current dimensions
@@ -280,16 +261,65 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       textureCanvas.width = dimensions.textureWidth;
       textureCanvas.height = dimensions.textureHeight;
 
+      // PERFORMANCE: Pre-render each slide image to offscreen canvas ONCE
+      const preRenderSlides = () => {
+        const slideHeightPx = (dimensions.slideHeight / (totalSlides * (dimensions.slideHeight + dimensions.gap))) * dimensions.textureHeight;
+        const slideWidthPx = dimensions.textureWidth * (dimensions.isMobile ? 0.8 : 0.9);
+        const paddingX = dimensions.textureWidth * (dimensions.isMobile ? 0.1 : 0.05);
+
+        images.forEach((img, index) => {
+          if (!img) return;
+          const slideCanvas = document.createElement("canvas");
+          slideCanvas.width = slideWidthPx;
+          slideCanvas.height = slideHeightPx;
+          const slideCtx = slideCanvas.getContext("2d", { alpha: false }) as CanvasRenderingContext2D;
+
+          // Calculate cover dimensions
+          const imgAspect = img.width / img.height;
+          const rectAspect = slideWidthPx / slideHeightPx;
+          let drawWidth, drawHeight, drawX, drawY;
+
+          if (imgAspect > rectAspect) {
+            drawHeight = slideHeightPx;
+            drawWidth = drawHeight * imgAspect;
+            drawX = (slideWidthPx - drawWidth) / 2;
+            drawY = 0;
+          } else {
+            drawWidth = slideWidthPx;
+            drawHeight = drawWidth / imgAspect;
+            drawX = 0;
+            drawY = (slideHeightPx - drawHeight) / 2;
+          }
+
+          // Draw with rounded corners
+          slideCtx.fillStyle = "#000";
+          slideCtx.fillRect(0, 0, slideWidthPx, slideHeightPx);
+          slideCtx.save();
+          slideCtx.beginPath();
+          // @ts-ignore
+          slideCtx.roundRect(0, 0, slideWidthPx, slideHeightPx, 12);
+          slideCtx.clip();
+          slideCtx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+          slideCtx.restore();
+
+          preRenderedSlides.current[index] = slideCanvas;
+        });
+      };
+
+      preRenderSlides();
+
       const texture = new THREE.CanvasTexture(textureCanvas);
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
+      // BALANCED: Linear filter for smooth images
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+      texture.generateMipmaps = false; // Not needed for canvas textures
 
+      // CPU-ONLY: FrontSide only (halves face count)
       const parentMaterial = new THREE.MeshBasicMaterial({
         map: texture,
-        side: THREE.DoubleSide,
+        side: THREE.FrontSide,
       });
 
       const parentMesh = new THREE.Mesh(parentGeometry, parentMaterial);
@@ -328,18 +358,15 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
       
       scene.add(parentMesh);
 
+      // PERFORMANCE: Optimized updateTexture using pre-rendered slide canvases
       function updateTexture(offset = 0) {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
-        // Optimize for mobile by reducing font size and extra slides
-        const fontSize = dimensions.isMobile ? 90 : 180;
-        ctx.font = `500 ${fontSize}px Dahlia, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        // Reduce extra slides on mobile for better performance
-        const extraSlides = dimensions.isMobile ? 0 : 2; // No extra slides on mobile for maximum performance
+        // Only render visible slides (no extra slides for performance)
+        const extraSlides = dimensions.isMobile ? 0 : 1;
+        const slideHeightPx = (dimensions.slideHeight / cycleHeight) * textureCanvas.height;
+        const paddingX = textureCanvas.width * (dimensions.isMobile ? 0.1 : 0.05);
 
         for (let i = -extraSlides; i < totalSlides + extraSlides; i++) {
           let slideY = -i * (dimensions.slideHeight + dimensions.gap);
@@ -349,57 +376,20 @@ const AboutSlider: React.FC<AboutSliderProps> = ({ open, onClose, onOpenTeam }) 
           let wrappedY = textureY % textureCanvas.height;
           if (wrappedY < 0) wrappedY += textureCanvas.height;
 
-          let slideIndex = ((-i % totalSlides) + totalSlides) % totalSlides;
-          let slideNumber = slideIndex + 1;
+          const slideIndex = ((-i % totalSlides) + totalSlides) % totalSlides;
 
-          const slideRect = {
-            x: textureCanvas.width * (dimensions.isMobile ? 0.1 : 0.05), // More padding on mobile
-            y: wrappedY,
-            width: textureCanvas.width * (dimensions.isMobile ? 0.8 : 0.9), // Smaller width on mobile
-            height: (dimensions.slideHeight / cycleHeight) * textureCanvas.height,
-          };
-
-          const img = images[slideNumber - 1];
-          if (img) {
-            const imgAspect = img.width / img.height;
-            const rectAspect = slideRect.width / slideRect.height;
-
-            let drawWidth, drawHeight, drawX, drawY;
-
-            if (imgAspect > rectAspect) {
-              drawHeight = slideRect.height;
-              drawWidth = drawHeight * imgAspect;
-              drawX = slideRect.x + (slideRect.width - drawWidth) / 2;
-              drawY = slideRect.y;
-            } else {
-              drawWidth = slideRect.width;
-              drawHeight = drawWidth / imgAspect;
-              drawX = slideRect.x;
-              drawY = slideRect.y + (slideRect.height - drawHeight) / 2;
-            }
-
-            ctx.save();
-            ctx.beginPath();
-            // @ts-ignore: roundRect is not in all TS DOM types
-            ctx.roundRect(
-              slideRect.x,
-              slideRect.y,
-              slideRect.width,
-              slideRect.height
-            );
-            ctx.clip();
-            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-            ctx.restore();
-
-            // Remove text from canvas - now handled by HTML overlay
+          // Use pre-rendered canvas instead of drawing image each frame
+          const preRenderedCanvas = preRenderedSlides.current[slideIndex];
+          if (preRenderedCanvas) {
+            ctx.drawImage(preRenderedCanvas, paddingX, wrappedY);
           }
         }
         texture.needsUpdate = true;
       }
 
-      // Throttle rendering on mobile for better performance
+      // BALANCED: Target 45fps for smooth scrolling while reducing CPU load
       let lastRenderTime = 0;
-      const renderThrottle = dimensions.isMobile ? 42 : 33; // 24fps on mobile, 30fps on desktop
+      const renderThrottle = dimensions.isMobile ? 33 : 22; // 30fps on mobile, 45fps on desktop
       
       function render() {
         const now = Date.now();

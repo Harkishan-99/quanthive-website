@@ -1,11 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AboutSlider from "@/components/AboutSlider";
-import NewTeamSlider from "@/components/NewTeamSlider";
+
+// PERFORMANCE: Dynamic imports for heavy Three.js components
+// These are only loaded when the user opens the About/Team modal
+const AboutSlider = dynamic(() => import("@/components/AboutSlider"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+      <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+    </div>
+  ),
+});
+
+const NewTeamSlider = dynamic(() => import("@/components/NewTeamSlider"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+      <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+    </div>
+  ),
+});
 
 export default function Home() {
   // State for AboutSlider open/close
@@ -30,8 +49,13 @@ export default function Home() {
         <Footer />
       </main>
       
-      <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} onOpenTeam={() => setTeamOpen(true)} />
-      <NewTeamSlider open={teamOpen} onClose={() => setTeamOpen(false)} />
+      {/* PERFORMANCE: Only render sliders when opened to defer Three.js loading */}
+      {aboutOpen && (
+        <AboutSlider open={aboutOpen} onClose={() => setAboutOpen(false)} onOpenTeam={() => setTeamOpen(true)} />
+      )}
+      {teamOpen && (
+        <NewTeamSlider open={teamOpen} onClose={() => setTeamOpen(false)} />
+      )}
     </>
   );
 }

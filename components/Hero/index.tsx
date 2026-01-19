@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import CTAButton from "./CTAButton";
 import AnimatedWord from "./AnimatedWord";
 
 const Hero = () => {
@@ -19,14 +18,10 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    // Preload critical resources
-    const preloadVideo = () => {
-      if (videoRef.current) {
-        videoRef.current.load();
-      }
-    };
-
-    preloadVideo();
+    // Preload video
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
   }, []);
 
   return (
@@ -41,7 +36,7 @@ const Hero = () => {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
       />
       
       {/* Content Container */}
@@ -91,18 +86,6 @@ const Hero = () => {
           </motion.p>
         </motion.div>
 
-        {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.6,
-            delay: 0.6,
-            ease: "easeOut",
-          }}
-        >
-          <CTAButton />
-        </motion.div>
       </div>
     </div>
   );
