@@ -144,10 +144,10 @@
 }
 
 .slideText {
-  position: fixed; /* lock to viewport */
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate3d(-50%, -50%, 0); /* avoid sub‑pixel drift */
+  transform: translate3d(-50%, -50%, 0);
   text-align: center;
   color: white;
   opacity: 0;
@@ -156,27 +156,28 @@
   max-width: 800px;
   padding: 0 2rem;
   will-change: opacity, transform;
-  /* Ensure proper centering on all devices */
   margin: 0 auto;
-  /* Force centering on desktop */
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* CRITICAL: Prevent overlap by ensuring only one is visible */
   z-index: 10;
   pointer-events: none;
-  /* Quick and smooth transitions for text changes */
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-  /* Additional overlap prevention */
   visibility: hidden;
-  /* Force single element display */
   isolation: isolate;
+  /* PERFORMANCE: CSS transitions instead of GSAP */
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
-/* Ensure proper text overlay visibility with quick transitions */
-.slideText {
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+/* Active state - shown with CSS transition */
+.slideTextActive {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1);
+}
+
+/* Hidden state - fades out with CSS transition */
+.slideTextHidden {
+  opacity: 0;
+  transform: translate3d(-50%, -55%, 0) scale(0.98);
 }
 
 .textContent {
