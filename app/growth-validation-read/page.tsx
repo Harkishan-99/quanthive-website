@@ -113,30 +113,30 @@ export default function GrowthValidationReadPage() {
               </div>
               <div className={styles.logoItem}>
                 <img
-                  src="/assets/google_logo.png"
+                  src="/assets/google_logo.svg"
                   alt="Google"
-                  className={styles.companyLogo}
+                  className={`${styles.companyLogo} ${styles.googleLogo}`}
                 />
               </div>
               <div className={styles.logoItem}>
                 <img
-                  src="/assets/aws_logo.png"
+                  src="/assets/aws_logo.svg"
                   alt="Amazon Web Services"
-                  className={styles.companyLogo}
+                  className={`${styles.companyLogo} ${styles.awsLogo}`}
                 />
               </div>
               <div className={styles.logoItem}>
                 <img
-                  src="/assets/nvidia_logo.png"
+                  src="/assets/nvidia_logo.svg"
                   alt="NVIDIA"
-                  className={styles.companyLogo}
+                  className={`${styles.companyLogo} ${styles.nvidiaLogo}`}
                 />
               </div>
               <div className={styles.logoItem}>
                 <img
                   src="/assets/nasscom_logo.png"
                   alt="NASSCOM"
-                  className={styles.companyLogo}
+                  className={`${styles.companyLogo} ${styles.nasscomLogo}`}
                 />
               </div>
 
@@ -145,6 +145,22 @@ export default function GrowthValidationReadPage() {
                   src="/assets/er_logo.png"
                   alt="Exception Raised"
                   className={styles.companyLogo}
+                />
+              </div>
+            </div>
+            <div className={styles.logoCenteredRow}>
+              <div className={styles.logoItem}>
+                <img
+                  src="/assets/intel_logo.svg"
+                  alt="Intel"
+                  className={`${styles.companyLogo} ${styles.intelLogo}`}
+                />
+              </div>
+              <div className={styles.logoItem}>
+                <img
+                  src="/assets/citi_bank_logo.svg"
+                  alt="Citi Bank"
+                  className={`${styles.companyLogo} ${styles.citiLogo}`}
                 />
               </div>
             </div>

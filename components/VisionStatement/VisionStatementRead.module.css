@@ -209,13 +209,50 @@
   width: auto;
   height: auto;
   object-fit: contain;
-  filter: grayscale(100%) opacity(0.7);
   transition: all 0.3s ease;
 }
 
 .companyLogo:hover {
-  filter: grayscale(0%) opacity(1);
   transform: scale(1.05);
+}
+
+.logoCenteredRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 200px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.googleLogo {
+  max-width: 111px;
+  max-height: 56px;
+}
+
+.awsLogo {
+  max-width: 88px;
+  max-height: 44px;
+}
+
+.nvidiaLogo {
+  max-width: 117px;
+  max-height: 59px;
+}
+
+.nasscomLogo {
+  max-width: 330px;
+  max-height: 165px;
+}
+
+.intelLogo {
+  max-width: 162px;
+  max-height: 81px;
+}
+
+.citiLogo {
+  max-width: 81px;
+  max-height: 41px;
 }
 
 .placeholderLogo {
@@ -495,10 +532,15 @@
     gap: 30px 40px;
     max-width: 700px;
   }
-  
+
   .logoGridTitle {
     font-size: 22px;
     margin-bottom: 30px;
+  }
+
+  .logoCenteredRow {
+    gap: 140px;
+    max-width: 700px;
   }
 }
 
@@ -605,12 +647,46 @@
     max-width: 180px;
     max-height: 90px;
   }
-  
+
+  .googleLogo {
+    max-width: 80px;
+    max-height: 40px;
+  }
+
+  .awsLogo {
+    max-width: 63px;
+    max-height: 32px;
+  }
+
+  .nvidiaLogo {
+    max-width: 84px;
+    max-height: 43px;
+  }
+
+  .nasscomLogo {
+    max-width: 238px;
+    max-height: 119px;
+  }
+
+  .logoCenteredRow {
+    gap: 100px;
+  }
+
+  .intelLogo {
+    max-width: 117px;
+    max-height: 59px;
+  }
+
+  .citiLogo {
+    max-width: 59px;
+    max-height: 30px;
+  }
+
   .placeholderLogo {
     width: 100px;
     height: 50px;
   }
-  
+
   .placeholderLogo span {
     font-size: 12px;
   }
@@ -714,12 +790,46 @@
     max-width: 150px;
     max-height: 75px;
   }
-  
+
+  .googleLogo {
+    max-width: 67px;
+    max-height: 33px;
+  }
+
+  .awsLogo {
+    max-width: 53px;
+    max-height: 26px;
+  }
+
+  .nvidiaLogo {
+    max-width: 70px;
+    max-height: 35px;
+  }
+
+  .nasscomLogo {
+    max-width: 198px;
+    max-height: 99px;
+  }
+
+  .logoCenteredRow {
+    gap: 70px;
+  }
+
+  .intelLogo {
+    max-width: 97px;
+    max-height: 49px;
+  }
+
+  .citiLogo {
+    max-width: 48px;
+    max-height: 25px;
+  }
+
   .placeholderLogo {
     width: 80px;
     height: 40px;
   }
-  
+
   .placeholderLogo span {
     font-size: 10px;
   }
