@@ -4,9 +4,9 @@
   "buildCommand": "bun run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/flash", "destination": "/index.html" },
-    { "source": "/flash/", "destination": "/index.html" },
-    { "source": "/showcase", "destination": "/index.html" },
-    { "source": "/showcase/", "destination": "/index.html" }
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }

@@ -12,7 +12,7 @@ import About from "./components/About";
 import AboutPage from "./components/AboutPage";
 import WaitlistDialog, { onWaitlistRequest } from "./components/WaitlistDialog";
 import Showcase from "./components/Showcase";
-import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageFrom, type Page } from "./lib/router";
+import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageAt, pageFrom, type Page } from "./lib/router";
 import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
 
@@ -31,7 +31,7 @@ if (typeof window !== "undefined") canonicaliseAddress();
 // Nav renders last so its panel and scrim paint over the page without depending on
 // z-index alone.
 // /showcase: the About panel's demo alone, full screen, for a display.
-const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname === "/showcase";
+const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") === "/showcase";
 
 // The browser tab's name on each page (index.html carries the landing page's).
 const PAGE_TITLE: Record<Page, string> = {
@@ -120,7 +120,7 @@ function Site() {
       if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
       const url = new URL(link.href);
       if (url.origin !== window.location.origin) return;
-      if (url.pathname !== "/" && url.pathname.replace(/\/+$/, "") !== "/flash") return;
+      if (!pageAt(url.pathname)) return;
       if (pageFrom(url) === pageFrom() && url.pathname === window.location.pathname) return;
       event.preventDefault();
       navigate(url.pathname + url.hash);

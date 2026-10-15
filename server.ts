@@ -43,9 +43,10 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 4173),
   routes: {
     "/": index,
-    "/flash": index, // Flash's page (App.tsx / src/lib/router.ts pick the page)
-    "/flash/": index,
-    "/showcase": index, // the demo alone, full screen (App renders Showcase)
+    // Every page of the site (/flash, /about, /showcase, and any added later) is
+    // the same app; src/lib/router.ts picks the page from the address. More
+    // specific routes below (assets, the API) take precedence over this one.
+    "/*": index,
     "/icons/:file": (req) =>
       new Response(Bun.file(join(ICON_DIR, safeName(req.params.file)))),
     "/images/figma-solution/:file": (req) =>

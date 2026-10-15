@@ -7,7 +7,7 @@ Pages (one app; moving between them never reloads):
 
 - `/` — QuantHive landing page (hero, capabilities, about section)
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
-- `/#about-us` — About page
+- `/about` — About page; old `/#about-us` links redirect here
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
 ## Requirements
@@ -80,8 +80,9 @@ host will show the pages but **the waitlist form will not work**.
 ### On Vercel
 
 `vercel.json` sets everything up: Vercel installs with Bun, runs `bun run build`,
-serves `dist/`, and serves the app at `/flash` and `/showcase` too, so refreshing
-those pages works instead of showing Vercel's 404. `api/waitlist.ts` runs as a
+serves `dist/`, and serves the app at every other path (except `/api/…`), so
+refreshing `/flash`, `/about` or any page added later works instead of showing
+Vercel's 404. `api/waitlist.ts` runs as a
 Vercel function for the waitlist form.
 
 1. Import the repo in Vercel and leave the framework preset on **Other**. Don't
@@ -104,9 +105,15 @@ bun install --production
 NODE_ENV=production PORT=4173 bun run start      # runs: bun server.ts
 ```
 
-`server.ts` serves the app at both `/` and `/flash`. If you put another server or
-CDN in front, pass `/flash` through to the app (or rewrite it to `/`); don't
-let it 404.
+`server.ts` serves the app at every path (`/`, `/flash`, `/about`, …). If you put
+another server or CDN in front, pass all page paths through to the app (or
+rewrite them to `/index.html`); don't let them 404.
+
+### Adding a page
+
+Add it to `Page` and `PAGE_URL` in `src/lib/router.ts`, and give it a tab title
+in `PAGE_TITLE` (`src/App.tsx`). Both hosts already serve the app at any path,
+so nothing else is needed for the new address to survive a refresh.
 
 Then put it behind your web server / load balancer (e.g. nginx or Caddy) for
 HTTPS and your domain, and keep it running with a process manager, e.g.:

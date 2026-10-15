@@ -19,7 +19,7 @@ const FOOTER_COLUMNS = [
     links: [
       ["Customers", "/#about"],
       ["Security", "/#about"],
-      ["About", "/#about-us"],
+      ["About", "/about"],
       ["Careers", "mailto:mail@quanthive.in"],
       ["Newsroom", "/#about"],
     ],
