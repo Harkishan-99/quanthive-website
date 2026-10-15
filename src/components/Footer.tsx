@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import { scrollPageTo } from "../lib/smoothScroll";
 import "./Footer.css";
 
-// Every link goes somewhere real: the site's own pages (App.tsx changes page in
-// place) or mail. The Certified column is a list, not links — there are no
+// Every link opens something: the site's own pages (App.tsx changes page in
+// place), or — for pages not built yet — the "under maintenance" note. The Certified column is a list, not links — there are no
 // certificate pages to open.
 const FOOTER_COLUMNS: { title: string; links: [string, string | null][] }[] = [
   {
@@ -12,31 +12,31 @@ const FOOTER_COLUMNS: { title: string; links: [string, string | null][] }[] = [
       ["Overview", "/flash"],
       ["Agents", "/flash"],
       ["Intelligence", "/#about"],
-      ["Projects", "/flash"],
-      ["Watchtower", "/flash"],
-      ["Data", "/flash"],
+      ["Projects", "/projects"],
+      ["Watchtower", "/watchtower"],
+      ["Data", "/data"],
     ],
   },
   {
     title: "Company",
     links: [
-      ["Customers", "/about"],
-      ["Security", "/contact"],
+      ["Customers", "/customers"],
+      ["Security", "/security"],
       ["About", "/about"],
       ["Team", "/team"],
-      ["Careers", "/contact"],
-      ["Newsroom", "/blog"],
+      ["Careers", "/careers"],
+      ["Newsroom", "/newsroom"],
     ],
   },
   {
     title: "Resources",
     links: [
       ["Blog", "/blog"],
-      ["Reports", "/blog"],
-      ["Press Kit", "/contact"],
-      ["Legal", "/contact"],
-      ["Privacy Policy", "/contact"],
-      ["Terms of Use", "/contact"],
+      ["Reports", "/reports"],
+      ["Press Kit", "/press"],
+      ["Legal", "/legal"],
+      ["Privacy Policy", "/privacy"],
+      ["Terms of Use", "/terms"],
     ],
   },
   {
@@ -62,7 +62,7 @@ const SOCIAL_LINKS = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com",
+    href: "https://www.linkedin.com/company/quanthive/home/",
     icon: (
       <path d="M4.6 6.8H2V16h2.6V6.8ZM3.3 2.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM16 10.6c0-2.5-.5-4-3.3-4-1.3 0-2.2.7-2.6 1.4V6.8H7.6V16h2.6v-4.6c0-1.2.2-2.4 1.7-2.4s1.5 1.4 1.5 2.5V16H16v-5.4Z" />
     ),

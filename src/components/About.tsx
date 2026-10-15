@@ -18,12 +18,17 @@ import "./About.css";
 const VIDEO_SRC: string | undefined = undefined;
 const VIDEO_POSTER: string | undefined = undefined;
 
-type Face = "ghost" | "schibsted" | "bricolage" | "hanken" | "host";
+type Face = "ghost" | "schibsted" | "bricolage" | "hanken" | "host" | "power";
 
-/** A run of the heading set in one face; `soft` is the frame's lighter -0.48px tracking. */
-function F({ f, soft, children }: { f: Face; soft?: boolean; children: string }) {
+/** A run of the heading set in one face; `soft` is the frame's lighter -0.48px
+ *  tracking, `open` and `large` as in the section above (Capabilities.css). */
+function F({ f, soft, open, large, children }: { f: Face; soft?: boolean; open?: boolean; large?: boolean; children: string }) {
   return (
-    <span className={`cap-face cap-face--${f}`} data-track={soft ? "soft" : undefined}>
+    <span
+      className={`cap-face cap-face--${f}`}
+      data-track={soft ? "soft" : open ? "open" : undefined}
+      data-large={large || undefined}
+    >
       {children}
     </span>
   );
@@ -102,33 +107,31 @@ export default function About() {
       <header className="about__header">
         {/* Runs follow the frame's spans letter for letter. */}
         <h2 id="about-title">
+          {/* Set as the section above's heading is: Host Grotesk and Bricolage,
+              a Ghost capital, the odd Schibsted or Power Grotesk letter. */}
           <span className="about__title-line">
-            <F f="ghost" soft>R</F>
-            <F f="schibsted" soft>ede</F>
-            <F f="ghost" soft>f</F>
-            <F f="hanken">i</F>
-            <F f="bricolage">n</F>
-            <F f="host">g </F>
-            <F f="ghost">T</F>
-            <F f="bricolage">h</F>
-            <F f="schibsted">e </F>
-            <F f="ghost">F</F>
-            <F f="bricolage">utur</F>
-            <F f="schibsted">e </F>
-            <F f="hanken">O</F>
-            <F f="ghost">f </F>
+            <F f="ghost">R</F>
+            <F f="schibsted">e</F>
+            <F f="bricolage">d</F>
+            <F f="schibsted">e</F>
+            <F f="power">f</F>
+            <F f="host">ining </F>
+            <F f="bricolage">The </F>
+            <F f="schibsted">F</F>
+            <F f="host">uture </F>
+            <F f="bricolage">O</F>
+            <F f="power">f </F>
             <F f="schibsted">I</F>
-            <F f="bricolage">nvest</F>
-            <F f="ghost">m</F>
-            <F f="bricolage">ent </F>
-            <F f="schibsted">I</F>
-            <F f="bricolage">nt</F>
-            <F f="host">e</F>
-            <F f="ghost">ll</F>
-            <F f="host">ige</F>
-            <F f="bricolage">n</F>
-            <F f="ghost">c</F>
-            <F f="host">e</F>
+            <F f="host">nvestment </F>
+            <F f="bricolage">A</F>
+            <F f="host">n</F>
+            <F f="schibsted">a</F>
+            <F f="host">l</F>
+            <F f="schibsted" open>y</F>
+            <F f="bricolage" large>t</F>
+            <F f="host">i</F>
+            <F f="bricolage">c</F>
+            <F f="schibsted">s</F>
             <F f="bricolage">,</F>
           </span>{" "}
           <span className="about__title-line about__title-line--light">

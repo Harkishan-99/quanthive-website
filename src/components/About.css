@@ -32,7 +32,7 @@
 .about__header h2 {
   margin: 0;
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
-  font-size: clamp(28px, 2.25vw, 46px); /* = the section above */
+  font-size: max(24px, 1.797vw); /* = the section above (Capabilities.css) */
   font-weight: 400;
   letter-spacing: -0.03em; /* the frame's -1.14px on 38px */
   line-height: 1.08;

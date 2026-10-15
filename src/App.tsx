@@ -6,6 +6,7 @@ import ArticlePage from "./components/ArticlePage";
 import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
 import ContactPage from "./components/ContactPage";
+import MaintenancePage from "./components/MaintenancePage";
 import TeamPage from "./components/TeamPage";
 import EdgeMotifs from "./components/EdgeMotifs";
 import FlashProductPage from "./components/FlashProductPage";
@@ -47,6 +48,7 @@ const PAGE_TITLE: Record<Page, string> = {
   contact: "Contact | QuantHive",
   blog: "Blog | QuantHive",
   article: "Blog | QuantHive", // ArticlePage names the tab after the article
+  maintenance: "Under maintenance | QuantHive",
 };
 
 // The pages that open on a hero; changing between two of them hands one hero
@@ -195,6 +197,8 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "maintenance" ? (
+        <MaintenancePage />
       ) : page === "article" ? (
         <ArticlePage />
       ) : page === "blog" ? (
