@@ -1,4 +1,4 @@
-import { LOREM_LONG, PageHead } from "./AboutPage";
+import { PageHead } from "./AboutPage";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
 import "./TeamPage.css";
@@ -28,7 +28,10 @@ export default function TeamPage() {
         </PageHead>
 
         <div className="about-page__copy">
-          <p>{LOREM_LONG}</p>
+          <p>
+            Built at IIT Madras, sharpened on a trading desk: engineers who ship at scale, guided by an
+            ex-quant desk head from Dolat Capital.
+          </p>
         </div>
 
         <ul className="team-page__grid">
