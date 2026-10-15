@@ -15,7 +15,7 @@ Pages (hash-routed, one app):
 | What | Why | Needed for |
 | --- | --- | --- |
 | **Bun ≥ 1.3** | runtime, bundler, server, package manager | everything |
-| An **SMTP mailbox** (e.g. Gmail / Google Workspace with an App Password) | sends waitlist sign-ups by email | waitlist emails (optional — sign-ups are always saved to a file) |
+| An **SMTP mailbox** (e.g. Gmail / Google Workspace with an App Password) | sends waitlist sign-ups by email — see [Waitlist email (SMTP)](#waitlist-email-smtp--set-up-before-going-live) | waitlist emails (optional — sign-ups are always saved to a file) |
 | **ffmpeg** + Playwright's Chromium | renders the about-section demo to a `.mov` | only the "download video" button (optional) |
 
 Install Bun:
@@ -98,11 +98,105 @@ Checklist for the server:
 - Bun installed
 - `.env` present with the SMTP settings (and `NODE_ENV=production`)
 - the app can write to `data/` (waitlist sign-ups are appended to `data/waitlist.jsonl` — back this up)
-- outbound SMTP allowed (port 465 or 587)
+- outbound SMTP allowed (port 465 or 587) — see [Waitlist email (SMTP)](#waitlist-email-smtp--set-up-before-going-live)
 - ffmpeg + `bunx playwright install chromium` only if you want the demo-video download to work
 
 If the app sits behind a proxy, it reads the client IP from `X-Forwarded-For`
 (used for the waitlist's rate limit: 5 sign-ups per IP per 10 minutes).
+
+## Waitlist email (SMTP) — set up before going live
+
+The "Join waitlist" form on the Flash page posts to `/api/waitlist`. The server
+saves every sign-up to `data/waitlist.jsonl` and then emails it, signing in to
+an ordinary mailbox over SMTP. No paid email service or API key is involved,
+but the person deploying has to provide a mailbox the server can send from.
+
+### 1. Pick the sending mailbox and get an app password
+
+Use a mailbox on the company domain, such as `hello@quanthive.in` or
+`waitlist@quanthive.in`. Mail sent from a personal address can land in spam.
+
+**Google Workspace or Gmail**
+
+1. Sign in to the sending mailbox.
+2. Turn on 2-Step Verification at myaccount.google.com → Security. Google only
+   issues app passwords to accounts that have it.
+3. Go to myaccount.google.com/apppasswords, create one named, say, "Website
+   waitlist", and copy the 16-character password. It's shown only once.
+   - If the page says app passwords aren't available, a Workspace admin must
+     allow them: Admin console → Security → Authentication → 2-Step
+     Verification, and make sure the user can enrol.
+4. Use `SMTP_HOST=smtp.gmail.com` and `SMTP_PORT=465`.
+
+**Zoho Mail:** `SMTP_HOST=smtp.zoho.in` (or `smtp.zoho.com`), `SMTP_PORT=465`,
+with an app-specific password from Zoho Mail → Settings → Security.
+
+**Any other provider** (Outlook/Microsoft 365, Amazon SES SMTP, Brevo, …): use
+its SMTP host, port 465 (TLS) or 587 (STARTTLS), and the SMTP username and
+password it gives you.
+
+Use the app password, not the mailbox's normal sign-in password; normal
+passwords are rejected.
+
+### 2. Put it in `.env` on the server
+
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=waitlist@quanthive.in      # the mailbox that sends
+SMTP_PASS=<16-char app password>     # spaces optional
+WAITLIST_TO=team@quanthive.in        # who receives sign-ups (default mail@quanthive.in)
+# WAITLIST_FROM=waitlist@quanthive.in  # optional; must be the mailbox or an alias it can send as
+```
+
+Restart the server after editing `.env`: Bun reads it at start-up.
+
+### 3. Make sure the host allows outgoing SMTP
+
+The server needs to reach the mail provider on port 465 (or 587).
+
+- **DigitalOcean** blocks outbound SMTP ports on new accounts. Open a support
+  ticket to lift it, or host elsewhere.
+- **Some other VPS and cloud hosts** do the same. Check with your provider.
+- **AWS EC2** only throttles port 25; 465 and 587 work.
+- **Railway, Render and Fly.io** allow 465 and 587.
+
+To check from the server:
+
+```bash
+nc -vz smtp.gmail.com 465
+```
+
+### 4. Test it
+
+1. Open `/#flash` on the live site, click "Join waitlist" and submit the form
+   once.
+2. The email should arrive at `WAITLIST_TO` from "Flash waitlist". Replying to
+   it replies to the person who signed up.
+3. The server log shows the result:
+   - nothing extra means it was sent;
+   - `[waitlist] SMTP not configured` means the `SMTP_*` variables weren't
+     found (check `.env` and restart);
+   - `[waitlist] mail failed …` gives the provider's reason.
+
+Common failures:
+
+| Error in the log | Fix |
+| --- | --- |
+| `535 … Username and Password not accepted` / `Invalid login` | use an **app password**, not the normal password; check `SMTP_USER` is the full address |
+| `ETIMEDOUT` / `ECONNREFUSED` | the host is blocking outbound SMTP (step 3), or the host or port is wrong |
+| `self signed certificate` / TLS errors | port mismatch: 465 for TLS, 587 for STARTTLS |
+| Mail arrives in spam | send from a mailbox on your own domain, with the domain's SPF/DKIM set up (Google Workspace and Zoho guide you through this) |
+
+### Limits and upkeep
+
+- **Daily limits:** the provider's apply. Google Workspace allows about 2,000
+  emails a day and personal Gmail about 500, far more than a waitlist needs.
+  If mail is ever refused, sign-ups are still saved to `data/waitlist.jsonl`.
+- **Back up `data/waitlist.jsonl`:** it's the full list of sign-ups (personal
+  data), so keep it out of git, which `.gitignore` already does.
+- **Rotate the password if it leaks:** revoke the app password, create a new
+  one, update `SMTP_PASS` and restart.
 
 ## Project layout
 
