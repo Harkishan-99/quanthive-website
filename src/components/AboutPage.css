@@ -258,8 +258,8 @@
 .about-page__partners-title {
   display: flex;
   align-items: center;
+  justify-content: center; /* centred in its compartment, as the logos are */
   margin: 0;
-  padding-left: calc(var(--col) * 10 / 812);
   font-size: clamp(30px, 2.35vw, 45px);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -319,7 +319,7 @@
   width: calc(var(--w, 0.4) * 80cqw); /* airy, as in the reference */
   justify-content: center;
   filter: grayscale(1);
-  opacity: 0.42;
+  opacity: 0.28; /* faint: present, never loud */
   transition:
     filter 300ms ease,
     opacity 300ms ease;
@@ -357,7 +357,7 @@
 
 /* Its light blue would vanish when greyed: dark until hovered, then its blue. */
 .about-page__lockup--er span {
-  color: #1d1d1d;
+  color: #6a6a6a; /* greys to the same weight as the other wordmarks */
   transition: color 300ms ease;
   font-family: "Bebas Neue", var(--font-ui, sans-serif);
   font-size: calc(var(--w) * 13cqw);
@@ -478,9 +478,9 @@
   }
 
   .about-page__partners-title {
+    justify-content: flex-start;
     min-height: 0;
     margin-bottom: 20px;
-    padding-left: 0;
   }
 
   .about-page__logos {
