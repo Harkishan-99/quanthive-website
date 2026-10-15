@@ -1,0 +1,350 @@
+/* "The Problem" — frames 1886:87160 and 1886:87496, both 1920 x 1080.
+   Every length below is derived from those frames; the vw/vh forms reproduce the
+   frame's proportion exactly at 1920 and scale sensibly either side of it. */
+
+.prob {
+  --p: 0; /* eased scroll progress through this section, 0 to 1 (set from JS) */
+  --q: 0; /* phase two: the dial's morph into the photograph (set from JS) */
+  --r: 0; /* phase three: the handover to the second photograph (set from JS) */
+  --s: 0; /* phase four: the same again, to the third (set from JS) */
+  --alloy: 0;
+
+  --prob-bg: #f0f0ef;
+  --prob-rule: #ebebeb;
+
+  /* Clock geometry, straight from the two frames:
+       entry   1200 x 1129 at (360, 546)  -> 62.5vw wide, centre at 102.8% of height
+       settled  555 x  522 at (682, 279)  -> centre at (50%, 50%), i.e. scale 0.4625
+     so the travel is 52.8vh and the scale ratio is 555/1200.
+     Same aspect in both, so it is a pure scale plus a vertical slide. */
+  --clock-w: 62.5vw;
+  --clock-scale-end: 0.4625;
+  --clock-y-travel: 52.8; /* vh from centre to the entry position */
+  /* dvh the SETTLED clock sits above the stage centre. 0 on the frame, which puts
+     it dead centre; the phone block at the foot of this file lifts it, where the
+     dial is large enough that the geometric centre reads as low. Multiplied by --p
+     below, so it arrives with the travel instead of displacing the entry too. */
+  --clock-y-end: 0;
+
+  position: relative;
+  z-index: 1; /* above the fixed .motifs layer */
+  /* see the phone block at the foot of this file for the mobile geometry */
+  /* Three viewports of travel on top of the pinned stage: the first brings the
+     clock to the centre, the second holds it there while its dial turns into the
+     photograph, and the last two hand that picture on to the next one and then the
+     one after. --p, --q, --r and --s run across one each. */
+  height: 500vh;
+  background: transparent;
+}
+
+.prob__stage {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  /* The clock hangs well below the fold at the start; clip it to the stage instead
+     of letting it bleed into whatever follows. */
+  overflow: hidden;
+}
+
+/* --- title and subtitle ------------------------------------------------------ */
+
+.prob__head {
+  position: relative;
+  z-index: 1;
+  /* 97/1080 of the frame height down. */
+  padding-top: clamp(40px, 8.98vh, 108px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 0.55vh, 8px);
+}
+
+/* The thin rule box around the title. Figma draws it as four separate strokes: the
+   verticals run the full 55px height while the horizontals are inset 5px from the
+   top and 6px from the bottom, so it is not a plain border. Borders give the
+   verticals; the two rules are pseudo-elements at those insets. */
+.prob__title {
+  position: relative;
+  margin: 0;
+  padding: clamp(4px, 0.46vh, 6px) clamp(8px, 0.6vw, 12px);
+  border-left: 2px solid var(--prob-rule);
+  border-right: 2px solid var(--prob-rule);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.prob__title::before,
+.prob__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--prob-rule);
+}
+
+.prob__title::before {
+  top: clamp(3px, 0.46vh, 5px);
+}
+
+.prob__title::after {
+  bottom: clamp(4px, 0.56vh, 6px);
+}
+
+.prob__title-text {
+  display: block;
+  font-family: var(--font-display, "PP Pangaia", "Fraunces", Georgia, serif);
+  /* 45px at 1920 wide. */
+  font-size: clamp(26px, 2.344vw, 52px);
+  letter-spacing: -0.02em;
+  color: #000000;
+}
+
+/* The torn band across the letters. Its own colour IS the page ground — the SVG
+   fills with currentColor and this sets that colour — so it reads as the letters
+   being erased rather than as a line drawn over them. */
+.prob__strike {
+  position: absolute;
+  left: 1.2%;
+  right: 0;
+  /* Figma: a 10px-tall band centred on y=122 in a box spanning y=91..146, i.e. just
+     above the middle of the cap height. */
+  top: 52%;
+  height: 0.62em;
+  transform: translateY(-50%);
+  color: var(--prob-bg);
+  -webkit-mask-image: url("../assets/icons/problem-strike.svg");
+  mask-image: url("../assets/icons/problem-strike.svg");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background: currentColor;
+  pointer-events: none;
+}
+
+.prob__sub {
+  margin: 0;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  /* 24px at 1920, tracking 4.8px = 0.2em. Figma sets Nata Sans, which this project
+     does not ship; Inter is the closest of the loaded faces and matches the hero's
+     caption treatment. */
+  font-size: clamp(11px, 1.25vw, 26px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #000000;
+  /* Gone by the time the clock has settled — frame 2.2 has no subtitle. */
+  opacity: max(0, calc(1 - var(--p) * 3));
+}
+
+/* --- the clock --------------------------------------------------------------- */
+
+.prob__clock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--clock-w);
+  /* Transform only — the vertical travel is NOT animated via `top`. `top` is a
+     layout property, so driving it from --p relaid out and repainted the clock on
+     every scroll frame, which is both wasteful and left stale fragments of the
+     larger clock behind as it shrank. Everything here composites instead.
+
+     Order matters: scale applies first (about the element's own centre), then the
+     travel is added in unscaled viewport units, then the -50% pair centres the
+     element. The percentages resolve against the unscaled box, so the centre stays
+     pinned however far it has scaled. */
+  transform: translate(-50%, -50%)
+    translateY(
+      calc(
+        (var(--clock-y-travel) * (1 - var(--p)) - var(--clock-y-end) * var(--p)) *
+          1dvh
+      )
+    )
+    scale(calc(1 - (1 - var(--clock-scale-end)) * var(--p)));
+  will-change: transform;
+}
+
+/* --- the clock's case --------------------------------------------------------
+   Hover tilt, shift and shadow. Separate from .prob__clock so the scroll-driven
+   scale and the pointer tilt each own a transform and cannot overwrite each other.
+
+   The rest values live here, and the handler only ever sets or removes the custom
+   properties — so releasing the pointer falls back to these and the transition
+   below eases it home. */
+.clock-case {
+  position: relative;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shift-x: 0px;
+  --shift-y: 0px;
+
+  transform: perspective(1400px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))
+    translate3d(var(--shift-x), var(--shift-y), 0);
+  /* Round, because drop-shadow follows the alpha rather than the box — a
+     box-shadow here would put a rectangle under a circular clock. */
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.13));
+  transition:
+    transform 0.5s cubic-bezier(0.22, 0.61, 0.24, 1),
+    filter 0.4s ease;
+}
+
+.clock-case:hover {
+  /* Lifted: a tighter, darker core plus a wider ambient falloff. */
+  filter: drop-shadow(0 20px 20px rgba(0, 0, 0, 0.1))
+    drop-shadow(0 34px 60px rgba(0, 0, 0, 0.16));
+  /* While the pointer is on it the tilt should track, not lag a third of a
+     second behind; the long ease above is for the journey back. */
+  transition:
+    transform 0.12s linear,
+    filter 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-case,
+  .clock-case:hover {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* The bezel, shaded by the liquid-metal shader instead of its flat gradient.
+
+   Sized 1.08x the clock and inset -4%: the mask SVG pads its artwork by 40 of 1080
+   units so the distance transform has background to seed on at BOTH walls of the
+   ring, and this puts that artwork back over the bezel exactly.
+
+   Tied to --p, so it is absent while the clock is at full size and arrives as it
+   shrinks toward the centre. Underneath it the painted gradient bezel is still
+   there, which is what the partial opacities in between read against. */
+.clock-bezel {
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+  opacity: var(--p, 0);
+}
+
+/* No WebGL2: leave the clock's own painted bezel showing rather than covering it
+   with a flat stand-in. */
+.clock-bezel[data-metal="off"] {
+  display: none;
+}
+
+/* --- Phones ------------------------------------------------------------------
+   Same 640px boundary as Hero.css and EdgeMotifs.css.
+
+   Both ends of the clock's travel are set from these two numbers, and they are
+   independent: --clock-w is the size it enters at, and multiplying by
+   --clock-scale-end gives the size it settles to. So the settled clock can be
+   raised on its own, which is all 0.7 does — at 444px the entry stays at 346px
+   while the clock it leaves you looking at goes to 243px, 55% of the screen. The
+   frame's own 62.5vw/0.4625 left both a token in a lot of empty page on a phone:
+   278px and 128px respectively.
+
+   --clock-y-travel is deliberately NOT touched. It is measured from the stage's
+   centre, so the entry position holds while the clock grows around it and simply
+   more of the face shows above the fold, which is the point of that frame. */
+@media (max-width: 640px) {
+  /* The navbar sits at a flat 10px inset down here (Nav.css), putting its bottom
+     edge at 10 + 52 + 2 = 64px. The frame's own 8.98vh puts this heading at 70px on
+     a small phone, which clears it by six — near enough to touching that the two
+     read as one block. Clear it by 30 instead. */
+  .prob__head {
+    padding-top: 94px;
+  }
+
+  .prob {
+    --clock-w: 78vw;
+    --clock-scale-end: 0.7;
+    /* Off the geometric centre by 5dvh. At this size the dial fills enough of the
+       screen that centring it by measurement reads as sitting low — the title above
+       it is a thin line and the space below it is empty, so the eye splits the
+       difference higher than the middle. */
+    --clock-y-end: 5;
+  }
+}
+
+/* --- the line under the clock ------------------------------------------------
+   Appears as the dial finishes becoming the photograph, not with it: the reveal
+   window starts at 45% of --q, so the image has already taken the dial before the
+   words arrive and the two read as one thing happening after another rather than
+   two things happening at once.
+
+   Anchored to the bottom of the stage rather than offset from the clock, because
+   the clock is fixed at the centre by then and the gap between them is whatever
+   the viewport leaves — which is what keeps this clear of the dial on a short
+   window without a media query. */
+.prob__foot {
+  --in: clamp(0, calc((var(--q) - 0.45) / 0.4), 1);
+
+  position: absolute;
+  left: 50%;
+  /* The frame puts the group's foot 141px up from the bottom edge (13.06vh), but
+     that was measured against a clock drawn smaller than this one settles to, and
+     at that height it crowds the dial. Dropped to 8.5vh, which holds the same
+     relationship to the bottom of the page at any viewport height. */
+  bottom: clamp(28px, 6.5vh, 84px);
+  z-index: 1;
+  width: min(560px, calc(100% - 2 * clamp(24px, 6vw, 80px)));
+  transform: translateX(-50%) translateY(calc((1 - var(--in)) * 18px));
+  opacity: var(--in);
+  text-align: center;
+  pointer-events: none;
+}
+
+.prob__foot-title {
+  margin: 0;
+  font-family: var(--font-display, "PP Pangaia", "Fraunces", Georgia, serif);
+  /* The frame's box is 45 units, the same as "The Problem" at the top of the
+     section. A step under that instead: set to match exactly it competed with the
+     heading rather than answering it. */
+  font-size: clamp(22px, 1.95vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: #000000;
+  /* Set down, always. Done here rather than by lower-casing the strings so the copy
+     stays as it was written — which is what the screen reader is handed, and what
+     anyone editing it will expect to find. */
+  text-transform: lowercase;
+}
+
+/* Caps and tracked, like the subtitle at the top of the section. The layer name in
+   Figma is mixed case, which is only how the string was typed — the node itself is
+   set in caps.
+
+   The size comes off that: 34 characters at 0.16em tracking have to fit the 422 of
+   1920 the frame allots the line, and caps are about 0.62em wide in Inter, so
+   34F(0.62 + 0.16) = 422 puts F at roughly 16px — 0.833vw. Caps need a smaller
+   size than the sentence case did, not the same one. */
+.prob__foot-caption {
+  margin: clamp(5px, 0.65vh, 10px) 0 0;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(9.5px, 0.833vw, 18px);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #55554f;
+}
+
+@media (max-width: 640px) {
+  .prob__foot {
+    bottom: clamp(28px, 7vh, 72px);
+  }
+}
+
+/* Read out to assistive technology while the visible line is mid-scramble. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Nothing here fixes the letters' widths. The settled line is rendered as one
+   unsplit run (see MatrixText), so it keeps its own metrics and kerning; only the
+   churn is per-letter, and there it is free to breathe. */

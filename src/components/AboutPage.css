@@ -1,0 +1,291 @@
+/* The About page (frames 17:3946, 18:4116), in the frames' 1920 measures:
+
+   - one column, 812 wide and centred; the back arrow (35) sits out in the margin,
+     its left edge 112 before the column's;
+   - "About" 50 on 1920, tracked -1.5, with a 51-wide black motif level with it at
+     the column's right edge;
+   - copy in Nata Sans 25, tracked -1.25, black; paragraphs 34 apart;
+   - #e3e3e3 rules, 45 above and below their neighbours;
+   - three #fcfcfc squares across the column, 46 apart;
+   - Partners: its heading 45, then two cells set off by 259-tall #e3e3e3 rules.
+
+   The frames' empty space is gone: the page starts under the nav with some air,
+   and the two frames simply follow one another. Sizes ease down with the screen
+   and the column narrows to the page's gutters. */
+
+.about-page {
+  --gutter: clamp(20px, 6vw, 112px);
+  --col: min(812px, calc(100vw - var(--gutter) * 2));
+  --rule: #e3e3e3;
+
+  position: relative;
+  z-index: 1;
+  padding: calc(var(--announcement-h, 0px) + 72px + clamp(40px, 5.5vw, 96px)) 0 clamp(64px, 7vw, 128px);
+  background: #ffffff;
+  color: #000000;
+}
+
+.about-page__column {
+  width: var(--col);
+  margin: 0 auto;
+}
+
+/* --- Head: the arrow out in the margin, the title, the motif at the right --- */
+
+.about-page__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.about-page__back {
+  position: absolute;
+  top: 50%;
+  left: -112px; /* its left edge 112 before the column's */
+  display: grid;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #000000;
+  cursor: pointer;
+  translate: 0 -50%;
+  transition: translate 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-page__back:hover {
+  translate: -4px -50%;
+}
+
+.about-page__back:focus-visible {
+  outline: 1px solid #000000;
+  outline-offset: 4px;
+}
+
+.about-page__back svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-page__title {
+  margin: 0;
+  font-size: clamp(36px, 2.6vw, 50px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.28;
+  white-space: nowrap;
+}
+
+/* The faces the frames mix, a letter or two at a time. */
+.about-page__pg { font-family: var(--font-wordmark); font-weight: 400; }
+.about-page__pp { font-family: "PP Pangaia", var(--font-display, serif); font-weight: 500; }
+.about-page__bg {
+  font-family: "Bricolage Grotesque", var(--font-ui);
+  font-weight: 500;
+  font-variation-settings: "opsz" 14, "wdth" 100;
+}
+
+/* The hero's ornament, small and black (the art 51 across; the file is padded). */
+.about-page__motif {
+  flex: none;
+  width: calc(clamp(40px, 2.65vw, 51px) * 450 / 390);
+  margin-right: calc(clamp(40px, 2.65vw, 51px) * -30 / 390);
+  aspect-ratio: 450 / 453.649;
+  background: #000000;
+  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+}
+
+/* --- Copy, rules, tiles ------------------------------------------------------ */
+
+.about-page__copy {
+  margin-top: clamp(32px, 3vw, 58px);
+}
+
+.about-page__copy p {
+  margin: 0;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(17px, 1.3vw, 25px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 1.22;
+  text-wrap: pretty;
+}
+
+.about-page__copy p + p {
+  margin-top: clamp(20px, 1.8vw, 34px);
+}
+
+.about-page__rule {
+  height: 0;
+  margin: clamp(32px, 2.4vw, 45px) 0 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.about-page__rule + .about-page__copy {
+  margin-top: clamp(32px, 2.4vw, 45px);
+}
+
+.about-page__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: calc(var(--col) * 46 / 812);
+  margin-top: clamp(28px, 2.9vw, 56px);
+}
+
+.about-page__tiles span {
+  aspect-ratio: 1;
+  background: #fcfcfc;
+}
+
+/* The tiles' rule sits a little further off them, as in the frame (92). */
+.about-page__tiles + .about-page__rule {
+  margin-top: clamp(48px, 4.8vw, 92px);
+}
+
+/* --- Partners ------------------------------------------------------------------
+   The heading in the first cell, then two cells, each set off by a full-height
+   hairline (the frame's lines at 818 and 1102 of a column from 549). */
+
+.about-page__partners {
+  display: grid;
+  grid-template-columns: 269fr 284fr 259fr;
+  min-height: clamp(160px, 13.5vw, 259px);
+  margin-top: clamp(28px, 2.8vw, 53px);
+}
+
+.about-page__partners-title {
+  align-self: center;
+  margin: 0;
+  padding-left: calc(var(--col) * 10 / 812);
+  font-size: clamp(30px, 2.35vw, 45px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.28;
+  white-space: nowrap;
+}
+
+.about-page__partner {
+  border-left: 1px solid var(--rule);
+}
+
+/* --- Entrance ----------------------------------------------------------------- */
+
+.about-page__head,
+.about-page__copy,
+.about-page__rule,
+.about-page__tiles,
+.about-page__partners {
+  animation: about-page-in 900ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.about-page__head { animation-delay: 60ms; }
+.about-page__copy { animation-delay: 160ms; }
+.about-page__rule { animation-delay: 220ms; }
+.about-page__tiles { animation-delay: 280ms; }
+.about-page__partners { animation-delay: 340ms; }
+
+@keyframes about-page-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+/* --- Narrower screens ------------------------------------------------------- */
+
+/* No margin to hold the arrow: it joins the head, before the title. */
+@media (max-width: 1100px) {
+  .about-page__head {
+    justify-content: flex-start;
+  }
+
+  .about-page__back {
+    position: static;
+    width: 28px;
+    height: 28px;
+    margin-right: 4px;
+    translate: none;
+  }
+
+  .about-page__back:hover {
+    translate: -3px 0;
+  }
+
+  .about-page__motif {
+    margin-left: auto;
+  }
+}
+
+/* Phones: Partners heads its row; the two cells sit side by side under it. The
+   back arrow gets a row of its own above the title, at the column's left edge,
+   and the title takes the arrow's old place at the start of the row below. */
+@media (max-width: 640px) {
+  .about-page__head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    row-gap: 18px;
+  }
+
+  .about-page__back {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 0 0 -2px;
+  }
+
+  .about-page__title {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .about-page__motif {
+    grid-column: 2;
+    grid-row: 2;
+    margin-left: 0;
+  }
+
+  .about-page__tiles {
+    gap: 12px;
+  }
+
+  .about-page__partners {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 140px;
+    row-gap: 20px;
+    min-height: 0;
+  }
+
+  .about-page__partners-title {
+    grid-column: 1 / -1;
+    padding-left: 0;
+  }
+
+  .about-page__partner:first-of-type {
+    border-left: 0;
+  }
+
+  .about-page__partner + .about-page__partner {
+    border-left: 1px solid var(--rule);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-page__head,
+  .about-page__copy,
+  .about-page__rule,
+  .about-page__tiles,
+  .about-page__partners {
+    animation: none;
+  }
+}

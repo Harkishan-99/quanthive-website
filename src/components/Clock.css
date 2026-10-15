@@ -1,0 +1,127 @@
+.clk {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Angles are seeded here so the face is drawn at a plausible time on the very
+     first paint, before the effect has run. */
+  --clk-h: 0deg;
+  --clk-m: 0deg;
+  --clk-s: 0deg;
+}
+
+/* The window reflection tracks the pointer. view-box units so the offsets are in
+   the same 1000-unit space as everything else on the dial. */
+.clk__spec {
+  transform-box: view-box;
+  transform: translate(
+    calc(var(--clk-gx, 0) * 1px),
+    calc(var(--clk-gy, 0) * 1px)
+  );
+}
+
+.clk__hand {
+  /* view-box, not the default border-box: the hands are children of the <svg>, so
+     their rotation origin has to be expressed in viewBox units to land on the
+     dial's centre. */
+  transform-box: view-box;
+  transform-origin: 500px 500px;
+}
+
+.clk__hand--hour {
+  transform: rotate(var(--clk-h));
+}
+
+.clk__hand--min {
+  transform: rotate(var(--clk-m));
+}
+
+.clk__hand--sec {
+  transform: rotate(var(--clk-s));
+}
+
+.clk__hours,
+.clk__minlabels,
+.clk__brand {
+  font-family: "PT Serif", Georgia, serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.clk__hours {
+  font-size: 92px;
+  /* Tightens the pairs in 10, 11 and 12. In em so it tracks the size, and modest
+     on purpose: letter-spacing is added after the LAST glyph too, which shifts
+     text-anchor="middle" by half a step — and by a full step on the two-digit
+     numerals. At this value that asymmetry is about 2.5 of the dial's 1000 units,
+     well under a pixel at any size the clock is drawn. Going much further would
+     start to pull the two-digit numerals off their radial positions. */
+  letter-spacing: -0.055em;
+}
+
+.clk__minlabels {
+  font-size: 27px;
+}
+
+.clk__brand {
+  font-size: 26px;
+  letter-spacing: 6px;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+/* No reduced-motion rule on the hands: they are a readout of the actual time, not
+   decoration, and freezing them would make the clock wrong rather than calmer. */
+
+/* --- turning silver with the photograph --------------------------------------
+   As the dial morphs, every mark on it changes colour — but each one at the moment
+   the image actually reaches IT, not all together and not on a sweep of its own.
+
+   --i is that element's place in the dissolve, written by Clock.tsx out of the same
+   baked field the shader thresholds (lib/dialField.ts). The arithmetic below is the
+   shader's reveal, rearranged: it ramps from q = i to q = i + 0.36, where 0.36 is
+   twice the FIELD_EDGE both sides share. Linear here against the shader's
+   smoothstep, which is a difference of a few percent across a band that is already
+   soft, and nothing a colour blend shows.
+
+   Only the second hand stays red. It is the one mark on the face that is not
+   information — it is the accent — and red carries against both the silver dial and
+   the photograph, so there is nothing for it to gain by changing. */
+.clk {
+  --clk-silver: #eaeef2;
+}
+
+.clk__lit {
+  --lit: clamp(0, calc((var(--q, 0) * 1.36 - var(--i, 0)) / 0.36), 1);
+}
+
+.clk__minlabels .clk__lit {
+  fill: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #7b7b7b);
+}
+
+.clk__hours .clk__lit {
+  fill: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #3d3d3d);
+}
+
+.clk__bars .clk__lit {
+  fill: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #3a3a3a);
+}
+
+.clk__brand {
+  fill: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #8d8d8d);
+}
+
+.clk__ticks .clk__lit {
+  stroke: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #6f6f6f);
+}
+
+/* One continuous ring, so it has no single place in the field. Half way, which puts
+   it with the middle of the transition rather than at either end of it. */
+.clk__track {
+  --lit: clamp(0, calc((var(--q, 0) * 1.36 - 0.5) / 0.36), 1);
+  stroke: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #b9b9b9);
+}
+
+.clk__hand--hour polygon,
+.clk__hand--min polygon,
+.clk__hub {
+  fill: color-mix(in srgb, var(--clk-silver) calc(var(--lit) * 100%), #141414);
+}

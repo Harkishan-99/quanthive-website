@@ -1,0 +1,1626 @@
+/* Solid full-width navbar with a full-width top-edge dropdown, centred enlarged elements, and hatched empty flanks */
+
+.nav {
+  --nav-gutter: clamp(16px, 3.5vw, 36px);
+  --nav-bar-h: 72px;
+  --nav-bar-bg: #ffffff;
+  --nav-bar-ink: #111111;
+  --nav-grid-line: #e3e3df;
+  --nav-ink: #111827;
+  --nav-ink-soft: #64748b;
+  --nav-ink-subtle: #8b8b87;
+  --nav-hover: rgba(0, 0, 0, 0.05);
+  --nav-motif-art: url("../assets/icons/hero-motif.svg");
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  width: 100%;
+  z-index: 50;
+  pointer-events: none;
+  box-shadow: none !important;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+/* --- The bar: solid, full width, directly under the announcement bar --------- */
+
+.nav__bar-anchor {
+  position: fixed;
+  top: var(--announcement-h, 0px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 55;
+  pointer-events: none;
+  transition: top 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Three columns, the outer two equal, so the links sit on the bar's true centre
+   whatever the widths of the wordmark and the CTA. */
+.nav__bar {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: var(--nav-bar-h);
+  padding: 0 var(--nav-gutter);
+  /* Transparent at the top of the page; see [data-scrolled] below. */
+  background: transparent;
+  transition: background-color 0.35s ease;
+  color: var(--nav-bar-ink);
+  --nav-ink: var(--nav-bar-ink);
+  --nav-hover: rgba(0, 0, 0, 0.05);
+}
+
+/* Scrolled, or the menu is open (its drawer is white beneath the bar): solid. */
+.nav[data-scrolled] .nav__bar,
+.nav[data-open] .nav__bar {
+  background: var(--nav-bar-bg);
+}
+
+.nav__start {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nav__end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* The wordmark half of the QuantHive lockup (the footer uses the same crop). */
+.nav__wordmark {
+  display: block;
+  width: clamp(110px, 8.8vw, 136px);
+  aspect-ratio: 10626.33 / 1601.672;
+  background: var(--nav-bar-ink);
+  -webkit-mask: url("../assets/icons/quanthive-lockup.svg") 94.5% 38.2% / 124.8% 166.4% no-repeat;
+  mask: url("../assets/icons/quanthive-lockup.svg") 94.5% 38.2% / 124.8% 166.4% no-repeat;
+}
+
+/* Landing-page entrance. The hero lockup fades out from 2.3s over 1.4s on an
+   ease-in-out (hero-lockup-out, Hero.css); it is 60% of the way out at about 3.1s,
+   which is when the wordmark starts to come in. Keep the two in step. */
+.nav[data-intro] .nav__wordmark {
+  animation: nav-wordmark-in 1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 3.1s) backwards;
+}
+
+@keyframes nav-wordmark-in {
+  from {
+    opacity: 0;
+    translate: 0 10px; /* rises up into place */
+  }
+}
+
+/* The menu button only appears on phones, where the links live in the drawer. */
+.nav__end .nav__burger {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav[data-intro] .nav__wordmark {
+    animation: none;
+  }
+}
+
+.nav__cta {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  background: #151515;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.16s ease;
+}
+
+.nav__cta:hover {
+  background: #000000;
+}
+
+.nav__wordmark:focus-visible,
+.nav__cta:focus-visible,
+.nav__link:focus-visible,
+.nav__burger:focus-visible {
+  outline: 1px solid #111111;
+  outline-offset: 2px;
+}
+
+.nav__burger {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--nav-ink);
+  transition: background-color 0.16s ease;
+  box-shadow: none !important;
+}
+
+.nav__burger:hover {
+  background-color: var(--nav-hover);
+}
+
+.nav__burger-lines {
+  position: relative;
+  display: block;
+  width: 17px;
+  height: 11px;
+}
+
+.nav__burger-lines > span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 1px;
+  background-color: currentColor;
+  transition:
+    transform 0.36s cubic-bezier(0.5, 0, 0.2, 1),
+    opacity 0.2s ease;
+}
+
+.nav__burger-lines > span:nth-child(1) {
+  top: 0;
+}
+.nav__burger-lines > span:nth-child(2) {
+  top: 50%;
+  margin-top: -0.75px;
+}
+.nav__burger-lines > span:nth-child(3) {
+  bottom: 0;
+}
+
+.nav[data-open] .nav__burger-lines > span:nth-child(1) {
+  transform: translateY(4.75px) rotate(45deg);
+}
+.nav[data-open] .nav__burger-lines > span:nth-child(2) {
+  opacity: 0;
+}
+.nav[data-open] .nav__burger-lines > span:nth-child(3) {
+  transform: translateY(-4.75px) rotate(-45deg);
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav__link {
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  /* Title case as written in Nav.tsx; a px up from the old all-caps size, since
+     lowercase sets visibly smaller. */
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--nav-ink);
+  padding: 6px 12px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: none !important;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.nav__link:hover {
+  background-color: var(--nav-hover);
+}
+
+.nav__link[data-active="true"] {
+  background-color: #ededf0;
+  color: #111111;
+}
+
+.nav__chevron {
+  width: 9px;
+  height: 6px;
+  opacity: 0.75;
+  transition: transform 0.22s ease;
+}
+
+.nav__link[data-active="true"] .nav__chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* --- Dropdown starts from TOP EDGE of the viewport (top: 0), FULL WIDTH ----- */
+
+.nav__dropdown {
+  position: fixed;
+  top: var(--announcement-h, 0px);
+  left: 0;
+  right: 0;
+  width: 100vw;
+  width: 100%;
+  z-index: 51;
+  pointer-events: auto;
+  background-color: #ffffff;
+  border-bottom: 1px dotted var(--nav-grid-line);
+  box-shadow: none !important;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    grid-template-rows 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav[data-open] .nav__dropdown {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.44s cubic-bezier(0.22, 0.66, 0.24, 1);
+}
+
+.nav__dropdown-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.nav__dropdown-inner {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: none !important;
+}
+
+/* Spacer allowing the untouched navbar elements to sit inside at their exact place */
+.nav__dropdown-bar-spacer {
+  height: var(--nav-bar-h);
+  width: 100%;
+}
+
+/* Horizontal dotted divider running full width below the navbar elements */
+.nav__dropdown-bar-rule {
+  width: 100%;
+  border-bottom: 1px dotted var(--nav-grid-line);
+}
+
+/* --- Centered Dropdown Grid with Reduced Empty Space & Bigger Content ------- */
+
+.nav__dropdown-grid {
+  width: 100%;
+}
+
+.nav__dropdown-header-row,
+.nav__dropdown-body-row,
+.nav__dropdown-footer-row {
+  display: grid;
+  /* Centered columns: larger minimum and maximum widths, taking up more space */
+  grid-template-columns:
+    1fr
+    minmax(310px, 360px)
+    minmax(310px, 360px)
+    minmax(350px, 420px)
+    1fr;
+  width: 100%;
+}
+
+/* Header Row — Expanded vertically with larger typography */
+.nav__dropdown-header-row {
+  border-bottom: 1px dotted var(--nav-grid-line);
+}
+
+.nav__dropdown-header-cell {
+  padding: 18px 24px 14px;
+  border-right: 1px dotted var(--nav-grid-line);
+}
+
+.nav__dropdown-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nav-ink-subtle);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Diagonal Lines Pattern filling remaining flanking spaces */
+.nav__dropdown-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 7px,
+    rgba(0, 0, 0, 0.035) 7px,
+    rgba(0, 0, 0, 0.035) 8px
+  );
+  min-height: 100%;
+}
+
+.nav__dropdown-hatch--left {
+  border-right: 1px dotted var(--nav-grid-line);
+}
+
+.nav__dropdown-hatch--right {
+  border-left: 1px dotted var(--nav-grid-line);
+}
+
+/* Content Columns — Expanded vertically with larger spacing */
+.nav__dropdown-col {
+  padding: 24px 22px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px dotted var(--nav-grid-line);
+}
+
+.nav__dropdown-col--cards {
+  gap: 16px;
+  border-right: none;
+}
+
+/* Mega Menu Item — Bigger touch target, more generous padding */
+.nav__mega-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 2%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-8px);
+  box-shadow: none !important;
+  transition:
+    opacity 0.16s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.15s ease;
+}
+
+.nav__mega-item:hover {
+  background-color: #f4f4f6;
+}
+
+/* Both text columns carry four independent menu rows. Give each desktop row
+   the same track height so their icon tiles align precisely across the grid,
+   regardless of a blurb wrapping to an extra line. */
+@media (min-width: 641px) {
+  .nav__dropdown-col:not(.nav__dropdown-col--cards) .nav__mega-item {
+    height: 108px;
+  }
+}
+
+.nav__mega-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* Bigger titles & blurbs */
+.nav__mega-item-title {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--nav-ink);
+  letter-spacing: -0.01em;
+}
+
+.nav__mega-item-blurb {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nav-ink-soft);
+}
+
+/* --- Bigger Squircle Pixel Art Icons ---------------------------------------- */
+
+.nav-pixel-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 2%;
+  background: linear-gradient(140deg, #38383b 0%, #242426 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: none !important;
+  border: none;
+  transition: transform 0.16s ease;
+}
+
+.nav__mega-item:hover .nav-pixel-icon {
+  transform: scale(1.04);
+}
+
+.nav-pixel-icon__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.16) 2px,
+    rgba(0, 0, 0, 0.16) 4px
+  );
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.nav-pixel-icon__glyph {
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-pixel-icon__glyph svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Bigger Showcase Promo Cards in Column 3 -------------------------------- */
+
+.nav__promo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #181724;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2%;
+  padding: 24px 26px;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  min-height: 120px;
+  flex: 1;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-8px);
+  box-shadow: none !important;
+  transition:
+    opacity 0.16s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.nav__promo-card:hover {
+  background-color: #201f2e;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.nav__promo-content {
+  position: relative;
+  z-index: 1;
+}
+
+.nav__promo-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav__promo-arrow {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.75);
+  transition: transform 0.18s ease;
+}
+
+.nav__promo-card:hover .nav__promo-arrow {
+  transform: translate(2.5px, -2.5px);
+  color: #ffffff;
+}
+
+.nav__promo-blurb {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.48;
+  margin-top: 6px;
+}
+
+/* Scaled Decorative Pixel Clusters in Promo Cards */
+.promo-pixel-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.promo-pixel-cluster--tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 38px;
+  height: 38px;
+}
+
+.promo-pixel-cluster--br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 34px;
+  height: 28px;
+}
+
+.promo-pixel-decor .px {
+  position: absolute;
+  display: block;
+}
+
+/* Cyan/Purple corner pixel palette */
+.promo-pixel-decor--cyan .px-1 {
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: #6366f1;
+}
+.promo-pixel-decor--cyan .px-2 {
+  top: 18px;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  background: #38bdf8;
+}
+.promo-pixel-decor--cyan .px-3 {
+  top: 0;
+  right: 18px;
+  width: 9px;
+  height: 9px;
+  background: #818cf8;
+}
+.promo-pixel-decor--cyan .px-4 {
+  top: 9px;
+  right: 9px;
+  width: 9px;
+  height: 9px;
+  background: #a855f7;
+  opacity: 0.8;
+}
+
+.promo-pixel-decor--cyan .px-5 {
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background: #4f46e5;
+}
+.promo-pixel-decor--cyan .px-6 {
+  bottom: 15px;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background: #06b6d4;
+}
+.promo-pixel-decor--cyan .px-7 {
+  bottom: 0;
+  right: 15px;
+  width: 8px;
+  height: 8px;
+  background: #7c3aed;
+}
+
+/* Emerald/Lime corner pixel palette */
+.promo-pixel-decor--emerald .px-1 {
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: #65a30d;
+}
+.promo-pixel-decor--emerald .px-2 {
+  top: 18px;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  background: #22c55e;
+}
+.promo-pixel-decor--emerald .px-3 {
+  top: 0;
+  right: 18px;
+  width: 9px;
+  height: 9px;
+  background: #84cc16;
+}
+.promo-pixel-decor--emerald .px-4 {
+  top: 9px;
+  right: 9px;
+  width: 9px;
+  height: 9px;
+  background: #10b981;
+  opacity: 0.8;
+}
+
+.promo-pixel-decor--emerald .px-5 {
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background: #15803d;
+}
+.promo-pixel-decor--emerald .px-6 {
+  bottom: 15px;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background: #a3e635;
+}
+.promo-pixel-decor--emerald .px-7 {
+  bottom: 0;
+  right: 15px;
+  width: 8px;
+  height: 8px;
+  background: #059669;
+}
+
+/* --- Footer Row — Vertically expanded with larger motif -------------------- */
+
+.nav__dropdown-footer-row {
+  border-top: 1px dotted var(--nav-grid-line);
+}
+
+.nav__dropdown-footer-center {
+  grid-column: 2 / span 3;
+  padding: 18px 0 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.nav__motif {
+  width: 22px;
+  aspect-ratio: 390 / 393.649;
+  background-color: #a8a8a4;
+  -webkit-mask-image: var(--nav-motif-art);
+  mask-image: var(--nav-motif-art);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  opacity: 0.7;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The drawer unfolds first, then its contents settle in. On close these rules
+   are removed, so every item fades out immediately instead of being clipped by
+   the collapsing panel. */
+.nav[data-open] .nav__dropdown-title,
+.nav[data-open] .nav__mega-item,
+.nav[data-open] .nav__promo-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav[data-open] .nav__motif {
+  opacity: 0.7;
+  transform: translateY(0);
+  animation: nav-motif-color-cycle 460ms 60ms cubic-bezier(0.22, 0.76, 0.24, 1) 4 both;
+}
+
+@keyframes nav-motif-color-cycle {
+  0% {
+    background-color: #a8a8a4;
+  }
+
+  18% {
+    background-color: #20a464;
+  }
+
+  47% {
+    background-color: #2878d4;
+  }
+
+  74% {
+    background-color: #111113;
+  }
+
+  100% {
+    background-color: #a8a8a4;
+  }
+}
+
+.nav[data-open] .nav__dropdown-header-cell .nav__dropdown-title {
+  transition-delay: 80ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(2) .nav__mega-item:nth-child(1) {
+  transition-delay: 100ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(2) .nav__mega-item:nth-child(2) {
+  transition-delay: 125ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(2) .nav__mega-item:nth-child(3) {
+  transition-delay: 150ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(2) .nav__mega-item:nth-child(4) {
+  transition-delay: 175ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(3) .nav__mega-item:nth-child(1) {
+  transition-delay: 120ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(3) .nav__mega-item:nth-child(2) {
+  transition-delay: 145ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(3) .nav__mega-item:nth-child(3) {
+  transition-delay: 170ms;
+}
+
+.nav[data-open] .nav__dropdown-col:nth-child(3) .nav__mega-item:nth-child(4) {
+  transition-delay: 195ms;
+}
+
+.nav[data-open] .nav__dropdown-col--cards .nav__promo-card:nth-child(1) {
+  transition-delay: 170ms;
+}
+
+.nav[data-open] .nav__dropdown-col--cards .nav__promo-card:nth-child(2) {
+  transition-delay: 200ms;
+}
+
+.nav[data-open] .nav__motif {
+  transition-delay: 210ms;
+}
+
+/* --- Backdrop Scrim -------------------------------------------------------- */
+
+.nav-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.42);
+  transition: opacity 0.28s ease;
+}
+
+.nav-scrim[data-open] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Responsive Adaptations ------------------------------------------------ */
+
+@media (max-width: 1240px) {
+  .nav__dropdown-header-row,
+  .nav__dropdown-body-row,
+  .nav__dropdown-footer-row {
+    grid-template-columns:
+      1fr
+      minmax(280px, 320px)
+      minmax(280px, 320px)
+      minmax(310px, 360px)
+      1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .nav__dropdown-header-row,
+  .nav__dropdown-body-row,
+  .nav__dropdown-footer-row {
+    grid-template-columns: 1fr minmax(240px, 1fr) minmax(240px, 1fr) 1fr;
+  }
+
+  .nav__dropdown-col--cards {
+    grid-column: 2 / span 2;
+    border-top: 1px dotted var(--nav-grid-line);
+    flex-direction: row;
+    padding-top: 18px;
+  }
+
+  .nav__dropdown-footer-center {
+    grid-column: 2 / span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Links move into the drawer; the bar keeps the wordmark, menu and button. */
+  .nav__links {
+    display: none;
+  }
+
+  .nav__end .nav__burger {
+    display: grid;
+  }
+
+  .nav__wordmark {
+    width: 104px;
+  }
+
+  /* Phones: just the menu key on the right; "Request demo" steps out. */
+  .nav__cta {
+    display: none;
+  }
+
+  .nav__bar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav__dropdown-header-row,
+  .nav__dropdown-body-row,
+  .nav__dropdown-footer-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Keep the entire drawer inside a short viewport. The inner clip scrolls,
+     rather than allowing a long menu to extend below the browser chrome. */
+  .nav__dropdown {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    border-bottom-color: transparent;
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.16s ease;
+  }
+
+  .nav[data-open] .nav__dropdown {
+    height: calc(100dvh - var(--announcement-h, 0px));
+    border-bottom-color: var(--nav-grid-line);
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.16s ease;
+  }
+
+  .nav__dropdown-clip {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .nav__dropdown-inner {
+    min-height: min-content;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .nav__dropdown-header-cell {
+    padding: 0.85rem 0.9rem 0.45rem;
+    border-right: none;
+  }
+
+  .nav__dropdown-header-cell:empty {
+    display: none;
+  }
+
+  .nav__dropdown-hatch {
+    display: none;
+  }
+
+  .nav__dropdown-col {
+    border-right: none;
+    border-bottom: 1px dotted var(--nav-grid-line);
+    padding: 16px 14px;
+  }
+
+  .nav__dropdown-col--cards {
+    flex-direction: column;
+  }
+
+  .nav__dropdown-footer-center {
+    grid-column: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav__dropdown,
+  .nav__burger-lines > span,
+  .nav-scrim,
+  .nav__promo-card,
+  .nav-pixel-icon {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .nav[data-open] .nav__motif {
+    animation: none;
+  }
+}
+
+/* --- Over Flash's dark hero (data-tone="dark", Nav.tsx) --------------------------
+   The bar inverts while it's over the product hero's dark ground: white ink and
+   wordmark, a near-black ground once scrolled, the CTA in white — and the drawer
+   goes dark with it (below). Past the hero, over the light sections, it's back to
+   the light bar and drawer. */
+.nav[data-tone="dark"] {
+  --nav-bar-bg: #050505;
+  --nav-bar-ink: #ffffff;
+}
+
+.nav[data-tone="dark"] .nav__bar {
+  --nav-hover: rgba(255, 255, 255, 0.1);
+}
+
+.nav[data-tone="dark"] .nav__cta {
+  background: #ffffff;
+  color: #111111;
+}
+
+.nav[data-tone="dark"] .nav__cta:hover {
+  background: #e6e6e6;
+}
+
+.nav[data-tone="dark"] .nav__wordmark:focus-visible,
+.nav[data-tone="dark"] .nav__cta:focus-visible,
+.nav[data-tone="dark"] .nav__link:focus-visible,
+.nav[data-tone="dark"] .nav__burger:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* --- Flash's logo in the bar ---------------------------------------------------
+   On Flash's page the QuantHive wordmark hands over to Flash's logo, timed off the
+   hero's logo leaving (hero-lockup-out: 1.4s from 2.3s, Hero.css). At 45% of that
+   (2.93s) the wordmark lifts and fades; at 72% (3.31s) Flash's logo rises into
+   its place. Both start when the page does — on load, or as the page transition
+   sets data-page (App.tsx) — so they run on the hero's own clock. */
+.nav__flash {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: block;
+  width: clamp(96px, 7.6vw, 118px); /* reads at the wordmark's weight */
+  margin-top: calc(clamp(96px, 7.6vw, 118px) * -45.918 / 407 / 2);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.nav__flash img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes nav-mark-out {
+  to {
+    opacity: 0;
+    translate: 0 -10px;
+    visibility: hidden;
+  }
+}
+
+@keyframes nav-mark-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    visibility: visible;
+  }
+}
+
+:root[data-page="product"] .nav .nav__wordmark {
+  animation: nav-mark-out 0.6s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 2.93s) forwards;
+}
+
+:root[data-page="product"] .nav .nav__flash {
+  visibility: visible;
+  pointer-events: auto;
+  animation: nav-mark-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 3.31s) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-page="product"] .nav .nav__wordmark {
+    animation: none;
+    visibility: hidden;
+  }
+
+  :root[data-page="product"] .nav .nav__flash {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --- The drawer, sleek and minimal (after Sarvam's) ------------------------------
+   Same contents, quieter dress: a plain white panel with one hairline under it,
+   no hatched flanks or dotted grid; small grey column labels; each item a light
+   rounded icon tile beside its title and a grey line under it, with a soft grey
+   hover; the two promo cards as rounded cards — a gradient picture over a
+   caption — side by side; the page behind dimmed lightly and blurred. These
+   rules override the drawer's earlier ones. */
+
+.nav__dropdown {
+  border-bottom: 1px solid #ececec;
+}
+
+.nav__dropdown-bar-rule {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.nav__dropdown-hatch {
+  background-image: none;
+  border: 0;
+}
+
+.nav__dropdown-header-row {
+  border-bottom: 0;
+}
+
+.nav__dropdown-header-cell {
+  padding: 30px 14px 8px;
+  border-right: 0;
+}
+
+.nav__dropdown-title {
+  color: #707070;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.nav__dropdown-col {
+  gap: 2px;
+  padding: 4px 4px 34px;
+  border-right: 0;
+}
+
+.nav__dropdown-col--cards {
+  flex-direction: row;
+  gap: 14px;
+  padding: 4px 4px 34px 24px;
+}
+
+/* An item: icon tile, title, a grey line. */
+.nav__mega-item {
+  align-items: center;
+  gap: 14px;
+  padding: 9px 10px;
+  border-radius: 10px;
+}
+
+@media (min-width: 641px) {
+  .nav__dropdown-col:not(.nav__dropdown-col--cards) .nav__mega-item {
+    height: auto;
+  }
+}
+
+.nav__mega-item:hover {
+  background-color: #f6f6f6;
+}
+
+.nav__mega-item-text {
+  gap: 2px;
+}
+
+.nav__mega-item-title {
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.nav__mega-item-blurb {
+  color: #757575;
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+/* The icon tile: white, a hairline edge, the glyph in a quiet colour of its own. */
+.nav-pixel-icon {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ececec;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #3d3d3d;
+}
+
+.nav-pixel-icon__scanlines {
+  display: none;
+}
+
+.nav-pixel-icon__glyph {
+  width: 18px;
+  height: 18px;
+}
+
+.nav__mega-item:hover .nav-pixel-icon {
+  transform: none;
+  border-color: #e2e2e2;
+}
+
+.nav__dropdown-col .nav__mega-item:nth-child(1) .nav-pixel-icon { color: #5b5bd6; }
+.nav__dropdown-col .nav__mega-item:nth-child(2) .nav-pixel-icon { color: #e0603a; }
+.nav__dropdown-col .nav__mega-item:nth-child(3) .nav-pixel-icon { color: #2f8f5b; }
+.nav__dropdown-col .nav__mega-item:nth-child(4) .nav-pixel-icon { color: #3b7fc4; }
+
+/* A promo card: a gradient picture (its pixel clusters still in the corners) over
+   a caption, in a white rounded frame. */
+.nav__promo-card {
+  flex: 1 1 0;
+  align-self: flex-start;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 5px 5px 12px;
+  overflow: hidden;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.nav__promo-card:hover {
+  border-color: #dedede;
+  background-color: #ffffff;
+}
+
+.nav__promo-card .promo-pixel-decor {
+  position: relative;
+  inset: auto;
+  flex: none;
+  height: 112px;
+  border-radius: 8px;
+  background: linear-gradient(170deg, #1e1b4b 0%, #4f46e5 55%, #c7d2fe 100%);
+  transition: filter 0.2s ease;
+}
+
+.nav__promo-card .promo-pixel-decor--emerald {
+  background: linear-gradient(170deg, #052e16 0%, #16a34a 55%, #d9f99d 100%);
+}
+
+.nav__promo-card:hover .promo-pixel-decor {
+  filter: saturate(1.15) brightness(1.04);
+}
+
+.nav__promo-content {
+  padding: 10px 6px 0;
+}
+
+.nav__promo-title {
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.nav__promo-arrow {
+  color: #8a8a8a;
+  font-size: 13px;
+}
+
+.nav__promo-card:hover .nav__promo-arrow {
+  color: #111111;
+}
+
+.nav__promo-blurb {
+  margin-top: 2px;
+  color: #757575;
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+/* The motif row goes: nothing but the items. */
+.nav__dropdown-footer-row {
+  display: none;
+}
+
+/* The page behind: lightly dimmed and blurred. */
+.nav-scrim {
+  background-color: rgba(20, 20, 20, 0.18);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@media (max-width: 980px) {
+  .nav__dropdown-col--cards {
+    padding: 18px 4px 28px;
+    border-top: 1px solid #f1f1f1;
+  }
+}
+
+@media (max-width: 640px) {
+  /* One column: the items, then the cards. The column labels sit in a row of
+     their own above both lists, so on a phone they'd read as one stacked pair
+     over the wrong list; they step out. */
+  .nav__dropdown-header-row {
+    display: none;
+  }
+
+  .nav__dropdown-col,
+  .nav__dropdown-col--cards {
+    grid-column: 1;
+  }
+
+  .nav__dropdown-col:first-of-type {
+    padding-top: 12px;
+  }
+
+  .nav__dropdown-col {
+    padding: 2px 4px 14px;
+    border-bottom: 1px solid #f3f3f3;
+  }
+
+  .nav__dropdown-col--cards {
+    flex-direction: row;
+    padding: 16px 10px 20px;
+    border-top: 0;
+    border-bottom: 0;
+  }
+
+  .nav__promo-card .promo-pixel-decor {
+    height: 84px;
+  }
+}
+
+/* --- The drawer, dark (over Flash's hero) ------------------------------------- */
+.nav[data-tone="dark"] .nav__dropdown,
+.nav[data-tone="dark"] .nav__dropdown-inner {
+  background-color: #0a0a0a;
+}
+
+.nav[data-tone="dark"] .nav__dropdown {
+  border-bottom-color: #1c1c1c;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-bar-rule {
+  border-bottom-color: #1a1a1a;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-title {
+  color: #8a8a8a;
+}
+
+.nav[data-tone="dark"] .nav__mega-item:hover {
+  background-color: #151515;
+}
+
+.nav[data-tone="dark"] .nav__mega-item-title,
+.nav[data-tone="dark"] .nav__promo-title {
+  color: #f2f2f2;
+}
+
+.nav[data-tone="dark"] .nav__mega-item-blurb,
+.nav[data-tone="dark"] .nav__promo-blurb {
+  color: #959595;
+}
+
+.nav[data-tone="dark"] .nav-pixel-icon {
+  border-color: #262626;
+  background: #121212;
+}
+
+.nav[data-tone="dark"] .nav__mega-item:hover .nav-pixel-icon {
+  border-color: #333333;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(1) .nav-pixel-icon { color: #8b8bf0; }
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(2) .nav-pixel-icon { color: #f08560; }
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(3) .nav-pixel-icon { color: #4fbf82; }
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(4) .nav-pixel-icon { color: #64a6ea; }
+
+.nav[data-tone="dark"] .nav__promo-card {
+  border-color: #242424;
+  background: #101010;
+}
+
+.nav[data-tone="dark"] .nav__promo-card:hover {
+  border-color: #333333;
+  background-color: #101010;
+}
+
+.nav[data-tone="dark"] .nav__promo-arrow {
+  color: #8a8a8a;
+}
+
+.nav[data-tone="dark"] .nav__promo-card:hover .nav__promo-arrow {
+  color: #ffffff;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-col {
+  border-bottom-color: #1a1a1a;
+}
+
+/* Flash's logo is white; over the light bar it's drawn dark. */
+.nav:not([data-tone="dark"]) .nav__flash img {
+  filter: invert(1);
+}
+
+/* --- The drawer's two columns: the four links, then the Flash card ------------- */
+.nav__dropdown-header-row,
+.nav__dropdown-body-row {
+  grid-template-columns: 1fr minmax(300px, 380px) minmax(300px, 380px) 1fr;
+}
+
+@media (max-width: 980px) {
+  .nav__dropdown-header-row,
+  .nav__dropdown-body-row {
+    grid-template-columns: 1fr minmax(240px, 1fr) minmax(240px, 1fr) 1fr;
+  }
+
+  .nav__dropdown-col--cards {
+    grid-column: auto;
+    padding: 4px 4px 28px 18px;
+    border-top: 0;
+  }
+}
+
+/* The Flash card: the white logo centred on a deep, softly lit ground. */
+.nav__promo-card--flash {
+  flex: 1 1 auto;
+}
+
+.nav__flash-visual {
+  position: relative;
+  display: grid;
+  height: 132px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    radial-gradient(120% 90% at 50% 120%, rgba(211, 149, 50, 0.32), transparent 60%),
+    radial-gradient(80% 70% at 20% 0%, rgba(255, 255, 255, 0.1), transparent 70%),
+    #070707;
+}
+
+.nav__flash-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+}
+
+.nav__flash-visual img {
+  position: relative;
+  width: 46%;
+  height: auto;
+  transition: scale 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav__promo-card--flash:hover .nav__flash-visual img {
+  scale: 1.04;
+}
+
+.nav[data-open] .nav__dropdown-col--cards .nav__promo-card {
+  transition-delay: 150ms;
+}
+
+@media (max-width: 640px) {
+  .nav__dropdown-header-row,
+  .nav__dropdown-body-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nav__dropdown-col--cards {
+    padding: 14px 10px 20px;
+  }
+
+  .nav__flash-visual {
+    height: 110px;
+  }
+}
+
+/* The Flash card's corners: barely rounded. */
+.nav__promo-card {
+  border-radius: 3px;
+}
+
+.nav__flash-visual,
+.nav__promo-card .promo-pixel-decor {
+  border-radius: 2px;
+}
+
+/* --- Phones: a drawer as tall as its contents ----------------------------------
+   It used to open to the full height of the screen whatever it held, leaving
+   most of it empty under four links and a card. Now it unfolds to its contents
+   (the same 0fr → 1fr fold as on wider screens), scrolling only if a short
+   screen can't hold them; and everything sits on the bar's own 16px gutter. */
+@media (max-width: 640px) {
+  .nav__dropdown {
+    display: grid;
+    height: auto;
+    max-height: calc(100dvh - var(--announcement-h, 0px));
+    grid-template-rows: 0fr;
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      grid-template-rows 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.16s ease;
+  }
+
+  .nav[data-open] .nav__dropdown {
+    height: auto;
+    grid-template-rows: 1fr;
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      grid-template-rows 0.44s cubic-bezier(0.22, 0.66, 0.24, 1),
+      border-color 0.16s ease;
+  }
+
+  .nav__dropdown-clip {
+    height: auto;
+    max-height: calc(100dvh - var(--announcement-h, 0px));
+  }
+
+  .nav__dropdown-inner {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .nav__dropdown-col {
+    padding: 8px 6px 12px;
+  }
+
+  .nav__mega-item {
+    padding: 10px;
+  }
+
+  .nav__dropdown-col--cards {
+    padding: 14px 16px 18px;
+  }
+
+  .nav__flash-visual {
+    height: clamp(88px, 26vw, 120px);
+  }
+}
+
+/* --- Link icons: plain line glyphs in one quiet ink; titles a size up ----------- */
+/* (:nth-child(n) lifts these over the per-row colours set earlier.) */
+.nav .nav__dropdown-col .nav__mega-item:nth-child(n) .nav-pixel-icon {
+  color: #4a4a4a;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(n) .nav-pixel-icon {
+  color: #c4c4c4;
+}
+
+.nav .nav__dropdown-col .nav__mega-item:nth-child(n):hover .nav-pixel-icon {
+  color: #111111;
+}
+
+.nav[data-tone="dark"] .nav__dropdown-col .nav__mega-item:nth-child(n):hover .nav-pixel-icon {
+  color: #ffffff;
+}
+
+.nav-pixel-icon__glyph {
+  width: 18px;
+  height: 18px;
+}
+
+.nav__mega-item-title {
+  font-size: 15.5px;
+}
+
+/* Phones: the Flash card first, then the links; titles larger still. */
+@media (max-width: 640px) {
+  .nav__dropdown-col--cards {
+    order: -1;
+    padding: 14px 16px 6px;
+  }
+
+  .nav__dropdown-col:not(.nav__dropdown-col--cards) {
+    padding-top: 6px;
+    border-bottom: 0;
+  }
+
+  .nav__mega-item-title {
+    font-size: 17px;
+  }
+
+  .nav__mega-item-blurb {
+    font-size: 13px;
+  }
+}
+
+/* --- Phones: the drawer is the whole screen ------------------------------------
+   Under the bar it fills the rest of the screen: the Flash card large across
+   the top, then the four links as big single-line titles, with room all round. */
+@media (max-width: 640px) {
+  .nav__dropdown {
+    display: block;
+    height: 0;
+    max-height: none;
+    overflow: hidden;
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav[data-open] .nav__dropdown {
+    height: calc(100dvh - var(--announcement-h, 0px));
+    transition:
+      top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav__dropdown-clip {
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .nav__dropdown-col--cards {
+    padding: 22px 24px 10px;
+  }
+
+  .nav__flash-visual {
+    height: clamp(150px, 46vw, 220px);
+  }
+
+  .nav__flash-visual img {
+    width: 52%;
+  }
+
+  .nav__promo-content {
+    padding: 14px 6px 4px;
+  }
+
+  .nav__promo-title {
+    font-size: 17px;
+  }
+
+  .nav__promo-blurb {
+    font-size: 13.5px;
+  }
+
+  .nav__dropdown-col:not(.nav__dropdown-col--cards) {
+    gap: 4px;
+    padding: 14px 14px 24px;
+  }
+
+  .nav__mega-item {
+    gap: 16px;
+    padding: 14px 10px;
+  }
+
+  /* Titles only, and large. */
+  .nav__mega-item-blurb {
+    display: none;
+  }
+
+  .nav__mega-item-title {
+    font-size: 23px;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-pixel-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-pixel-icon__glyph {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* The link icons' tiles: barely rounded, like the Flash card. */
+.nav .nav-pixel-icon {
+  border-radius: 3px;
+}
