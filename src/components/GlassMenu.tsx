@@ -1,3 +1,4 @@
+import { useNearViewport } from "../lib/useNearViewport";
 import { Children, useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { GROUND, LATTICE_INK, TILE_H, TILE_SRC, TILE_W } from "./VideoPromptGlass";
 import "./GlassMenu.css";
@@ -183,7 +184,11 @@ export default function GlassMenu({
     };
   }, [open, toggle]);
 
+  // Its glass starts once the panel is near the screen (it begins far below it).
+  const near = useNearViewport(rootRef);
+
   useEffect(() => {
+    if (!near) return;
     const root = rootRef.current;
     const canvas = canvasRef.current;
     const panel = root?.closest<HTMLElement>(".about__video");
@@ -350,7 +355,7 @@ export default function GlassMenu({
         tile && gl.deleteTexture(tile);
       }
     };
-  }, [count]);
+  }, [count, near]);
 
   const showBusy = !open && busy !== null && busy !== undefined;
 
