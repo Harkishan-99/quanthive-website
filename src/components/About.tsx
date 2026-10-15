@@ -10,7 +10,7 @@ import "./About.css";
 
 // The third section (frames 4040:3614, 2:28): the heading top-left, then a ruled
 // grid of square cells. A video panel (10×7; 7×5 on tablets, 8×13 on phones), the
-// framed QuantHive wordmark beside it, a founder card (2×2 on large screens) and a
+// framed QuantHive wordmark beside it, a Blog tile (3×2) and a
 // 3×1 call to action sit on it, so every edge lands on a grid line.
 //
 // Set VIDEO_SRC (and optionally VIDEO_POSTER) to fill the panel; until then it is
@@ -18,25 +18,17 @@ import "./About.css";
 const VIDEO_SRC: string | undefined = undefined;
 const VIDEO_POSTER: string | undefined = undefined;
 
-// Placeholder copy and portrait — swap in the name, role, a line or two, and a
-// `photo` URL (a square, ideally monochrome) when they're ready.
-const FOUNDERS = [
-  {
-    name: "Founder Name",
-    role: "Co-founder & CTO",
-    initials: "FN",
-    photo: undefined as string | undefined,
-    tone: "#76826f",
-    bio: "Builds the agents and data systems behind Flash, turning raw market data, filings and calls into sourced answers an investor can trust.",
-  },
-];
+type Face = "ghost" | "schibsted" | "bricolage" | "hanken" | "host" | "power";
 
-type Face = "ghost" | "schibsted" | "bricolage" | "hanken" | "host";
-
-/** A run of the heading set in one face; `soft` is the frame's lighter -0.48px tracking. */
-function F({ f, soft, children }: { f: Face; soft?: boolean; children: string }) {
+/** A run of the heading set in one face; `soft` is the frame's lighter -0.48px
+ *  tracking, `open` and `large` as in the section above (Capabilities.css). */
+function F({ f, soft, open, large, children }: { f: Face; soft?: boolean; open?: boolean; large?: boolean; children: string }) {
   return (
-    <span className={`cap-face cap-face--${f}`} data-track={soft ? "soft" : undefined}>
+    <span
+      className={`cap-face cap-face--${f}`}
+      data-track={soft ? "soft" : open ? "open" : undefined}
+      data-large={large || undefined}
+    >
       {children}
     </span>
   );
@@ -115,33 +107,31 @@ export default function About() {
       <header className="about__header">
         {/* Runs follow the frame's spans letter for letter. */}
         <h2 id="about-title">
+          {/* Set as the section above's heading is: Host Grotesk and Bricolage,
+              a Ghost capital, the odd Schibsted or Power Grotesk letter. */}
           <span className="about__title-line">
-            <F f="ghost" soft>R</F>
-            <F f="schibsted" soft>ede</F>
-            <F f="ghost" soft>f</F>
-            <F f="hanken">i</F>
-            <F f="bricolage">n</F>
-            <F f="host">g </F>
-            <F f="ghost">T</F>
-            <F f="bricolage">h</F>
-            <F f="schibsted">e </F>
-            <F f="ghost">F</F>
-            <F f="bricolage">utur</F>
-            <F f="schibsted">e </F>
-            <F f="hanken">O</F>
-            <F f="ghost">f </F>
+            <F f="ghost">R</F>
+            <F f="schibsted">e</F>
+            <F f="bricolage">d</F>
+            <F f="schibsted">e</F>
+            <F f="power">f</F>
+            <F f="host">ining </F>
+            <F f="bricolage">The </F>
+            <F f="schibsted">F</F>
+            <F f="host">uture </F>
+            <F f="bricolage">O</F>
+            <F f="power">f </F>
             <F f="schibsted">I</F>
-            <F f="bricolage">nvest</F>
-            <F f="ghost">m</F>
-            <F f="bricolage">ent </F>
-            <F f="schibsted">I</F>
-            <F f="bricolage">nt</F>
-            <F f="host">e</F>
-            <F f="ghost">ll</F>
-            <F f="host">ige</F>
-            <F f="bricolage">n</F>
-            <F f="ghost">c</F>
-            <F f="host">e</F>
+            <F f="host">nvestment </F>
+            <F f="bricolage">A</F>
+            <F f="host">n</F>
+            <F f="schibsted">a</F>
+            <F f="host">l</F>
+            <F f="schibsted" open>y</F>
+            <F f="bricolage" large>t</F>
+            <F f="host">i</F>
+            <F f="bricolage">c</F>
+            <F f="schibsted">s</F>
             <F f="bricolage">,</F>
           </span>{" "}
           <span className="about__title-line about__title-line--light">
@@ -232,34 +222,18 @@ export default function About() {
             <BrandLogo className="about__brand-logo" />
           </div>
 
-          {FOUNDERS.map((founder, index) => (
-            <article
-              className="about__founder"
-              key={index}
-              style={{ "--tone": founder.tone } as CSSProperties}
-            >
-              <div className="about__founder-body">
-                <span className="about__index">{String(index + 1).padStart(2, "0")}</span>
-                <p className="about__bio">{founder.bio}</p>
-              </div>
-              <footer className="about__founder-foot">
-                <p className="about__name">
-                  {founder.name},
-                  <br />
-                  <span>{founder.role}</span>
-                </p>
-                <div className="about__photo">
-                  {founder.photo ? (
-                    <img src={founder.photo} alt={founder.name} loading="lazy" />
-                  ) : (
-                    <span aria-hidden>{founder.initials}</span>
-                  )}
-                </div>
-              </footer>
-            </article>
-          ))}
+          {/* The blog, 3×2: its name and an arrow; opens /blog (App.tsx takes the
+              link and changes page in place). */}
+          <a className="about__blog" href="/blog">
+            <span className="about__blog-label">Blog</span>
+            <span className="about__blog-key" aria-hidden>
+              <svg viewBox="0 0 16 16">
+                <path d="M4.5 11.5l7-7M5.5 4.5h6v6" />
+              </svg>
+            </span>
+          </a>
 
-          <a className="about__cta" href="mailto:mail@quanthive.in">
+          <a className="about__cta" href="/contact">
             <span className="about__cta-label">Get in touch</span>
             <span className="about__cta-key" aria-hidden>
               <svg viewBox="0 0 16 16">

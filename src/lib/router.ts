@@ -1,35 +1,66 @@
 // The site's pages and their addresses:
 //
-//   /             the QuantHive landing page
-//   /flash        Flash's page (old /#flash and /#product links still open it)
-//   /#about-us    the About page
+//   /         the QuantHive landing page
+//   /flash    Flash's page (old /#flash and /#product links still open it)
+//   /about    the About page (old /#about-us links still open it)
+//   /team     the Team page
+//   /contact  the Contact page
+//   /blog     the Blog page
+//   /blog/<slug>  an article (src/content/articles.ts)
+//   anything else an "under maintenance" note, until that page is built
 //
 // Moving between them never reloads: navigate() pushes the address and App.tsx
 // changes page (with its transition) on that, on back/forward, and on a change of
 // hash.
+//
+// To add a page: add it to Page and PAGE_URL below (and a title in App.tsx). The
+// hosts already serve the app at any path (vercel.json, server.ts), so a refresh
+// on the new address works with nothing else to set up.
 
-export type Page = "landing" | "product" | "about";
+export type Page = "landing" | "product" | "about" | "team" | "contact" | "blog" | "article" | "maintenance";
 
 export const PAGE_URL: Record<Page, string> = {
   landing: "/",
   product: "/flash",
-  about: "/#about-us",
+  about: "/about",
+  team: "/team",
+  contact: "/contact",
+  blog: "/blog",
+  article: "/blog", // an article lives at /blog/<slug> (src/content/articles.ts)
+  maintenance: "/maintenance", // any address with no page yet
+};
+
+// Addresses the site used before, still honoured: shown as the page's own.
+const OLD_HASHES: Record<string, Page> = {
+  "#flash": "product",
+  "#product": "product",
+  "#about-us": "about",
 };
 
 const NAVIGATE_EVENT = "quanthive:navigate";
 
-/** The page a location (or URL) shows. */
-export function pageFrom(location: { pathname: string; hash: string } = window.location): Page {
-  if (location.hash === "#about-us") return "about";
-  const path = location.pathname.replace(/\/+$/, "");
-  if (path === "/flash" || location.hash === "#flash" || location.hash === "#product") return "product";
-  return "landing";
+const trimPath = (path: string) => path.replace(/\/+$/, "") || "/";
+
+/** The page at a path, or null if it isn't one of the site's pages. */
+export function pageAt(pathname: string): Page | null {
+  const path = trimPath(pathname);
+  if (/^\/blog\/[^/]+$/.test(path)) return "article";
+  const page = (Object.keys(PAGE_URL) as Page[]).find((name) => name !== "article" && PAGE_URL[name] === path);
+  if (page) return page;
+  // Any other page-like address (not a file, not the API) has no page yet.
+  if (!/\.[a-z0-9]+$/i.test(path) && !path.startsWith("/api/") && path !== "/showcase") return "maintenance";
+  return null;
 }
 
-/** Old hash addresses for Flash's page are shown as /flash (no new history entry). */
+/** The page a location (or URL) shows. Unknown paths show the landing page. */
+export function pageFrom(location: { pathname: string; hash: string } = window.location): Page {
+  return OLD_HASHES[location.hash] ?? pageAt(location.pathname) ?? "landing";
+}
+
+/** Old hash addresses are shown as the page's own path (no new history entry). */
 export function canonicaliseAddress() {
-  const { hash } = window.location;
-  if (hash === "#flash" || hash === "#product") window.history.replaceState(null, "", "/flash");
+  const page = OLD_HASHES[window.location.hash];
+  if (page) window.history.replaceState(null, "", PAGE_URL[page]);
 }
 
 /** Goes to a page of the site without reloading. */

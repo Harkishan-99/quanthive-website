@@ -2,51 +2,55 @@ import { useEffect, useRef } from "react";
 import { scrollPageTo } from "../lib/smoothScroll";
 import "./Footer.css";
 
-const FOOTER_COLUMNS = [
+// Every link opens something: the site's own pages (App.tsx changes page in
+// place), or — for pages not built yet — the "under maintenance" note. The Certified column is a list, not links — there are no
+// certificate pages to open.
+const FOOTER_COLUMNS: { title: string; links: [string, string | null][] }[] = [
   {
     title: "Platform",
     links: [
       ["Overview", "/flash"],
       ["Agents", "/flash"],
       ["Intelligence", "/#about"],
-      ["Projects", "/#about"],
-      ["Watchtower", "/#about"],
-      ["Data", "/#about"],
+      ["Projects", "/projects"],
+      ["Watchtower", "/watchtower"],
+      ["Data", "/data"],
     ],
   },
   {
     title: "Company",
     links: [
-      ["Customers", "/#about"],
-      ["Security", "/#about"],
-      ["About", "/#about-us"],
-      ["Careers", "mailto:mail@quanthive.in"],
-      ["Newsroom", "/#about"],
+      ["Customers", "/customers"],
+      ["Security", "/security"],
+      ["About", "/about"],
+      ["Team", "/team"],
+      ["Careers", "/careers"],
+      ["Newsroom", "/newsroom"],
     ],
   },
   {
     title: "Resources",
     links: [
-      ["Blog", "/#about"],
-      ["Reports", "/#about"],
-      ["Press Kit", "mailto:mail@quanthive.in"],
-      ["Legal", "mailto:mail@quanthive.in"],
-      ["Privacy Policy", "mailto:mail@quanthive.in"],
-      ["Terms of Use", "mailto:mail@quanthive.in"],
+      ["Blog", "/blog"],
+      ["Reports", "/reports"],
+      ["Press Kit", "/press"],
+      ["Legal", "/legal"],
+      ["Privacy Policy", "/privacy"],
+      ["Terms of Use", "/terms"],
     ],
   },
   {
     title: "Certified",
     links: [
-      ["SOC 2 Type II", "/#about"],
-      ["ISO 27001", "/#about"],
-      ["ISO 42001", "/#about"],
-      ["CCPA", "/#about"],
-      ["GDPR", "/#about"],
-      ["EU AI Act", "/#about"],
+      ["SOC 2 Type II", null],
+      ["ISO 27001", null],
+      ["ISO 42001", null],
+      ["CCPA", null],
+      ["GDPR", null],
+      ["EU AI Act", null],
     ],
   },
-] as const;
+];
 
 const SOCIAL_LINKS = [
   {
@@ -58,7 +62,7 @@ const SOCIAL_LINKS = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com",
+    href: "https://www.linkedin.com/company/quanthive/home/",
     icon: (
       <path d="M4.6 6.8H2V16h2.6V6.8ZM3.3 2.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM16 10.6c0-2.5-.5-4-3.3-4-1.3 0-2.2.7-2.6 1.4V6.8H7.6V16h2.6v-4.6c0-1.2.2-2.4 1.7-2.4s1.5 1.4 1.5 2.5V16H16v-5.4Z" />
     ),
@@ -115,7 +119,7 @@ export default function Footer() {
                     <a href="mailto:mail@quanthive.in">mail@quanthive.in</a>
                   </li>
                   <li>
-                    <a href="mailto:mail@quanthive.in">Contact sales</a>
+                    <a href="/contact">Contact sales</a>
                   </li>
                 </ul>
               </section>
@@ -127,9 +131,13 @@ export default function Footer() {
                   <ul>
                     {column.links.map(([label, href]) => (
                       <li key={label}>
-                        <a href={href} {...linkProps(href)}>
-                          {label}
-                        </a>
+                        {href ? (
+                          <a href={href} {...linkProps(href)}>
+                            {label}
+                          </a>
+                        ) : (
+                          <span className="site-footer__item">{label}</span>
+                        )}
                       </li>
                     ))}
                   </ul>

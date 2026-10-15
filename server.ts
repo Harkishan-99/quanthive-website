@@ -1,6 +1,8 @@
 import { join, normalize } from "node:path";
 import index from "./index.html";
-import { rateLimited, submit, validate } from "./api/waitlist.ts";
+import { handleContact } from "./api/contact.ts";
+import { handleNewsletter } from "./api/newsletter.ts";
+import { handleWaitlist } from "./api/waitlist.ts";
 
 const ICON_DIR = join(import.meta.dir, "src/assets/icons");
 const IMAGE_DIR = join(import.meta.dir, "src/assets/images");
@@ -8,6 +10,7 @@ const FIGMA_SOLUTION_IMAGE_DIR = join(IMAGE_DIR, "figma-solution");
 const FIGMA_PRODUCT_IMAGE_DIR = join(IMAGE_DIR, "figma-product");
 const FIGMA_CAPABILITIES_IMAGE_DIR = join(IMAGE_DIR, "figma-capabilities");
 const VIDEO_SHOT_IMAGE_DIR = join(IMAGE_DIR, "video-shot");
+const TEAM_IMAGE_DIR = join(IMAGE_DIR, "team");
 const VIDEO_DIR = join(import.meta.dir, "src/assets/videos");
 
 // The video panel's download: rendered on demand (scripts/render-video.ts) and
@@ -43,9 +46,10 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 4173),
   routes: {
     "/": index,
-    "/flash": index, // Flash's page (App.tsx / src/lib/router.ts pick the page)
-    "/flash/": index,
-    "/showcase": index, // the demo alone, full screen (App renders Showcase)
+    // Every page of the site (/flash, /about, /showcase, and any added later) is
+    // the same app; src/lib/router.ts picks the page from the address. More
+    // specific routes below (assets, the API) take precedence over this one.
+    "/*": index,
     "/icons/:file": (req) =>
       new Response(Bun.file(join(ICON_DIR, safeName(req.params.file)))),
     "/images/figma-solution/:file": (req) =>
@@ -60,27 +64,22 @@ const server = Bun.serve({
     },
     // Flash waitlist sign-ups: stored, then mailed over SMTP (api/waitlist.ts).
     "/api/waitlist": {
-      POST: async (req, srv) => {
-        const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || srv.requestIP(req)?.address || "unknown";
-        if (rateLimited(ip)) return Response.json({ ok: false, error: "Too many tries — please wait a few minutes." }, { status: 429 });
-        const body = await req.json().catch(() => null);
-        // A field people never see; bots fill it in.
-        if (body && typeof body === "object" && (body as { website?: unknown }).website) return Response.json({ ok: true });
-        const result = validate(body);
-        if ("error" in result) return Response.json({ ok: false, error: result.error }, { status: 400 });
-        try {
-          const { mailed } = await submit(result.signup, { ip, ua: req.headers.get("user-agent") ?? "" });
-          return Response.json({ ok: true, mailed });
-        } catch (error) {
-          console.error("[waitlist] could not store sign-up:", error);
-          return Response.json({ ok: false, error: "Something went wrong — please try again." }, { status: 500 });
-        }
-      },
+      POST: (req, srv) => handleWaitlist(req, srv.requestIP(req)?.address),
+    },
+    // The blog's newsletter sign-up (api/newsletter.ts).
+    "/api/newsletter": {
+      POST: (req, srv) => handleNewsletter(req, srv.requestIP(req)?.address),
+    },
+    // The contact page's form (api/contact.ts).
+    "/api/contact": {
+      POST: (req, srv) => handleContact(req, srv.requestIP(req)?.address),
     },
     "/videos/:file": (req) =>
       new Response(Bun.file(join(VIDEO_DIR, safeName(req.params.file)))),
     "/images/video-shot/:file": (req) =>
       new Response(Bun.file(join(VIDEO_SHOT_IMAGE_DIR, safeName(req.params.file)))),
+    "/images/team/:file": (req) =>
+      new Response(Bun.file(join(TEAM_IMAGE_DIR, safeName(req.params.file)))),
     "/images/:file": (req) =>
       new Response(Bun.file(join(IMAGE_DIR, safeName(req.params.file)))),
     // News about the followed companies, proxied so the GNews key stays

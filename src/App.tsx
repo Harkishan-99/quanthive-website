@@ -2,7 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
+import ArticlePage from "./components/ArticlePage";
+import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
+import ContactPage from "./components/ContactPage";
+import MaintenancePage from "./components/MaintenancePage";
+import TeamPage from "./components/TeamPage";
 import EdgeMotifs from "./components/EdgeMotifs";
 import FlashProductPage from "./components/FlashProductPage";
 import Footer from "./components/Footer";
@@ -12,7 +17,8 @@ import About from "./components/About";
 import AboutPage from "./components/AboutPage";
 import WaitlistDialog, { onWaitlistRequest } from "./components/WaitlistDialog";
 import Showcase from "./components/Showcase";
-import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageFrom, type Page } from "./lib/router";
+import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageAt, pageFrom, type Page } from "./lib/router";
+import { markTransition } from "./lib/pageTransition";
 import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
 
@@ -31,7 +37,23 @@ if (typeof window !== "undefined") canonicaliseAddress();
 // Nav renders last so its panel and scrim paint over the page without depending on
 // z-index alone.
 // /showcase: the About panel's demo alone, full screen, for a display.
-const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname === "/showcase";
+const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") === "/showcase";
+
+// The browser tab's name on each page (index.html carries the landing page's).
+const PAGE_TITLE: Record<Page, string> = {
+  landing: "QuantHive | Financial Analytics Made Easy",
+  product: "Flash | QuantHive",
+  about: "About | QuantHive",
+  team: "Team | QuantHive",
+  contact: "Contact | QuantHive",
+  blog: "Blog | QuantHive",
+  article: "Blog | QuantHive", // ArticlePage names the tab after the article
+  maintenance: "Under maintenance | QuantHive",
+};
+
+// The pages that open on a hero; changing between two of them hands one hero
+// over to the other (page-transition.css).
+const isHero = (page: string | undefined) => page === "landing" || page === "product";
 
 export default function App() {
   if (SHOWCASE_ONLY) return <Showcase />;
@@ -63,11 +85,15 @@ function Site() {
   // Arrived from the other hero by the page change below: the arriving hero waits
   // for the change (--page-t0) and its edge marks morph across rather than enter.
   const [handoff, setHandoff] = useState(false);
+  // Hero to hero, the arriving page's ground blooms up from the hero's foot
+  // (page-transition.css): this is the page it blooms for, while it plays.
+  const [bloom, setBloom] = useState<Page | null>(null);
 
   // The page's colours follow it: the nav and announcement bar invert on Flash's
   // dark hero (Nav.css, AnnouncementBar.css), and so does the page ground.
   useEffect(() => {
     document.documentElement.dataset.page = page;
+    if (page !== "article") document.title = PAGE_TITLE[page];
   }, [page]);
 
   // Changing page is one view transition, not a reload (page-transition.css): the
@@ -80,25 +106,48 @@ function Site() {
       canonicaliseAddress();
       const next = pageFrom();
       // Moving within the landing page (its #about section, say) isn't a page change.
-      if (next === document.documentElement.dataset.page) return;
+      // From one article to another, the page stays (ArticlePage follows the
+      // address) and opens at the top.
+      if (next === document.documentElement.dataset.page) {
+        if (next === "article" && !window.location.hash) jumpPageTo(0);
+        return;
+      }
       // Remember where the reader came from (the About page's back arrow).
       document.documentElement.dataset.prevPage = document.documentElement.dataset.page ?? "";
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const animated = !!document.startViewTransition && !reduce;
       // Hero to hero: the arriving hero's timeline waits for the change.
-      const heroToHero = animated && next !== "about" && document.documentElement.dataset.page !== "about";
+      const heroToHero = animated && isHero(next) && isHero(document.documentElement.dataset.page);
       const apply = () => {
         if (heroToHero) document.documentElement.dataset.handoff = "";
         else delete document.documentElement.dataset.handoff;
         flushSync(() => {
           setHandoff(heroToHero);
           setPage(next);
+          setBloom(heroToHero ? next : null);
         });
         document.documentElement.dataset.page = next;
         jumpPageTo(0);
       };
-      if (!animated) apply();
-      else document.startViewTransition(apply);
+      // The edge marks carry across in place only from the very top of the page,
+      // where they sit exactly where the new hero's will. Scrolled at all — even a
+      // little, marks still half on screen — carrying them would slide them in
+      // from above, as the new page opens at the top. Then they enter from their
+      // own sides instead, as the new hero starts (page-transition.css, Hero.css,
+      // EdgeMotifs.css). Set before the old page is captured.
+      const marksAtRest = window.scrollY <= 8;
+      if (heroToHero && !marksAtRest) document.documentElement.dataset.marksEnter = "";
+      else delete document.documentElement.dataset.marksEnter;
+      if (!animated) return apply();
+      const html = document.documentElement;
+      html.dataset.vt = "";
+      const transition = document.startViewTransition(apply);
+      // Heavy set-up on the new page (shaders, masks) waits for this to start.
+      markTransition(transition.ready);
+      void transition.finished.finally(() => {
+        delete html.dataset.vt;
+        setBloom(null);
+      });
     };
     return onAddressChange(go);
   }, []);
@@ -112,7 +161,7 @@ function Site() {
       if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
       const url = new URL(link.href);
       if (url.origin !== window.location.origin) return;
-      if (url.pathname !== "/" && url.pathname.replace(/\/+$/, "") !== "/flash") return;
+      if (!pageAt(url.pathname)) return;
       if (pageFrom(url) === pageFrom() && url.pathname === window.location.pathname) return;
       event.preventDefault();
       navigate(url.pathname + url.hash);
@@ -138,7 +187,7 @@ function Site() {
   const [waitlist, setWaitlist] = useState(false);
   useEffect(() => onWaitlistRequest(() => setWaitlist(true)), []);
   const closeWaitlist = useCallback(() => setWaitlist(false), []);
-  const openAbout = () => goTo("about");
+
 
   return (
     <>
@@ -148,6 +197,16 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "maintenance" ? (
+        <MaintenancePage />
+      ) : page === "article" ? (
+        <ArticlePage />
+      ) : page === "blog" ? (
+        <BlogPage />
+      ) : page === "team" ? (
+        <TeamPage />
+      ) : page === "contact" ? (
+        <ContactPage />
       ) : (
         <>
           {/* Fixed to the viewport, so the pages scroll past a single pair rather than
@@ -163,7 +222,8 @@ function Site() {
       )}
       <Footer />
       <WaitlistDialog open={waitlist} onClose={closeWaitlist} />
-      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onAboutSelect={openAbout} page={page} intro={introOnLanding && page === "landing"} />
+      {bloom && <div className="page-bloom" data-to={bloom} aria-hidden />}
+      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onPageSelect={goTo} page={page} intro={introOnLanding && page === "landing"} />
     </>
   );
 }

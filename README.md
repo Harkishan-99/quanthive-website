@@ -7,7 +7,11 @@ Pages (one app; moving between them never reloads):
 
 - `/` — QuantHive landing page (hero, capabilities, about section)
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
-- `/#about-us` — About page
+- `/about` — About page; old `/#about-us` links redirect here
+- `/team` — Team page; add photos in `src/assets/images/team/` and list them in `TEAM` (`src/components/TeamPage.tsx`)
+- `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); the newest article is its featured post
+- `/blog/<slug>` — an article; articles are data in `src/content/articles.ts` (add one there to publish it; its sections fill the Contents navigator automatically)
+- `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
 ## Requirements
@@ -47,6 +51,8 @@ Bun loads `.env` automatically. **Never commit `.env`** — it's git-ignored.
 | `SMTP_PASS` | for waitlist email | that mailbox's **App Password** (Google: myaccount.google.com/apppasswords, needs 2-Step Verification) |
 | `WAITLIST_TO` | no | where sign-ups are emailed (default `mail@quanthive.in`) |
 | `WAITLIST_FROM` | no | the "from" address (default `SMTP_USER`) |
+| `CONTACT_TO` | no | where contact-form messages are emailed (default `WAITLIST_TO`, then `mail@quanthive.in`) |
+| `WAITLIST_DATA_DIR` | no | where sign-ups are saved (default `data/`) |
 | `PORT` | no | port to listen on (default `4173`) |
 | `NODE_ENV` | in production | set to `production` to serve the minified build without hot reload |
 | `GNEWS_API_KEY` | no | only for the legacy company-news proxy (`/api/company-news`) |
@@ -76,6 +82,27 @@ The site must be run **as a Bun server** (it has API routes: the waitlist form
 posts to `/api/waitlist`). Uploading only the static `dist/` folder to a static
 host will show the pages but **the waitlist form will not work**.
 
+### On Vercel
+
+`vercel.json` sets everything up: Vercel installs with Bun, runs `bun run build`,
+serves `dist/`, and serves the app at every other path (except `/api/…`), so
+refreshing `/flash`, `/about` or any page added later works instead of showing
+Vercel's 404. `api/waitlist.ts` runs as a
+Vercel function for the waitlist form.
+
+1. Import the repo in Vercel and leave the framework preset on **Other**. Don't
+   override the build settings: `vercel.json` provides them.
+2. Project → Settings → Environment Variables: add `SMTP_HOST`, `SMTP_PORT`,
+   `SMTP_USER`, `SMTP_PASS` and optionally `WAITLIST_TO` / `WAITLIST_FROM` (see
+   [Waitlist email (SMTP)](#waitlist-email-smtp--set-up-before-going-live)), then redeploy.
+
+On Vercel the disk is read-only, so sign-ups are **only emailed**, not saved to
+`data/waitlist.jsonl`. If SMTP isn't set up, the form shows an error rather than
+dropping the sign-up. The demo-video download (`/api/video/render`) isn't
+available on Vercel.
+
+### On your own server
+
 On any Linux VM / VPS (or a container platform such as Railway, Render, Fly.io):
 
 ```bash
@@ -83,9 +110,15 @@ bun install --production
 NODE_ENV=production PORT=4173 bun run start      # runs: bun server.ts
 ```
 
-`server.ts` serves the app at both `/` and `/flash`. If you put another server or
-CDN in front, pass `/flash` through to the app (or rewrite it to `/`); don't
-let it 404.
+`server.ts` serves the app at every path (`/`, `/flash`, `/about`, …). If you put
+another server or CDN in front, pass all page paths through to the app (or
+rewrite them to `/index.html`); don't let them 404.
+
+### Adding a page
+
+Add it to `Page` and `PAGE_URL` in `src/lib/router.ts`, and give it a tab title
+in `PAGE_TITLE` (`src/App.tsx`). Both hosts already serve the app at any path,
+so nothing else is needed for the new address to survive a refresh.
 
 Then put it behind your web server / load balancer (e.g. nginx or Caddy) for
 HTTPS and your domain, and keep it running with a process manager, e.g.:
@@ -173,7 +206,7 @@ nc -vz smtp.gmail.com 465
 
 ### 4. Test it
 
-1. Open `/#flash` on the live site, click "Join waitlist" and submit the form
+1. Open `/flash` on the live site, click "Join waitlist" and submit the form
    once.
 2. The email should arrive at `WAITLIST_TO` from "Flash waitlist". Replying to
    it replies to the person who signed up.
@@ -207,6 +240,8 @@ Common failures:
 ```
 server.ts            Bun server: pages, assets, /api/waitlist, /api/video/render
 api/waitlist.ts      waitlist validation, storage (data/waitlist.jsonl) and SMTP mail
+api/contact.ts       contact form: validation, storage (data/contact.jsonl), same SMTP mail
+api/newsletter.ts    blog newsletter sign-ups (data/newsletter.jsonl), same SMTP mail
 index.html           app entry
 src/App.tsx          page switching + page transitions
 src/components/      sections and pages (Hero, Capabilities, About, AboutPage, FlashPartners, Nav, …)
