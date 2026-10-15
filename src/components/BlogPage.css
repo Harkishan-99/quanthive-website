@@ -271,32 +271,26 @@ a.blog-page__post-link:hover {
 /* --- Phones ---------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
-  /* About 50% taller than the plain stack: a deeper image, more air between. */
+  /* Tall, with the space given to the text: a shorter image, and the tag,
+     title, excerpt and byline set well apart. */
   .blog-page__featured {
     grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    padding: 20px 20px 24px;
+    gap: 46px;
+    padding: 24px 22px 32px;
   }
 
   .blog-page__featured-image {
     grid-row: 1;
-    aspect-ratio: 320 / 352;
+    aspect-ratio: 320 / 250;
   }
 
   .blog-page__featured-title {
-    margin-top: 16px;
-  }
-
-  .blog-page__excerpt {
-    margin-top: 14px;
-  }
-
-  .blog-page__byline {
-    padding-top: 34px;
+    margin-top: 28px;
   }
 
   .blog-page__excerpt {
     max-width: none;
+    margin-top: 28px;
   }
 
   .blog-page__featured-title {
@@ -306,6 +300,7 @@ a.blog-page__post-link:hover {
   .blog-page__byline {
     display: flex;
     justify-content: space-between;
+    padding-top: 60px;
   }
 
   .blog-page__newsletter {
