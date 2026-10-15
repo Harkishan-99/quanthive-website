@@ -30,10 +30,11 @@
 .testimonials__title {
   margin: 0 var(--gutter) clamp(32px, 3.2vw, 64px);
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
-  font-size: max(24px, calc(38 * var(--ref) * 1.3333));
+  /* The same size as the landing page's second-section heading (Capabilities.css). */
+  font-size: max(24px, 1.797vw);
   font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: normal;
+  line-height: 1.08;
 }
 
 .testimonials__title-line {
