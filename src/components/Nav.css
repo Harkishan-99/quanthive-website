@@ -1812,3 +1812,10 @@
     transition-delay: 0s !important;
   }
 }
+
+/* Both "Request demo" keys are buttons (they open the waitlist form). */
+.nav__cta,
+.nav__drawer-cta {
+  font-family: inherit;
+  cursor: pointer;
+}

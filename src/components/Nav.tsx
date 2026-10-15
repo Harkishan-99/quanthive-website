@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import "./Nav.css";
 import { NavIconBox } from "./NavPixelIcons";
+import { openWaitlist } from "./WaitlistDialog";
 
 // Original navbar items — preserved exactly from the original codebase
 const ORIGINAL_ITEMS = [
@@ -245,9 +246,9 @@ export default function Nav({
                   <span />
                 </span>
               </button>
-              <a className="nav__cta" href="mailto:mail@quanthive.in">
+              <button type="button" className="nav__cta" aria-haspopup="dialog" onClick={openWaitlist}>
                 Request demo
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -335,9 +336,18 @@ export default function Nav({
               </div>
 
               {/* Phones: the bar's "Request demo" lives here, at the drawer's foot. */}
-              <a className="nav__drawer-cta" href="mailto:mail@quanthive.in" tabIndex={open ? 0 : -1}>
+              <button
+                type="button"
+                className="nav__drawer-cta"
+                aria-haspopup="dialog"
+                tabIndex={open ? 0 : -1}
+                onClick={() => {
+                  onOpenChange(false);
+                  openWaitlist();
+                }}
+              >
                 Request demo
-              </a>
+              </button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
@@ -10,6 +10,7 @@ import Hero from "./components/Hero";
 import Nav from "./components/Nav";
 import About from "./components/About";
 import AboutPage from "./components/AboutPage";
+import WaitlistDialog, { onWaitlistRequest } from "./components/WaitlistDialog";
 import Showcase from "./components/Showcase";
 import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
@@ -126,6 +127,11 @@ function Site() {
     else window.location.hash = hash;
   };
   const openProduct = () => goTo("flash");
+
+  // The waitlist form, over whichever page is showing (WaitlistDialog.openWaitlist).
+  const [waitlist, setWaitlist] = useState(false);
+  useEffect(() => onWaitlistRequest(() => setWaitlist(true)), []);
+  const closeWaitlist = useCallback(() => setWaitlist(false), []);
   const openAbout = () => goTo("about-us");
 
   return (
@@ -150,6 +156,7 @@ function Site() {
         </>
       )}
       <Footer />
+      <WaitlistDialog open={waitlist} onClose={closeWaitlist} />
       <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onAboutSelect={openAbout} page={page} intro={introOnLanding && page === "landing"} />
     </>
   );

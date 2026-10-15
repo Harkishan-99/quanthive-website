@@ -11,6 +11,18 @@ import "./WaitlistDialog.css";
 
 type Phase = "idle" | "sending" | "sent";
 
+// One form for the whole site (App.tsx mounts it): anything can open it —
+// "Join waitlist" on Flash's hero, "Request demo" in the nav — from any page.
+const OPEN_EVENT = "quanthive:waitlist";
+export function openWaitlist() {
+  window.dispatchEvent(new Event(OPEN_EVENT));
+}
+/** Calls `onOpen` whenever something asks for the form. */
+export function onWaitlistRequest(onOpen: () => void) {
+  window.addEventListener(OPEN_EVENT, onOpen);
+  return () => window.removeEventListener(OPEN_EVENT, onOpen);
+}
+
 export default function WaitlistDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [phase, setPhase] = useState<Phase>("idle");
   // In the page only while open or fading out (so its glass isn't drawing for

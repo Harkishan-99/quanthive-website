@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import LiquidGlassPill from "./LiquidGlassPill";
 import MetalSurface from "./MetalSurface";
-import WaitlistDialog from "./WaitlistDialog";
+import { openWaitlist } from "./WaitlistDialog";
 import { PEARL, STAINLESS } from "../shaders/liquidMetal";
 import "./Hero.css";
 
@@ -259,9 +259,6 @@ export default function Hero({
   // Arriving from the other page, the sweep waits for the page change
   // (--page-t0, page-transition.css).
   const lightRef = useLightRays(flash, handoff ? 1500 : 0);
-  const [waitlist, setWaitlist] = useState(false);
-  const openWaitlist = useCallback(() => setWaitlist(true), []);
-  const closeWaitlist = useCallback(() => setWaitlist(false), []);
 
   return (
     <main
@@ -373,7 +370,6 @@ export default function Hero({
           <WaitlistButton onOpen={openWaitlist} />
         </div>
       )}
-      {flash && <WaitlistDialog open={waitlist} onClose={closeWaitlist} />}
     </main>
   );
 }
