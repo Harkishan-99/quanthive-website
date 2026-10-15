@@ -220,12 +220,12 @@
    and may run wider than the lockup's narrow column up to a 16px page gutter. */
 @media (max-width: 640px) {
   .hero__headline {
-    font-size: clamp(31px, 8.6vw, 50px); /* clears the edge motifs */
+    font-size: clamp(26px, 8.6vw, 50px); /* clears the edge motifs, down to 320px */
   }
 
   .hero__sub {
     text-wrap: balance;
-    font-size: 8.75px;
+    font-size: clamp(8.75px, 2.4vw, 11px);
   }
 
   .hero__sub span {
@@ -538,6 +538,14 @@
   /* Width from the padding alone here (see above), not the reference scale. */
   .hero__inner {
     width: calc(100% - 2 * var(--hero-pad));
+  }
+}
+
+/* Portrait tablets: the lockup at most 60% of the width, so it keeps clear of
+   the edge marks (the reference scale alone brings it within a few pixels). */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+  .hero {
+    --hero-pad: 20vw;
   }
 }
 
@@ -1055,6 +1063,10 @@
     --flash-logo-w: min(48vw, 225px); /* a quarter smaller than 64vw / 300px */
     --flash-motif-w: clamp(63px, 19.125vw, 124px); /* = the landing ornaments on phones */
     --flash-motif-y: 50%;
+  }
+
+  .hero__sub--flash {
+    font-size: clamp(9.5px, 2.45vw, 11px);
   }
 
   .hero__sub--flash span {

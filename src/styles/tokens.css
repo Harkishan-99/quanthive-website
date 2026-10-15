@@ -53,11 +53,12 @@
 }
 
 /* Portrait tablets: by width alone, and a little larger than the landscape
-   proportion, or the heroes look lost in the extra height. Phones (640px and
+   proportion, or the heroes look lost in the extra height (and a tablet's
+   headline would come out smaller than a large phone's). Phones (640px and
    under) set their own sizes. */
 @media (max-width: 1024px) and (orientation: portrait) {
   :root {
-    --ref: calc(100vw / 1800);
+    --ref: calc(100vw / 1600);
   }
 }
 
