@@ -108,11 +108,6 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
         {phase === "sent" ? (
           // In: their card, between a line of welcome and a note on the launch.
           <div className="waitlist__welcome" role="status">
-            <button type="button" className="waitlist__close waitlist__close--corner" onClick={onClose} aria-label="Close">
-              <svg viewBox="0 0 16 16" aria-hidden>
-                <path d="M4 4l8 8M12 4l-8 8" />
-              </svg>
-            </button>
             <h2 id="waitlist-title" className="waitlist__welcome-title">
               Your seat at the front of the line.
             </h2>

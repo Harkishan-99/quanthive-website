@@ -44,7 +44,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: 4.2cqw;
+  border-radius: 0.9cqw; /* nearly square corners */
   -webkit-mask: radial-gradient(var(--notch));
   mask: radial-gradient(var(--notch));
 }
@@ -88,8 +88,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 42%),
-    linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 45%, transparent 60%);
+    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.2) 45%, transparent 60%);
   background-size: 100% 100%, 260% 100%;
   background-position: 0 0, var(--mx) 0;
   mix-blend-mode: soft-light;
@@ -105,9 +105,9 @@
 /* Flash's mark, top left, pressed into the metal. */
 .member-card__flash {
   position: absolute;
-  top: 7.5cqw;
-  left: 7cqw;
-  width: 9cqw;
+  top: 8.5cqw;
+  left: 8.5cqw;
+  width: 6.4cqw;
   aspect-ratio: 204.73 / 176.64;
   background: linear-gradient(160deg, #4a505a, #23272d);
   -webkit-mask: url("../assets/images/figma-capabilities/c3-logo.svg") 0 0 / 100% 100% no-repeat;
@@ -118,15 +118,15 @@
 /* The chip and contactless arcs, right of centre, level with the disc's top. */
 .member-card__chip {
   position: absolute;
-  top: 23cqw;
-  left: 66cqw;
+  top: 24cqw;
+  left: 67cqw;
   display: flex;
   align-items: center;
-  gap: 2cqw;
+  gap: 2.4cqw;
 }
 
 .member-card__contactless {
-  width: 2.6cqw;
+  width: 2.1cqw;
   fill: none;
   stroke: #5b616b;
   stroke-width: 1.6;
@@ -135,9 +135,9 @@
 
 .member-card__chip-plate {
   position: relative;
-  width: 10cqw;
+  width: 8cqw;
   aspect-ratio: 1.3;
-  border-radius: 1.3cqw;
+  border-radius: 1cqw;
   background:
     linear-gradient(90deg, transparent 31%, rgba(70, 75, 84, 0.45) 31% 33%, transparent 33% 67%, rgba(70, 75, 84, 0.45) 67% 69%, transparent 69%),
     linear-gradient(0deg, transparent 32%, rgba(70, 75, 84, 0.45) 32% 34%, transparent 34% 66%, rgba(70, 75, 84, 0.45) 66% 68%, transparent 68%),
@@ -150,9 +150,9 @@
 /* QuantHive's lockup, bottom right. */
 .member-card__brand {
   position: absolute;
-  right: 6.5cqw;
-  bottom: 7cqw;
-  width: 26cqw;
+  right: 8.5cqw;
+  bottom: 8.5cqw;
+  width: 23.5cqw;
   aspect-ratio: 13266 / 2665.401;
   background: linear-gradient(160deg, #4a505a, #23272d);
   -webkit-mask: url("../assets/icons/quanthive-lockup.svg") 0 0 / 100% 100% no-repeat;
@@ -164,26 +164,26 @@
 
 .member-card__foot {
   position: absolute;
-  bottom: 7cqw;
-  left: 7cqw;
+  bottom: 8.5cqw;
+  left: 8.5cqw;
   display: flex;
   flex-direction: column;
-  gap: 1.2cqw;
+  gap: 2.2cqw;
   max-width: 56cqw;
 }
 
 .member-card__label {
   color: #6b717b;
-  font-size: 2.3cqw;
+  font-size: 1.8cqw;
   font-weight: 600;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
 }
 
 .member-card__name {
   display: block;
   overflow: hidden;
-  font-size: calc(4.4cqw * var(--size, 1));
+  font-size: calc(3.4cqw * var(--size, 1));
   font-weight: 600;
   letter-spacing: 0.1em;
   line-height: 1.2;
@@ -240,7 +240,7 @@
   }
 
   .member-card__body {
-    border-radius: 6.5cqw;
+    border-radius: 1.4cqw;
   }
 
   .member-card__metal {
@@ -253,48 +253,48 @@
   }
 
   .member-card__flash {
-    top: 10cqw;
-    left: 10cqw;
-    width: 15cqw;
+    top: 12cqw;
+    left: 12cqw;
+    width: 10.5cqw;
   }
 
   .member-card__chip {
-    top: 10cqw;
-    right: 10cqw;
+    top: 12cqw;
+    right: 12cqw;
     left: auto;
     flex-direction: row-reverse;
-    gap: 3cqw;
+    gap: 3.5cqw;
   }
 
   .member-card__chip-plate {
-    width: 16cqw;
-    border-radius: 2cqw;
+    width: 13cqw;
+    border-radius: 1.6cqw;
   }
 
   .member-card__contactless {
-    width: 4cqw;
+    width: 3.4cqw;
   }
 
   .member-card__foot {
-    bottom: 22cqw;
-    left: 10cqw;
-    max-width: 80cqw;
-    gap: 2cqw;
+    bottom: 28cqw;
+    left: 12cqw;
+    max-width: 76cqw;
+    gap: 3.4cqw;
   }
 
   .member-card__label {
-    font-size: 3.6cqw;
+    font-size: 2.9cqw;
   }
 
   .member-card__name {
-    font-size: calc(6.6cqw * var(--size, 1));
+    font-size: calc(5.4cqw * var(--size, 1));
   }
 
   .member-card__brand {
     right: auto;
-    bottom: 10cqw;
-    left: 10cqw;
-    width: 40cqw;
+    bottom: 12cqw;
+    left: 12cqw;
+    width: 38cqw;
   }
 
   /* No pointer to follow: a slow sway, the light drifting with it. */
@@ -315,10 +315,10 @@
 
 @keyframes member-card-sway {
   from {
-    transform: rotateX(4deg) rotateY(-6deg);
+    transform: rotateX(2deg) rotateY(-3deg);
   }
   to {
-    transform: rotateX(-3deg) rotateY(6deg);
+    transform: rotateX(-1.5deg) rotateY(3deg);
   }
 }
 

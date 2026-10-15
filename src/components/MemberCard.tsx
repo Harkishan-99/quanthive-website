@@ -11,7 +11,7 @@ import "./MemberCard.css";
 // Over it, the pointer tilts the card a little and moves the light across the
 // metal; on touch screens it sways gently on its own.
 
-const MAX_TILT = 9; // degrees
+const MAX_TILT = 4; // degrees: a hint of give, no more
 
 export default function MemberCard({ name }: { name: string }) {
   const cardRef = useRef<HTMLDivElement>(null);

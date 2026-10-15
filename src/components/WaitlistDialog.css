@@ -209,14 +209,6 @@
   text-align: center;
 }
 
-/* Out of the way: the stack's top-right corner, above the title. */
-.waitlist__close--corner {
-  position: absolute;
-  top: -44px;
-  right: 0;
-  margin: 0;
-}
-
 .waitlist__welcome-title {
   margin: 0;
   font-family: "PP Pangaia", var(--font-display, serif);
