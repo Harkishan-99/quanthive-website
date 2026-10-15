@@ -10,7 +10,7 @@
    - the panel: a quote mark, the quote in medium weight, then the author (an
      initials disc, name, role) left and one big figure with its label right.
 
-   Phones put the tabs in a row above the panel. */
+   Phones stack all the tabs above the panel. */
 
 .testimonials {
   --line: #dededb;
@@ -76,7 +76,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  min-height: clamp(64px, 4.6vw, 96px);
+  min-height: clamp(70px, 5.06vw, 106px); /* 10% over the first cut */
   padding: 0 16px;
   border: 0;
   background: transparent;
@@ -216,42 +216,24 @@
 
 /* --- Tablets: the head stacks ----------------------------------------------------- */
 
-/* --- Phones: the tabs in a row above the panel ---------------------------------------- */
+/* --- Phones: the tabs stacked above the panel ---------------------------------------- */
 
 @media (max-width: 640px) {
   .testimonials__box {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Five tabs don't fit across a phone: they scroll sideways, a peek of the
-     next showing, and the chosen one is kept in view (FlashTestimonials.tsx). */
+  /* All five companies, one row each, above the quote: the box grows taller
+     rather than hiding any of them. */
   .testimonials__tabs {
-    display: flex;
-    overflow-x: auto;
+    grid-auto-rows: auto;
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  .testimonials__tabs::-webkit-scrollbar {
-    display: none;
   }
 
   .testimonials__tab {
-    flex-direction: column;
-    gap: 6px;
-    flex: none;
-    width: 29%;
-    min-height: 76px;
-    padding: 0 6px;
-    font-size: 14px;
-    scroll-snap-align: start;
-  }
-
-  .testimonials__tab + .testimonials__tab {
-    border-top: 0;
-    border-left: 1px solid var(--line);
+    min-height: 60px;
+    font-size: 16px;
   }
 
   .testimonials__panel {
@@ -259,7 +241,8 @@
   }
 
   .testimonials__figure {
-    padding: 28px 20px 32px;
+    min-height: 360px;
+    padding: 32px 20px 36px;
   }
 
   .testimonials__foot {
