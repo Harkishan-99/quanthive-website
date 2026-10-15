@@ -4,19 +4,18 @@ import "./AboutPage.css";
 import "./TeamPage.css";
 
 // The Team page (frame 24:4168): the About page's head and copy, then the team in
-// square boxes three to a row — the frame's three, and two more under them so all
-// five fit — each portrait engraved and cut into a grid (EngravedPortrait), with
+// square boxes three to a row, as in the frame — each portrait engraved and cut into a grid (EngravedPortrait), with
 // the person's name and role under it; a rule closes the column.
 //
 // To add a photo: put it in src/assets/images/team/ and set `photo` to
 // "/images/team/<file>". Any ordinary photo works; a head-and-shoulders crop is
 // best. Without one, the box shows the treatment on a placeholder shape.
+// The photos are stand-ins (free stock portraits from Pexels) until the team's own.
 const TEAM: { name: string; role: string; photo?: string }[] = [
-  { name: "Team member", role: "Role" },
-  { name: "Team member", role: "Role" },
-  { name: "Team member", role: "Role" },
-  { name: "Team member", role: "Role" },
-  { name: "Team member", role: "Role" },
+  { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },
+  { name: "Neelesh Upadhaye", role: "Co-Founder", photo: "/images/team/neelesh.jpg" },
+  { name: "Chirag S J", role: "Founding Member, SDE", photo: "/images/team/chirag.jpg" },
+  { name: "Mahati", role: "Founding Member, Founder's Office Associate", photo: "/images/team/mahati.jpg" },
 ];
 
 export default function TeamPage() {

@@ -66,19 +66,28 @@ function lightness(image: HTMLImageElement | null, size: number) {
   }
   const data = ctx.getImageData(0, 0, size, size).data;
   const out = new Float32Array(size * size);
-  let lo = 1;
-  let hi = 0;
   for (let i = 0; i < out.length; i++) {
-    const l = (0.299 * data[i * 4]! + 0.587 * data[i * 4 + 1]! + 0.114 * data[i * 4 + 2]!) / 255;
-    out[i] = l;
-    if (l < lo) lo = l;
-    if (l > hi) hi = l;
+    out[i] = (0.299 * data[i * 4]! + 0.587 * data[i * 4 + 1]! + 0.114 * data[i * 4 + 2]!) / 255;
   }
-  // Stretch to the full range and lift the contrast, as an engraver would.
-  const span = Math.max(hi - lo, 0.05);
+  // Tone it as an engraver would, from the face rather than the whole frame:
+  // the middle of the square sets the black and white points (2nd and 98th
+  // percentiles), and a gamma puts its median tone at mid-grey. So a darker
+  // complexion or a dark backdrop still lands in the lines' mid-range, where the
+  // forms read, instead of going to solid ink.
+  const sample: number[] = [];
+  const step = Math.max(1, Math.floor(size / 120));
+  for (let y = Math.floor(size * 0.15); y < size * 0.85; y += step) {
+    for (let x = Math.floor(size * 0.2); x < size * 0.8; x += step) sample.push(out[y * size + x]!);
+  }
+  sample.sort((a, b) => a - b);
+  const at = (q: number) => sample[Math.min(sample.length - 1, Math.floor(q * sample.length))] ?? 0;
+  const lo = at(0.02);
+  const span = Math.max(at(0.98) - lo, 0.05);
+  const median = Math.min(0.95, Math.max(0.05, (at(0.5) - lo) / span));
+  const gamma = Math.min(1.6, Math.max(0.4, Math.log(0.52) / Math.log(median)));
   for (let i = 0; i < out.length; i++) {
-    const l = (out[i]! - lo) / span;
-    out[i] = l * l * (3 - 2 * l);
+    const l = Math.min(1, Math.max(0, (out[i]! - lo) / span));
+    out[i] = Math.pow(l, gamma);
   }
   return out;
 }
@@ -88,7 +97,7 @@ function engrave(light: Float32Array, size: number, seed: number) {
   const img = new ImageData(size, size);
   const px = img.data;
   const rand = random(seed * 7 + 1);
-  const pitch = Math.max(3, size / 72); // line spacing
+  const pitch = Math.max(3, size / 96); // line spacing
   const wave = size / 5; // wavelength of the lines' sway
   const sway = pitch * 1.4;
   const tilt = (rand() - 0.5) * 0.3;
