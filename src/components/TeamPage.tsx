@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { PageHead } from "./AboutPage";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
@@ -11,12 +12,29 @@ import "./TeamPage.css";
 // "/images/team/<file>". Any ordinary photo works; a head-and-shoulders crop is
 // best. Without one, the box shows the treatment on a placeholder shape.
 // The photos are stand-ins (free stock portraits from Pexels) until the team's own.
-const TEAM: { name: string; role: string; note?: string; photo?: string }[] = [
+// `note`: a line under the role; several, and they take turns in a loop.
+const TEAM: { name: string; role: string; note?: string | string[]; photo?: string }[] = [
   { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },
-  { name: "Neelesh Upadhaye", role: "Co-Founder", note: "Ex Quant Head, Dolat Capital", photo: "/images/team/neelesh.jpg" },
+  { name: "Neelesh Upadhaye", role: "Co-Founder", note: ["Ex Quant Head, Dolat Capital", "Professor, IIT Madras"], photo: "/images/team/neelesh.jpg" },
   { name: "Chirag S J", role: "Founding Member, SDE", photo: "/images/team/chirag.jpg" },
   { name: "Mahati", role: "Founding Member, Founder's Office Associate", photo: "/images/team/mahati.jpg" },
 ];
+
+/** The line under a role; given two, they take turns, each sliding up and out
+ *  as the other rises into its place (TeamPage.css). */
+function Note({ lines }: { lines: string[] }) {
+  if (lines.length === 1) return <p className="team-page__role team-page__note">{lines[0]}</p>;
+  return (
+    <p className="team-page__role team-page__note team-page__note--cycle">
+      <span className="team-page__sr">{lines.join("; ")}</span>
+      {lines.map((line, i) => (
+        <span key={line} aria-hidden style={{ "--i": i } as CSSProperties}>
+          {line}
+        </span>
+      ))}
+    </p>
+  );
+}
 
 export default function TeamPage() {
   return (
@@ -40,7 +58,7 @@ export default function TeamPage() {
               <EngravedPortrait src={person.photo} seed={index + 3} alt={person.photo ? `Portrait of ${person.name}` : ""} />
               <p className="team-page__name">{person.name}</p>
               <p className="team-page__role">{person.role}</p>
-              {person.note && <p className="team-page__role team-page__note">{person.note}</p>}
+              {person.note && <Note lines={([] as string[]).concat(person.note)} />}
             </li>
           ))}
         </ul>
