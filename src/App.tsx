@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
+import ArticlePage from "./components/ArticlePage";
 import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
 import ContactPage from "./components/ContactPage";
@@ -44,6 +45,7 @@ const PAGE_TITLE: Record<Page, string> = {
   team: "Team | QuantHive",
   contact: "Contact | QuantHive",
   blog: "Blog | QuantHive",
+  article: "Blog | QuantHive", // ArticlePage names the tab after the article
 };
 
 // The pages that open on a hero; changing between two of them hands one hero
@@ -85,7 +87,7 @@ function Site() {
   // dark hero (Nav.css, AnnouncementBar.css), and so does the page ground.
   useEffect(() => {
     document.documentElement.dataset.page = page;
-    document.title = PAGE_TITLE[page];
+    if (page !== "article") document.title = PAGE_TITLE[page];
   }, [page]);
 
   // Changing page is one view transition, not a reload (page-transition.css): the
@@ -98,7 +100,12 @@ function Site() {
       canonicaliseAddress();
       const next = pageFrom();
       // Moving within the landing page (its #about section, say) isn't a page change.
-      if (next === document.documentElement.dataset.page) return;
+      // From one article to another, the page stays (ArticlePage follows the
+      // address) and opens at the top.
+      if (next === document.documentElement.dataset.page) {
+        if (next === "article" && !window.location.hash) jumpPageTo(0);
+        return;
+      }
       // Remember where the reader came from (the About page's back arrow).
       document.documentElement.dataset.prevPage = document.documentElement.dataset.page ?? "";
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -175,6 +182,8 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "article" ? (
+        <ArticlePage />
       ) : page === "blog" ? (
         <BlogPage />
       ) : page === "team" ? (

@@ -1,0 +1,361 @@
+/* A blog article (ArticlePage.tsx; the template, Figma 44:4552), on the About
+   page's column (AboutPage.css), in the frame's measures against its 810 column:
+
+   - the head (arrow, the title at 50, the motif), then 30 under it the subtitle,
+     Nata Sans Medium 23 #282828; the author and date 16 #717171 under that,
+     split by an 18-tall hairline;
+   - the cover, 810 × 380 #1a1a1a, 30 under the byline;
+   - the lead 16, 30 under the cover; a rule; the body — paragraphs 16,
+     section titles 22 — all Nata Sans Medium, black;
+   - Contents to the right (from 1280px wide): its title 23 and sections 14 in
+     #b3b3b3, each over a hairline 274 wide, 55 clear of the column; it rides
+     down with the reader, the section in view in ink.
+
+   Below 1280px there's no room beside the column: no Contents. */
+
+.article-page {
+  --u: calc(var(--col) / 812); /* one frame px */
+  --ink-2: #282828;
+  --muted: #717171;
+  --faint: #b3b3b3;
+}
+
+.article-page__fg { font-family: "Familjen Grotesk", var(--font-ui, sans-serif); font-weight: 500; }
+.article-page__sg { font-family: "Schibsted Grotesk", var(--font-ui, sans-serif); font-weight: 500; }
+
+.article-page .about-page__title {
+  letter-spacing: -0.01em;
+  white-space: normal; /* long titles wrap */
+}
+
+/* --- Subtitle and byline ------------------------------------------------------------ */
+
+.article-page__subtitle {
+  margin: clamp(20px, 1.6vw, 30px) 0 0;
+  color: var(--ink-2);
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(18px, 1.2vw, 23px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.article-page__byline {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 0.8vw, 14px);
+  margin: clamp(8px, 0.6vw, 12px) 0 0;
+  color: var(--muted);
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(13px, 0.83vw, 16px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.article-page__byline-rule {
+  width: 1px;
+  height: 1.1em;
+  background: #c9c9c9;
+}
+
+/* --- Cover, lead, rule --------------------------------------------------------------- */
+
+.article-page__cover {
+  aspect-ratio: 810 / 380;
+  margin-top: clamp(20px, 1.6vw, 30px);
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.article-page__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-page__lead,
+.article-page__p,
+.article-page__list,
+.article-page__refs,
+.article-page__table {
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(15px, 0.86vw, 16.5px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+.article-page__lead {
+  margin: clamp(20px, 1.6vw, 30px) 0 0;
+}
+
+.article-page__rule {
+  height: 0;
+  margin: clamp(22px, 1.6vw, 30px) 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* --- Body --------------------------------------------------------------------------- */
+
+.article-page__body > * {
+  margin: 0;
+}
+
+.article-page__body > * + * {
+  margin-top: 1.1em;
+}
+
+.article-page__h2 {
+  margin-top: clamp(40px, 2.6vw, 52px) !important;
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(20px, 1.15vw, 22px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  scroll-margin-top: 120px;
+}
+
+.article-page__h3 {
+  margin-top: clamp(24px, 1.6vw, 30px) !important;
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(16.5px, 0.94vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.article-page__h2 + *,
+.article-page__h3 + * {
+  margin-top: 0.6em;
+}
+
+.article-page__quote {
+  padding: 2px 0 2px clamp(16px, 1.2vw, 22px);
+  border-left: 2px solid #111111;
+}
+
+.article-page__quote p {
+  margin: 0;
+  font-family: "PP Pangaia", var(--font-display, serif);
+  font-size: clamp(19px, 1.25vw, 24px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.article-page__list,
+.article-page__refs {
+  padding-left: 1.2em;
+}
+
+.article-page__list li + li,
+.article-page__refs li + li {
+  margin-top: 0.55em;
+}
+
+.article-page__list li::marker {
+  color: var(--faint);
+}
+
+.article-page__list strong {
+  font-weight: 700;
+}
+
+.article-page__source {
+  color: var(--muted);
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(12.5px, 0.73vw, 14px);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.article-page__refs {
+  color: #3a3a3a;
+  font-size: clamp(13.5px, 0.78vw, 15px);
+}
+
+/* The table scrolls sideways inside itself on a narrow screen, never the page. */
+.article-page__table-wrap {
+  overflow-x: auto;
+}
+
+.article-page__table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+}
+
+.article-page__table th,
+.article-page__table td {
+  padding: 10px 14px 10px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-page__table thead th {
+  color: var(--muted);
+  font-size: 0.88em;
+  font-weight: 600;
+}
+
+.article-page__table tbody th {
+  font-weight: 500;
+}
+
+.article-page__cta-row {
+  margin-top: 1.4em !important;
+}
+
+.article-page__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 0;
+  background: #121212;
+  color: #ffffff;
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.article-page__cta:hover {
+  background: #2c2c2c;
+}
+
+.article-page__cta:focus-visible {
+  outline: 1px solid #000000;
+  outline-offset: 3px;
+}
+
+.article-page__cta svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The small grey motif closing the article. */
+.article-page__end {
+  display: block;
+  width: calc(clamp(22px, 1.51vw, 29px) * 450 / 390);
+  aspect-ratio: 450 / 453.649;
+  margin: clamp(56px, 5vw, 96px) auto 0;
+  background: #e2e2e2;
+  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+}
+
+/* --- Contents --------------------------------------------------------------------------- */
+
+.article-page__aside {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  /* The column stays centred; Contents takes the right-hand margin, so each
+     margin keeps room for it (55 + 274). */
+  .article-page {
+    --col: min(812px, calc(100vw - 2 * 340px));
+  }
+
+  .article-page__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--col) minmax(0, 1fr);
+  }
+
+  .article-page__article {
+    grid-column: 2;
+    width: auto;
+  }
+
+  .article-page__aside {
+    display: block;
+    grid-column: 3;
+    /* Level with the subtitle (the frame's 226 against the head's 135). */
+    padding: clamp(70px, 4.74vw, 91px) 24px 0 clamp(40px, 2.86vw, 55px);
+  }
+
+  .article-page__contents {
+    position: sticky;
+    top: calc(var(--announcement-h, 0px) + 72px + 40px);
+    width: min(274px, 100%);
+  }
+}
+
+.article-page__contents-title {
+  margin: 0 0 12px;
+  color: var(--faint);
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: clamp(19px, 1.2vw, 23px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.article-page__contents ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-page__contents button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 12px 0 10px;
+  border-bottom: 1px solid #d9d9d9;
+  border-radius: 0;
+  color: var(--faint);
+  font-family: "Nata Sans", var(--font-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  text-decoration: none;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.article-page__contents button:hover {
+  color: #5a5a5a;
+}
+
+.article-page__contents button[aria-current] {
+  border-bottom-color: #111111;
+  color: #111111;
+}
+
+.article-page__contents button:focus-visible {
+  outline: 1px solid #111111;
+  outline-offset: 2px;
+}
+
+/* --- Phones ------------------------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  .article-page__cover {
+    aspect-ratio: 16 / 10;
+  }
+
+  .article-page__quote p {
+    font-size: 19px;
+  }
+}
+
+.article-page__missing a {
+  color: inherit;
+}

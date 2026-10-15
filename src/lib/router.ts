@@ -6,6 +6,7 @@
 //   /team     the Team page
 //   /contact  the Contact page
 //   /blog     the Blog page
+//   /blog/<slug>  an article (src/content/articles.ts)
 //
 // Moving between them never reloads: navigate() pushes the address and App.tsx
 // changes page (with its transition) on that, on back/forward, and on a change of
@@ -15,7 +16,7 @@
 // hosts already serve the app at any path (vercel.json, server.ts), so a refresh
 // on the new address works with nothing else to set up.
 
-export type Page = "landing" | "product" | "about" | "team" | "contact" | "blog";
+export type Page = "landing" | "product" | "about" | "team" | "contact" | "blog" | "article";
 
 export const PAGE_URL: Record<Page, string> = {
   landing: "/",
@@ -24,6 +25,7 @@ export const PAGE_URL: Record<Page, string> = {
   team: "/team",
   contact: "/contact",
   blog: "/blog",
+  article: "/blog", // an article lives at /blog/<slug> (src/content/articles.ts)
 };
 
 // Addresses the site used before, still honoured: shown as the page's own.
@@ -40,6 +42,7 @@ const trimPath = (path: string) => path.replace(/\/+$/, "") || "/";
 /** The page at a path, or null if it isn't one of the site's pages. */
 export function pageAt(pathname: string): Page | null {
   const path = trimPath(pathname);
+  if (/^\/blog\/[^/]+$/.test(path)) return "article";
   return (Object.keys(PAGE_URL) as Page[]).find((page) => PAGE_URL[page] === path) ?? null;
 }
 

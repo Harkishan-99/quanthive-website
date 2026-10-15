@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
+import { ARTICLES, type Article } from "../content/articles";
 import { PageHead } from "./AboutPage";
+import { articleHref } from "./ArticlePage";
 import "./AboutPage.css";
 import "./BlogPage.css";
 
@@ -8,26 +10,33 @@ import "./BlogPage.css";
 // left and its image on the right — a newsletter line with an email field, a
 // rule, the latest posts three across, and the small grey motif to close.
 //
-// PLACEHOLDER CONTENT: the posts are the frame's stand-ins; replace them (and
-// add images) when the articles are written. Each can take an `href` once it has
-// a page.
+// The posts come from src/content/articles.ts (newest first): the newest is the
+// featured post, and every article also appears in the grid. Until there are
+// three, the grid's remaining places show quiet "coming soon" tiles.
 
 type Post = { tag?: string; title: string; excerpt?: string; author?: string; date?: string; image?: string; href?: string };
 
-const FEATURED: Post = {
-  tag: "Insight",
-  // "\n": where the title breaks on wider screens, as the frame sets it.
-  title: "Behind Our Industry\nLeading Acceptance Rates",
-  excerpt: "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna..",
-  author: "Harkishan S Baniya",
-  date: "10th Jan, 2026",
-};
+const toPost = (article: Article): Post => ({
+  tag: article.category,
+  title: article.title,
+  excerpt: article.subtitle,
+  author: article.author,
+  date: article.date,
+  image: article.image,
+  href: articleHref(article),
+});
 
-const POSTS: Post[] = [
-  { title: "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et" },
-  { title: "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et" },
-  { title: "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et" },
+const FEATURED: Post = ARTICLES[0] ? toPost(ARTICLES[0]) : { title: "Coming soon" };
+
+const POSTS: (Post | null)[] = [
+  ...ARTICLES.map(toPost),
+  ...Array.from({ length: Math.max(0, 3 - ARTICLES.length) }, () => null),
 ];
+
+/** A post's picture until it has one: the lattice, faintly, round the motif. */
+function PostArt({ dark = false }: { dark?: boolean }) {
+  return <span className={`blog-page__post-art${dark ? " blog-page__post-art--dark" : ""}`} aria-hidden />;
+}
 
 /** A post's title, as a link once the post has a page. */
 function Title({ post, className }: { post: Post; className: string }) {
@@ -111,7 +120,9 @@ export default function BlogPage() {
               <time>{FEATURED.date}</time>
             </p>
           </div>
-          <div className="blog-page__featured-image">{FEATURED.image && <img src={FEATURED.image} alt="" />}</div>
+          <div className="blog-page__featured-image">
+            {FEATURED.image ? <img src={FEATURED.image} alt="" /> : FEATURED.href && <PostArt dark />}
+          </div>
         </article>
 
         <Newsletter />
@@ -119,14 +130,29 @@ export default function BlogPage() {
         <hr className="about-page__rule blog-page__rule" />
 
         <ul className="blog-page__posts">
-          {POSTS.map((post, index) => (
-            <li key={index} className="blog-page__post">
-              <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" />}</div>
-              <h3 className="blog-page__post-title">
-                <Title post={post} className="blog-page__post-link" />
-              </h3>
-            </li>
-          ))}
+          {POSTS.map((post, index) =>
+            post ? (
+              <li key={index} className="blog-page__post">
+                {post.href ? (
+                  <a className="blog-page__post-image" href={post.href} tabIndex={-1} aria-hidden>
+                    {post.image ? <img src={post.image} alt="" /> : <PostArt />}
+                  </a>
+                ) : (
+                  <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" />}</div>
+                )}
+                {post.tag && <p className="blog-page__post-tag">{post.tag}</p>}
+                <h3 className="blog-page__post-title">
+                  <Title post={post} className="blog-page__post-link" />
+                </h3>
+                {post.date && <p className="blog-page__post-date">{post.date}</p>}
+              </li>
+            ) : (
+              <li key={index} className="blog-page__post blog-page__post--soon" aria-hidden>
+                <div className="blog-page__post-image" />
+                <p className="blog-page__post-title">Coming soon</p>
+              </li>
+            ),
+          )}
         </ul>
 
         <span className="blog-page__end" aria-hidden />

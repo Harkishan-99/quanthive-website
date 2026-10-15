@@ -9,7 +9,8 @@ Pages (one app; moving between them never reloads):
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
 - `/about` — About page; old `/#about-us` links redirect here
 - `/team` — Team page; add photos in `src/assets/images/team/` and list them in `TEAM` (`src/components/TeamPage.tsx`)
-- `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); posts are placeholders in `src/components/BlogPage.tsx`
+- `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); the newest article is its featured post
+- `/blog/<slug>` — an article; articles are data in `src/content/articles.ts` (add one there to publish it; its sections fill the Contents navigator automatically)
 - `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
