@@ -1,0 +1,335 @@
+/* The waitlist card (MemberCard.tsx): silver metal after the reference card —
+   brushed silver, fine sunburst lines spreading from a soft, brighter disc, a
+   half-round notch in the edge — Flash's mark top left, a chip, the reader's
+   name engraved along the foot and QuantHive's lockup in the far corner.
+
+   Landscape (ISO card, 85.6 × 54) from 641px; portrait on phones, everything
+   re-placed for the upright card. The pointer tilts it (--rx, --ry) and moves the
+   light (--mx, --my); touch screens get a slow sway instead. */
+
+.member-card__stage {
+  --w: min(560px, 100%);
+
+  width: var(--w);
+  perspective: 1100px;
+  container-type: inline-size; /* cqw below is the card's width */
+}
+
+.member-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 30%;
+  --my: 20%;
+  /* The disc's centre and the notch: right of centre, as on the reference. */
+  --sun-x: 70%;
+  --sun-y: 52%;
+  --notch: circle at 100% 70%, transparent 0 4.6cqw, #000 calc(4.6cqw + 0.5px);
+  --ink: #3b4049;
+
+  position: relative;
+  aspect-ratio: 85.6 / 54;
+  color: var(--ink);
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  text-align: left;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* The card comes up out of a slight tilt as it's handed over. */
+  animation: member-card-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) 120ms backwards;
+  filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.55));
+}
+
+/* The card itself: cut to its rounded corners and notch (the shadow stays on the
+   outer layer, which the cut would otherwise clip away). */
+.member-card__body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 4.2cqw;
+  -webkit-mask: radial-gradient(var(--notch));
+  mask: radial-gradient(var(--notch));
+}
+
+.member-card[data-tilt] {
+  transition: transform 140ms ease-out;
+}
+
+@keyframes member-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px) rotateX(24deg) scale(0.94);
+  }
+}
+
+/* --- The metal ---------------------------------------------------------------------
+   Base: brushed silver — a cool grey ramp with bright bands, and fine horizontal
+   grain. Over it: the soft disc, and the sunburst — thin bright lines fanning
+   out round the disc — fading toward the card's edges. */
+.member-card__metal {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y), rgba(255, 255, 255, 0.55) 0 22cqw, rgba(255, 255, 255, 0) 22.6cqw),
+    radial-gradient(circle at var(--sun-x) var(--sun-y), transparent 0 21cqw, rgba(0, 0, 0, 0.06) 22.4cqw, transparent 26cqw),
+    repeating-conic-gradient(from 0deg at var(--sun-x) var(--sun-y), rgba(255, 255, 255, 0) 0deg 2.6deg, rgba(255, 255, 255, 0.55) 2.6deg 3.1deg, rgba(255, 255, 255, 0) 3.1deg 4deg),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, rgba(0, 0, 0, 0.025) 1px 2px),
+    linear-gradient(118deg, #c9cdd4 0%, #eef0f3 22%, #d2d6dc 40%, #f7f8fa 58%, #c5c9d0 78%, #e3e6ea 100%);
+}
+
+/* The sunburst fades out toward the edges, as printed lines on the reference do. */
+.member-card__metal::after {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 95% at var(--sun-x) var(--sun-y), transparent 35%, rgba(222, 225, 230, 0.75) 85%);
+  content: "";
+}
+
+/* The light: a soft specular that follows the pointer, and a faint sheen band. */
+.member-card__shine {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 45%, transparent 60%);
+  background-size: 100% 100%, 260% 100%;
+  background-position: 0 0, var(--mx) 0;
+  mix-blend-mode: soft-light;
+  transition: background-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.member-card[data-tilt] .member-card__shine {
+  transition: background-position 140ms ease-out;
+}
+
+/* --- Marks ------------------------------------------------------------------------- */
+
+/* Flash's mark, top left, pressed into the metal. */
+.member-card__flash {
+  position: absolute;
+  top: 7.5cqw;
+  left: 7cqw;
+  width: 9cqw;
+  aspect-ratio: 204.73 / 176.64;
+  background: linear-gradient(160deg, #4a505a, #23272d);
+  -webkit-mask: url("../assets/images/figma-capabilities/c3-logo.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/images/figma-capabilities/c3-logo.svg") 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(0 0.6px 0 rgba(255, 255, 255, 0.8)) drop-shadow(0 -0.5px 0 rgba(0, 0, 0, 0.25));
+}
+
+/* The chip and contactless arcs, right of centre, level with the disc's top. */
+.member-card__chip {
+  position: absolute;
+  top: 23cqw;
+  left: 66cqw;
+  display: flex;
+  align-items: center;
+  gap: 2cqw;
+}
+
+.member-card__contactless {
+  width: 2.6cqw;
+  fill: none;
+  stroke: #5b616b;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.member-card__chip-plate {
+  position: relative;
+  width: 10cqw;
+  aspect-ratio: 1.3;
+  border-radius: 1.3cqw;
+  background:
+    linear-gradient(90deg, transparent 31%, rgba(70, 75, 84, 0.45) 31% 33%, transparent 33% 67%, rgba(70, 75, 84, 0.45) 67% 69%, transparent 69%),
+    linear-gradient(0deg, transparent 32%, rgba(70, 75, 84, 0.45) 32% 34%, transparent 34% 66%, rgba(70, 75, 84, 0.45) 66% 68%, transparent 68%),
+    linear-gradient(135deg, #f3f4f6, #a9aeb6 45%, #e6e8eb 70%, #9ea3ab);
+  box-shadow:
+    inset 0 0 0 0.4px rgba(60, 64, 72, 0.5),
+    0 0.5px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* QuantHive's lockup, bottom right. */
+.member-card__brand {
+  position: absolute;
+  right: 6.5cqw;
+  bottom: 7cqw;
+  width: 26cqw;
+  aspect-ratio: 13266 / 2665.401;
+  background: linear-gradient(160deg, #4a505a, #23272d);
+  -webkit-mask: url("../assets/icons/quanthive-lockup.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/quanthive-lockup.svg") 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(0 0.6px 0 rgba(255, 255, 255, 0.8));
+}
+
+/* --- The name, engraved -------------------------------------------------------------- */
+
+.member-card__foot {
+  position: absolute;
+  bottom: 7cqw;
+  left: 7cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqw;
+  max-width: 56cqw;
+}
+
+.member-card__label {
+  color: #6b717b;
+  font-size: 2.3cqw;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.member-card__name {
+  display: block;
+  overflow: hidden;
+  font-size: calc(4.4cqw * var(--size, 1));
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Each letter lands as a white-hot point and cools into a debossed mark: dark
+   in the cut, a hairline of light on its lower lip. */
+.member-card__name > span {
+  display: inline-block;
+  color: var(--ink);
+  text-shadow:
+    0 0.06em 0 rgba(255, 255, 255, 0.85),
+    0 -0.04em 0 rgba(0, 0, 0, 0.18);
+  animation: member-card-engrave 900ms cubic-bezier(0.22, 1, 0.36, 1) calc(900ms + var(--i) * 70ms) backwards;
+}
+
+@keyframes member-card-engrave {
+  0% {
+    opacity: 0;
+    color: #ffffff;
+    filter: blur(3px);
+    text-shadow:
+      0 0 0.5em rgba(255, 255, 255, 1),
+      0 0 1.2em rgba(190, 215, 255, 0.9);
+    translate: 0 0.15em;
+  }
+  35% {
+    opacity: 1;
+    color: #ffffff;
+    filter: blur(0);
+    text-shadow:
+      0 0 0.35em rgba(255, 255, 255, 0.95),
+      0 0 0.9em rgba(190, 215, 255, 0.6);
+    translate: 0 0;
+  }
+}
+
+/* --- Phones: the card stands upright -------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .member-card__stage {
+    --w: min(300px, 78vw);
+  }
+
+  .member-card {
+    --sun-x: 50%;
+    --sun-y: 44%;
+    --notch: circle at 70% 100%, transparent 0 8cqw, #000 calc(8cqw + 0.5px);
+
+    aspect-ratio: 54 / 85.6;
+  }
+
+  .member-card__body {
+    border-radius: 6.5cqw;
+  }
+
+  .member-card__metal {
+    background:
+      radial-gradient(circle at var(--sun-x) var(--sun-y), rgba(255, 255, 255, 0.55) 0 34cqw, rgba(255, 255, 255, 0) 35cqw),
+      radial-gradient(circle at var(--sun-x) var(--sun-y), transparent 0 33cqw, rgba(0, 0, 0, 0.06) 35cqw, transparent 40cqw),
+      repeating-conic-gradient(from 0deg at var(--sun-x) var(--sun-y), rgba(255, 255, 255, 0) 0deg 2.6deg, rgba(255, 255, 255, 0.55) 2.6deg 3.1deg, rgba(255, 255, 255, 0) 3.1deg 4deg),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, rgba(0, 0, 0, 0.025) 1px 2px),
+      linear-gradient(160deg, #c9cdd4 0%, #eef0f3 22%, #d2d6dc 40%, #f7f8fa 58%, #c5c9d0 78%, #e3e6ea 100%);
+  }
+
+  .member-card__flash {
+    top: 10cqw;
+    left: 10cqw;
+    width: 15cqw;
+  }
+
+  .member-card__chip {
+    top: 10cqw;
+    right: 10cqw;
+    left: auto;
+    flex-direction: row-reverse;
+    gap: 3cqw;
+  }
+
+  .member-card__chip-plate {
+    width: 16cqw;
+    border-radius: 2cqw;
+  }
+
+  .member-card__contactless {
+    width: 4cqw;
+  }
+
+  .member-card__foot {
+    bottom: 22cqw;
+    left: 10cqw;
+    max-width: 80cqw;
+    gap: 2cqw;
+  }
+
+  .member-card__label {
+    font-size: 3.6cqw;
+  }
+
+  .member-card__name {
+    font-size: calc(6.6cqw * var(--size, 1));
+  }
+
+  .member-card__brand {
+    right: auto;
+    bottom: 10cqw;
+    left: 10cqw;
+    width: 40cqw;
+  }
+
+  /* No pointer to follow: a slow sway, the light drifting with it. */
+  .member-card {
+    animation:
+      member-card-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) 120ms backwards,
+      member-card-sway 7s ease-in-out 1300ms infinite alternate;
+  }
+}
+
+@media (hover: none) and (min-width: 641px) {
+  .member-card {
+    animation:
+      member-card-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) 120ms backwards,
+      member-card-sway 7s ease-in-out 1300ms infinite alternate;
+  }
+}
+
+@keyframes member-card-sway {
+  from {
+    transform: rotateX(4deg) rotateY(-6deg);
+  }
+  to {
+    transform: rotateX(-3deg) rotateY(6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .member-card,
+  .member-card__name > span {
+    animation: none;
+  }
+
+  .member-card,
+  .member-card__shine {
+    transition: none;
+  }
+}

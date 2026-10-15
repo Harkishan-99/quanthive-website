@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import LiquidGlassPill from "./LiquidGlassPill";
+import MemberCard from "./MemberCard";
 import "./WaitlistDialog.css";
 
 // The waitlist form, opened by the hero's "Join waitlist" key: a small dark card
@@ -30,6 +31,8 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(false);
   const [error, setError] = useState("");
+  // The name on the card the reader is handed once they're in.
+  const [name, setName] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const firstRef = useRef<HTMLInputElement>(null);
 
@@ -81,6 +84,7 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
       });
       const result = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) throw new Error(result.error || "Something went wrong — please try again.");
+      setName(data.name ?? "");
       setPhase("sent");
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Something went wrong — please try again.");
@@ -100,7 +104,24 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
       inert={!open}
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
-      <div className="waitlist__stack" role="dialog" aria-modal="true" aria-labelledby="waitlist-title">
+      <div className="waitlist__stack" data-sent={phase === "sent" || undefined} role="dialog" aria-modal="true" aria-labelledby="waitlist-title">
+        {phase === "sent" ? (
+          // In: their card, between a line of welcome and a note on the launch.
+          <div className="waitlist__welcome" role="status">
+            <button type="button" className="waitlist__close waitlist__close--corner" onClick={onClose} aria-label="Close">
+              <svg viewBox="0 0 16 16" aria-hidden>
+                <path d="M4 4l8 8M12 4l-8 8" />
+              </svg>
+            </button>
+            <h2 id="waitlist-title" className="waitlist__welcome-title">
+              Your seat at the front of the line.
+            </h2>
+            <MemberCard name={name} />
+            <p className="waitlist__welcome-note">
+              Flash launches in 8 weeks, and we can&apos;t wait to onboard you.
+            </p>
+          </div>
+        ) : (
         <form ref={formRef} id="waitlist-form" className="waitlist__card" onSubmit={submit} noValidate={false}>
           <header className="waitlist__head">
             <img className="waitlist__logo" src="/images/figma-product/flash-logo-white.svg" alt="Flash" />
@@ -111,12 +132,6 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
             </button>
           </header>
 
-          {phase === "sent" ? (
-            <div className="waitlist__done" role="status">
-              <h2 id="waitlist-title" className="waitlist__title">You're on the list.</h2>
-              <p className="waitlist__lede">Thanks — we'll be in touch before Flash launches.</p>
-            </div>
-          ) : (
             <>
               <h2 id="waitlist-title" className="waitlist__title">Join the waitlist</h2>
               <p className="waitlist__lede">Flash launches in 8 weeks. Leave your details for early access.</p>
@@ -146,8 +161,8 @@ export default function WaitlistDialog({ open, onClose }: { open: boolean; onClo
                 {error}
               </p>
             </>
-          )}
         </form>
+        )}
 
         {/* The submit key, outside the card, under it. */}
         {phase === "sent" ? (
