@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
+import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
 import ContactPage from "./components/ContactPage";
 import TeamPage from "./components/TeamPage";
@@ -42,6 +43,7 @@ const PAGE_TITLE: Record<Page, string> = {
   about: "About | QuantHive",
   team: "Team | QuantHive",
   contact: "Contact | QuantHive",
+  blog: "Blog | QuantHive",
 };
 
 // The pages that open on a hero; changing between two of them hands one hero
@@ -173,6 +175,8 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "blog" ? (
+        <BlogPage />
       ) : page === "team" ? (
         <TeamPage />
       ) : page === "contact" ? (

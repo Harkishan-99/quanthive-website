@@ -27,7 +27,7 @@ const FOOTER_COLUMNS = [
   {
     title: "Resources",
     links: [
-      ["Blog", "/#about"],
+      ["Blog", "/blog"],
       ["Reports", "/#about"],
       ["Press Kit", "mailto:mail@quanthive.in"],
       ["Legal", "mailto:mail@quanthive.in"],

@@ -9,6 +9,7 @@ Pages (one app; moving between them never reloads):
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
 - `/about` — About page; old `/#about-us` links redirect here
 - `/team` — Team page; add photos in `src/assets/images/team/` and list them in `TEAM` (`src/components/TeamPage.tsx`)
+- `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); posts are placeholders in `src/components/BlogPage.tsx`
 - `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
@@ -239,6 +240,7 @@ Common failures:
 server.ts            Bun server: pages, assets, /api/waitlist, /api/video/render
 api/waitlist.ts      waitlist validation, storage (data/waitlist.jsonl) and SMTP mail
 api/contact.ts       contact form: validation, storage (data/contact.jsonl), same SMTP mail
+api/newsletter.ts    blog newsletter sign-ups (data/newsletter.jsonl), same SMTP mail
 index.html           app entry
 src/App.tsx          page switching + page transitions
 src/components/      sections and pages (Hero, Capabilities, About, AboutPage, FlashPartners, Nav, …)

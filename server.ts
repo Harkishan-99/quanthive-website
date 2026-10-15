@@ -1,6 +1,7 @@
 import { join, normalize } from "node:path";
 import index from "./index.html";
 import { handleContact } from "./api/contact.ts";
+import { handleNewsletter } from "./api/newsletter.ts";
 import { handleWaitlist } from "./api/waitlist.ts";
 
 const ICON_DIR = join(import.meta.dir, "src/assets/icons");
@@ -64,6 +65,10 @@ const server = Bun.serve({
     // Flash waitlist sign-ups: stored, then mailed over SMTP (api/waitlist.ts).
     "/api/waitlist": {
       POST: (req, srv) => handleWaitlist(req, srv.requestIP(req)?.address),
+    },
+    // The blog's newsletter sign-up (api/newsletter.ts).
+    "/api/newsletter": {
+      POST: (req, srv) => handleNewsletter(req, srv.requestIP(req)?.address),
     },
     // The contact page's form (api/contact.ts).
     "/api/contact": {

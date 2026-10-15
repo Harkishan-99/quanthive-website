@@ -5,6 +5,7 @@
 //   /about    the About page (old /#about-us links still open it)
 //   /team     the Team page
 //   /contact  the Contact page
+//   /blog     the Blog page
 //
 // Moving between them never reloads: navigate() pushes the address and App.tsx
 // changes page (with its transition) on that, on back/forward, and on a change of
@@ -14,7 +15,7 @@
 // hosts already serve the app at any path (vercel.json, server.ts), so a refresh
 // on the new address works with nothing else to set up.
 
-export type Page = "landing" | "product" | "about" | "team" | "contact";
+export type Page = "landing" | "product" | "about" | "team" | "contact" | "blog";
 
 export const PAGE_URL: Record<Page, string> = {
   landing: "/",
@@ -22,6 +23,7 @@ export const PAGE_URL: Record<Page, string> = {
   about: "/about",
   team: "/team",
   contact: "/contact",
+  blog: "/blog",
 };
 
 // Addresses the site used before, still honoured: shown as the page's own.
