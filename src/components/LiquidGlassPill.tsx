@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { TILE_H, TILE_SRC, TILE_W } from "./VideoPromptGlass";
 import { maxDpr } from "../lib/perf";
-import { useTransitionReady } from "../lib/pageTransition";
 
 // Liquid glass for a pill-shaped key on Flash's dark hero: a small WebGL canvas
 // filling the key that draws the hero's own ground (#050505 and its faint
@@ -130,10 +129,8 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string) {
  *  draws a plain clear pill instead. */
 export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { ground?: number; ink?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ready = useTransitionReady(); // after a page change has started (lib/pageTransition)
 
   useEffect(() => {
-    if (!ready) return;
     const canvas = canvasRef.current;
     const key = canvas?.parentElement;
     // The ground it sits on: an element marked data-glass-ground (the waitlist
@@ -296,7 +293,7 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
       gl.deleteTexture(tile);
       gl.deleteProgram(program);
     };
-  }, [ground, ink, ready]);
+  }, [ground, ink]);
 
   return <canvas ref={canvasRef} className="liquid-glass-pill" aria-hidden />;
 }

@@ -8,7 +8,6 @@ import {
   type Ref,
 } from "react";
 import { LiveLoader, type Loader } from "./Capabilities";
-import { useTransitionReady } from "../lib/pageTransition";
 import "./VideoPromptGlass.css";
 
 // The video panel's opening shot, frames 4048:3660 → 123:238.
@@ -877,11 +876,8 @@ export default function VideoPromptGlass({
   // Re-reads the blocks' timings once a re-render has changed them.
   const refreshRef = useRef<() => void>(() => {});
   useLayoutEffect(() => refreshRef.current(), [sideBySide]);
-  // Arriving by a page change, the scene starts once the change is playing.
-  const transitionReady = useTransitionReady();
 
   useEffect(() => {
-    if (!transitionReady) return;
     const root = rootRef.current;
     const canvas = canvasRef.current;
     const text = textRef.current;
@@ -1527,7 +1523,7 @@ export default function VideoPromptGlass({
         tileTexture && gl.deleteTexture(tileTexture);
       }
     };
-  }, [variant, compare, outro, transitionReady]);
+  }, [variant, compare, outro]);
 
   const kick = () => kickRef.current();
 
