@@ -166,7 +166,7 @@ export default function FlashTestimonials() {
     <section className="testimonials" aria-labelledby="testimonials-title">
       {/* Frame 11:3765's title, letter for letter: the first line sets single
           letters in other faces, as the hero's headline does; the second is Nata
-          Sans throughout. (The frame spells "Rsearch".) */}
+          Sans throughout. */}
       <h2 id="testimonials-title" className="testimonials__title">
         <span className="testimonials__title-line">
           <F f="pp">T</F>
@@ -188,7 +188,7 @@ export default function FlashTestimonials() {
           <F f="pp">s</F>
         </span>
         <span className="testimonials__title-line testimonials__title-line--sub">
-          Rsearch Teams Use Flash To Read The Market Faster
+          Research Teams Use Flash To Read The Market Faster
         </span>
       </h2>
 
