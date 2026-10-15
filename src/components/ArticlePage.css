@@ -67,6 +67,30 @@
   background: #1a1a1a;
 }
 
+.article-page__cover-art {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(26, 26, 26, 0.84), rgba(26, 26, 26, 0.84)),
+    url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat,
+    #1a1a1a;
+}
+
+.article-page__cover-art::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(40px, 7%, 64px);
+  aspect-ratio: 450 / 453.649;
+  background: #474747;
+  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  content: "";
+  translate: -50% -50%;
+}
+
 .article-page__cover img {
   display: block;
   width: 100%;

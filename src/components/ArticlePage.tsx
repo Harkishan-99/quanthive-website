@@ -209,7 +209,10 @@ function ArticleView({ article }: { article: Article }) {
           <time>{article.date}</time>
         </p>
 
-        <div className="article-page__cover">{article.image && <img src={article.image} alt="" />}</div>
+        {/* No cover yet: the placeholder — the lattice, faint, round the motif. */}
+        <div className="article-page__cover">
+          {article.image ? <img src={article.image} alt="" /> : <span className="article-page__cover-art" aria-hidden />}
+        </div>
 
         <p className="article-page__lead">{article.lead}</p>
         <hr className="article-page__rule" />
