@@ -29,6 +29,13 @@ const ORIGINAL_ITEMS = [
   },
 ];
 
+// The bar's and menu's labels for the site's plain pages.
+const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | undefined> = {
+  About: "about",
+  Team: "team",
+  Contact: "contact",
+};
+
 const BAR_ITEMS = ORIGINAL_ITEMS.filter((it) => it.inBar);
 
 // The drawer's icons: plain 1.5px line glyphs in one ink (Nav.css colours them).
@@ -96,8 +103,7 @@ export default function Nav({
   open,
   onOpenChange,
   onProductSelect,
-  onAboutSelect,
-  onContactSelect,
+  onPageSelect,
   intro = false,
   page = "landing",
 }: {
@@ -107,8 +113,8 @@ export default function Nav({
   onOpenChange: (open: boolean) => void;
   onProductSelect?: () => void;
   /** Opens the About page. */
-  onAboutSelect?: () => void;
-  onContactSelect?: () => void;
+  /** Opens one of the site's plain pages (About, Team, Contact). */
+  onPageSelect?: (page: "about" | "team" | "contact") => void;
   /** The page showing, for the bar's tone over Flash's dark hero. */
   page?: string;
 }) {
@@ -206,8 +212,8 @@ export default function Nav({
                       onOpenChange(!open);
                     } else {
                       onOpenChange(false);
-                      if (it.label === "About") onAboutSelect?.();
-                      if (it.label === "Contact") onContactSelect?.();
+                      const page = PLAIN_PAGES[it.label];
+                      if (page) onPageSelect?.(page);
                     }
                   }}
                 >
@@ -294,8 +300,8 @@ export default function Nav({
                         tabIndex={open ? 0 : -1}
                         onClick={() => {
                           if (item.title === "Product") onProductSelect?.();
-                          if (item.title === "About") onAboutSelect?.();
-                          if (item.title === "Contact") onContactSelect?.();
+                          const page = PLAIN_PAGES[item.title];
+                          if (page) onPageSelect?.(page);
                           onOpenChange(false);
                         }}
                       >

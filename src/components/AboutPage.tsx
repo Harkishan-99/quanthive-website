@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { navigate } from "../lib/router";
 import "./AboutPage.css";
 
@@ -7,7 +8,7 @@ import "./AboutPage.css";
 // column's right; two paragraphs; a rule; a paragraph over three square tiles; a
 // rule — and then the Partners row: its heading and two cells divided by tall
 // hairlines. The copy and tiles are the frames' placeholders.
-const LOREM_LONG =
+export const LOREM_LONG =
   "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices.";
 const LOREM_SHORT = "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna.";
 
@@ -18,24 +19,34 @@ function goBack() {
   else navigate("/");
 }
 
+/** The head these pages share (About, Team, Contact): the back arrow out in the
+ *  margin, the title, and the small black motif at the column's right. */
+export function PageHead({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <header className="about-page__head">
+      <button type="button" className="about-page__back" onClick={goBack} aria-label="Back">
+        <svg viewBox="0 0 35 35" aria-hidden>
+          <path d="M29.1667 17.5H5.83333M16.0417 27.7083L5.83333 17.5L16.0417 7.29167" />
+        </svg>
+      </button>
+      <h1 id={id} className="about-page__title">
+        {children}
+      </h1>
+      <span className="about-page__motif" aria-hidden />
+    </header>
+  );
+}
+
 export default function AboutPage() {
   return (
     <main className="about-page" aria-labelledby="about-page-title">
       <article className="about-page__column">
-        <header className="about-page__head">
-          <button type="button" className="about-page__back" onClick={goBack} aria-label="Back">
-            <svg viewBox="0 0 35 35" aria-hidden>
-              <path d="M29.1667 17.5H5.83333M16.0417 27.7083L5.83333 17.5L16.0417 7.29167" />
-            </svg>
-          </button>
-          <h1 id="about-page-title" className="about-page__title">
-            <span className="about-page__pg">Ab</span>
-            <span className="about-page__pp">o</span>
-            <span className="about-page__bg">u</span>
-            <span className="about-page__pg">t</span>
-          </h1>
-          <span className="about-page__motif" aria-hidden />
-        </header>
+        <PageHead id="about-page-title">
+          <span className="about-page__pg">Ab</span>
+          <span className="about-page__pp">o</span>
+          <span className="about-page__bg">u</span>
+          <span className="about-page__pg">t</span>
+        </PageHead>
 
         <div className="about-page__copy">
           <p>{LOREM_LONG}</p>

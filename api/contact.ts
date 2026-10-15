@@ -10,7 +10,7 @@ import { DATA_DIR, EMAIL_RE, escapeHtml, mailer, oneLine, rateLimited } from "./
 const LOG_FILE = join(DATA_DIR, "contact.jsonl");
 const TO = process.env.CONTACT_TO || process.env.WAITLIST_TO || "mail@quanthive.in";
 
-type Message = { name: string; email: string; message: string };
+type Message = { name: string; email: string; organisation: string; message: string };
 
 function validate(body: unknown): { message: Message } | { error: string } {
   if (!body || typeof body !== "object") return { error: "Invalid request." };
@@ -18,7 +18,12 @@ function validate(body: unknown): { message: Message } | { error: string } {
     const value = (body as Record<string, unknown>)[key];
     return typeof value === "string" ? value.trim().slice(0, max) : "";
   };
-  const message = { name: read("name", 120), email: read("email", 200), message: read("message", 4000) };
+  const message = {
+    name: read("name", 120),
+    email: read("email", 200),
+    organisation: read("organisation", 160), // optional
+    message: read("message", 4000),
+  };
   if (!message.name) return { error: "Please add your name." };
   if (!EMAIL_RE.test(message.email)) return { error: "Please add a valid email." };
   if (!message.message) return { error: "Please add a message." };
@@ -46,10 +51,10 @@ async function deliver(message: Message, meta: { ip: string; ua: string }) {
         to: TO,
         replyTo: oneLine(`"${message.name.replace(/"/g, "")}" <${message.email}>`),
         subject: oneLine(`Contact form: ${message.name}`),
-        text: `Name: ${message.name}\nEmail: ${message.email}\nSent: ${at}\n\n${message.message}`,
+        text: `Name: ${message.name}\nEmail: ${message.email}\nOrganisation: ${message.organisation || "—"}\nSent: ${at}\n\n${message.message}`,
         html:
           `<h2 style="font:600 18px system-ui,sans-serif;margin:0 0 12px">New message from the website</h2>` +
-          `<p style="font:14px system-ui,sans-serif;color:#666;margin:0 0 4px">${escapeHtml(message.name)} &lt;${escapeHtml(message.email)}&gt; · ${at}</p>` +
+          `<p style="font:14px system-ui,sans-serif;color:#666;margin:0 0 4px">${escapeHtml(message.name)} &lt;${escapeHtml(message.email)}&gt;${message.organisation ? ` · ${escapeHtml(message.organisation)}` : ""} · ${at}</p>` +
           `<p style="font:15px/1.5 system-ui,sans-serif;white-space:pre-wrap;margin:16px 0 0">${escapeHtml(message.message)}</p>`,
       });
       mailed = true;

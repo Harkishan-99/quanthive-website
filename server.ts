@@ -9,6 +9,7 @@ const FIGMA_SOLUTION_IMAGE_DIR = join(IMAGE_DIR, "figma-solution");
 const FIGMA_PRODUCT_IMAGE_DIR = join(IMAGE_DIR, "figma-product");
 const FIGMA_CAPABILITIES_IMAGE_DIR = join(IMAGE_DIR, "figma-capabilities");
 const VIDEO_SHOT_IMAGE_DIR = join(IMAGE_DIR, "video-shot");
+const TEAM_IMAGE_DIR = join(IMAGE_DIR, "team");
 const VIDEO_DIR = join(import.meta.dir, "src/assets/videos");
 
 // The video panel's download: rendered on demand (scripts/render-video.ts) and
@@ -72,6 +73,8 @@ const server = Bun.serve({
       new Response(Bun.file(join(VIDEO_DIR, safeName(req.params.file)))),
     "/images/video-shot/:file": (req) =>
       new Response(Bun.file(join(VIDEO_SHOT_IMAGE_DIR, safeName(req.params.file)))),
+    "/images/team/:file": (req) =>
+      new Response(Bun.file(join(TEAM_IMAGE_DIR, safeName(req.params.file)))),
     "/images/:file": (req) =>
       new Response(Bun.file(join(IMAGE_DIR, safeName(req.params.file)))),
     // News about the followed companies, proxied so the GNews key stays

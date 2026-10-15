@@ -8,6 +8,7 @@ Pages (one app; moving between them never reloads):
 - `/` — QuantHive landing page (hero, capabilities, about section)
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
 - `/about` — About page; old `/#about-us` links redirect here
+- `/team` — Team page; add photos in `src/assets/images/team/` and list them in `TEAM` (`src/components/TeamPage.tsx`)
 - `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 

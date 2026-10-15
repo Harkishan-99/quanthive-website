@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
+import { LOREM_LONG, PageHead } from "./AboutPage";
+import "./AboutPage.css";
 import "./ContactPage.css";
 
-// The Contact page (frame 24:4211): the invitation and a three-line form on the
-// left — underlined fields with small italic labels, an outlined button — and a
-// map on the right, in greys. The form posts to /api/contact (api/contact.ts),
-// which mails the message to the team.
+// The Contact page (frame 24:4211), on the About page's column: its head and
+// copy, then a four-line form (hairline fields, a black send key) beside a square
+// map in greys, and a closing rule broken by a small grey motif. The form posts to
+// /api/contact (api/contact.ts), which mails the message to the team.
 
 // Where the map points. A place name or full street address both work.
 const MAP_PLACE = "India";
@@ -39,51 +41,49 @@ export default function ContactPage() {
   const sending = status.state === "sending";
 
   return (
-    <main className="contact-page" aria-labelledby="contact-title">
-      <div className="contact-page__inner">
-        <section className="contact-page__form-col">
-          <h1 id="contact-title" className="contact-page__title">
-            Don&apos;t hesitate to contact us! We&apos;d love<br className="contact-page__br" /> to meet you!
-          </h1>
+    <main className="about-page" aria-labelledby="contact-page-title">
+      <article className="about-page__column">
+        <PageHead id="contact-page-title">
+          <span className="about-page__pp">Co</span>
+          <span className="about-page__bg">n</span>
+          <span className="about-page__pg">t</span>
+          <span className="about-page__pp">ac</span>
+          <span className="about-page__pg">t</span>
+        </PageHead>
 
+        <div className="about-page__copy">
+          <p>{LOREM_LONG}</p>
+        </div>
+
+        <div className="contact-page__body">
           <form className="contact-form" onSubmit={send}>
-            <label className="contact-form__field">
-              <span>your name</span>
-              <input name="name" type="text" autoComplete="name" maxLength={120} required />
-            </label>
-            <label className="contact-form__field">
-              <span>your mail</span>
-              <input name="email" type="email" autoComplete="email" maxLength={200} required />
-            </label>
-            <label className="contact-form__field">
-              <span>your message</span>
-              <textarea name="message" rows={1} maxLength={4000} required />
-            </label>
+            <input name="name" type="text" placeholder="Name" aria-label="Name" autoComplete="name" maxLength={120} required />
+            <input name="email" type="email" placeholder="Email" aria-label="Email" autoComplete="email" maxLength={200} required />
+            <input name="organisation" type="text" placeholder="Organisation" aria-label="Organisation" autoComplete="organization" maxLength={160} />
+            <textarea name="message" placeholder="Message" aria-label="Message" rows={1} maxLength={4000} required />
             {/* Hidden from people; bots fill it in (api/contact.ts drops those). */}
             <input className="contact-form__trap" name="website" tabIndex={-1} autoComplete="off" aria-hidden />
 
-            <div className="contact-form__foot">
-              <button type="submit" className="contact-form__send" disabled={sending}>
-                {sending ? "sending…" : "send us a message"}
-              </button>
-              <p className="contact-form__status" role="status" aria-live="polite">
-                {status.state === "sent" && "Thanks — we'll be in touch soon."}
-                {status.state === "error" && status.message}
-              </p>
-            </div>
+            <button type="submit" className="contact-form__send" disabled={sending}>
+              {sending ? "Sending…" : "Send message"}
+            </button>
+            <p className="contact-form__status" role="status" aria-live="polite">
+              {status.state === "sent" && "Thanks — we'll be in touch soon."}
+              {status.state === "error" && status.message}
+            </p>
           </form>
-        </section>
 
-        <div className="contact-page__map">
-          <iframe
-            title={`Map: ${MAP_PLACE}`}
-            src={MAP_SRC}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+          <div className="contact-page__map">
+            <iframe title={`Map: ${MAP_PLACE}`} src={MAP_SRC} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+          </div>
         </div>
-      </div>
+
+        <div className="contact-page__end" aria-hidden>
+          <span />
+          <i />
+          <span />
+        </div>
+      </article>
     </main>
   );
 }

@@ -1,148 +1,121 @@
-/* The Contact page (frame 24:4211), in the frame's 1920 measures, scaled with the
-   screen (--ref, tokens.css; 1920 frame px = 1.333 --ref):
+/* The Contact page (frame 24:4211), on the About page's column (AboutPage.css),
+   in the frame's measures against its 812 column:
 
-   - two columns centred as a pair: the form's 500 wide, a 80 gap, the map 556 × 486;
-   - the invitation in bold 30 / 36, black, two lines;
-   - fields 100 apart: a small italic label (17) over a 1.5px grey underline;
-   - an outlined 250 × 54 button, 2px black, its label 17;
-   - the map in greys.
+   - under the copy (from 420): the form, 339 wide — four hairline fields whose
+     lines fall 70 apart (the first 74 down), then a #121212 key 190 × 45 another
+     75 down; beside it, from 410 across, the map, 402 square, in greys;
+   - closing it all, 153 under the map: a rule broken by a small grey motif at
+     the centre (two 340.5 rules, the motif 29 wide between them).
 
-   Tablets and phones stack the map under the form, full width. */
+   Phones stack the map under the form. */
 
-.contact-page {
-  --u: calc(var(--ref) * 1.3333); /* one frame px */
-  --ink: #1b1b1b;
-  --line: #8e8e8e;
-
-  position: relative;
-  z-index: 1;
+.contact-page__body {
   display: grid;
-  min-height: 100dvh;
-  place-items: center;
-  padding: calc(var(--announcement-h, 0px) + 72px + max(32px, calc(60 * var(--u)))) max(20px, 6vw)
-    max(56px, calc(110 * var(--u)));
-  background: #ffffff;
-  color: var(--ink);
-  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
-}
-
-.contact-page__inner {
-  display: grid;
-  grid-template-columns: max(300px, calc(500 * var(--u))) max(320px, calc(556 * var(--u)));
+  grid-template-columns: 339fr 71fr 402fr;
   align-items: start;
-  gap: max(40px, calc(80 * var(--u)));
+  margin-top: clamp(40px, 4.3vw, 82px);
+  animation: about-page-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 280ms backwards;
 }
 
-.contact-page__title {
-  margin: 0;
-  font-size: max(22px, calc(30 * var(--u)));
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-
-/* Desktop breaks after "love", as the frame does; narrower screens wrap freely. */
-.contact-page__title {
-  white-space: nowrap;
-}
-
-@media (max-width: 1199px) {
-  .contact-page__title {
-    white-space: normal;
-  }
-
-  .contact-page__br {
-    display: none;
-  }
-}
-
-/* --- The form ------------------------------------------------------------------ */
+/* --- The form --------------------------------------------------------------- */
 
 .contact-form {
-  display: grid;
-  gap: max(26px, calc(48 * var(--u)));
-  margin-top: max(26px, calc(48 * var(--u)));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
 }
 
-.contact-form__field {
-  display: grid;
-  gap: max(6px, calc(10 * var(--u)));
-}
-
-.contact-form__field span {
-  color: #3a3a3a;
-  font-size: max(13px, calc(17 * var(--u)));
-  font-style: italic;
-}
-
-.contact-form__field input,
-.contact-form__field textarea {
+/* Each field ends on its hairline, the type just above it. */
+.contact-form input,
+.contact-form textarea {
+  display: block;
   width: 100%;
-  padding: 0 0 max(6px, calc(8 * var(--u)));
+  box-sizing: border-box;
+  height: calc(var(--col) * 70 / 812);
+  min-height: 48px;
+  padding: 0 0 clamp(8px, 0.6vw, 12px);
   border: 0;
-  border-bottom: 1.5px solid var(--line);
+  border-bottom: 1px solid var(--rule);
   border-radius: 0;
   background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: max(15px, calc(19 * var(--u)));
+  color: #000000;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(15px, 0.94vw, 18px);
+  letter-spacing: -0.02em;
   outline: none;
   transition: border-color 200ms ease;
 }
 
-.contact-form__field textarea {
-  min-height: calc(1.5em + max(6px, calc(8 * var(--u))));
-  line-height: 1.5;
-  resize: vertical;
+.contact-form input {
+  padding-top: calc(var(--col) * 70 / 812 - 2.2em);
+}
+
+/* The first line falls 74 down, the rest 70 apart. */
+.contact-form input:first-of-type {
+  height: calc(var(--col) * 74 / 812);
+  padding-top: calc(var(--col) * 74 / 812 - 2.2em);
+}
+
+.contact-form textarea {
+  height: auto;
+  min-height: max(48px, calc(var(--col) * 70 / 812));
+  padding-top: calc(var(--col) * 70 / 812 - 2.2em);
+  line-height: 1.4;
+  resize: none;
   field-sizing: content; /* grows with the message where supported */
   max-height: 40vh;
 }
 
-.contact-form__field input:focus,
-.contact-form__field textarea:focus {
-  border-bottom-color: var(--ink);
+.contact-form ::placeholder {
+  color: #a3a3a3;
+  opacity: 1;
 }
 
-.contact-form__trap {
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-bottom-color: #000000;
+}
+
+.contact-form .contact-form__trap {
   position: absolute;
   left: -9999px;
   width: 1px;
   height: 1px;
+  min-height: 0;
   opacity: 0;
 }
 
-.contact-form__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 20px;
-  margin-top: max(10px, calc(24 * var(--u)));
-}
-
 .contact-form__send {
-  min-width: max(190px, calc(250 * var(--u)));
-  height: max(44px, calc(54 * var(--u)));
-  padding: 0 1.4em;
-  border: 2px solid var(--ink);
+  width: calc(var(--col) * 190 / 812);
+  min-width: 150px;
+  height: calc(var(--col) * 45 / 812);
+  min-height: 42px;
+  margin-top: calc(var(--col) * 75 / 812);
+  border: 0;
   border-radius: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: max(14px, calc(17 * var(--u)));
-  font-weight: 600;
+  background: #121212;
+  color: #ffffff;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(13px, 0.83vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition:
     background 200ms ease,
-    color 200ms ease;
+    translate 250ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .contact-form__send:hover:not(:disabled) {
-  background: var(--ink);
-  color: #ffffff;
+  background: #2c2c2c;
+}
+
+.contact-form__send:active:not(:disabled) {
+  translate: 0 1px;
 }
 
 .contact-form__send:focus-visible {
-  outline: 1px solid var(--ink);
+  outline: 1px solid #000000;
   outline-offset: 3px;
 }
 
@@ -152,9 +125,10 @@
 }
 
 .contact-form__status {
-  margin: 0;
+  margin: 14px 0 0;
   color: #555555;
-  font-size: max(13px, calc(16 * var(--u)));
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(13px, 0.83vw, 16px);
 }
 
 .contact-form__status:empty {
@@ -165,9 +139,10 @@
 
 .contact-page__map {
   position: relative;
-  aspect-ratio: 556 / 486;
+  grid-column: 3;
+  aspect-ratio: 1;
   overflow: hidden;
-  background: #eeeeee;
+  background: #fcfcfc; /* the frame's box, until the map loads */
 }
 
 .contact-page__map iframe {
@@ -176,28 +151,67 @@
   width: 100%;
   height: 100%;
   border: 0;
-  filter: grayscale(1) contrast(0.9) brightness(1.04);
+  filter: grayscale(1) contrast(0.92) brightness(1.05);
 }
 
-/* --- Tablets and phones: one column ------------------------------------------------ */
+/* --- The closing rule and its motif ------------------------------------------------ */
 
-@media (max-width: 900px) {
-  .contact-page {
-    place-items: start center;
-  }
+.contact-page__end {
+  display: grid;
+  grid-template-columns: 340.5fr 131fr 340.5fr;
+  align-items: center;
+  margin-top: calc(var(--col) * 153 / 812);
+  animation: about-page-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 340ms backwards;
+}
 
-  .contact-page__inner {
-    width: min(100%, 560px);
+.contact-page__end span {
+  border-top: 1px solid var(--rule);
+}
+
+/* The hero's ornament, small and pale (the art 29 across; the file is padded). */
+.contact-page__end i {
+  justify-self: center;
+  width: calc(clamp(22px, 1.51vw, 29px) * 450 / 390);
+  aspect-ratio: 450 / 453.649;
+  background: #e2e2e2;
+  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+}
+
+/* --- Phones: the map under the form ------------------------------------------------ */
+
+@media (max-width: 640px) {
+  .contact-page__body {
     grid-template-columns: minmax(0, 1fr);
+    row-gap: 40px;
   }
 
   .contact-page__map {
-    aspect-ratio: 4 / 3;
+    grid-column: 1;
+  }
+
+  .contact-form input,
+  .contact-form input:first-of-type,
+  .contact-form textarea {
+    height: 56px;
+    padding-top: 24px;
+  }
+
+  .contact-form__send {
+    width: 100%;
+    height: 48px;
+    margin-top: 40px;
+  }
+
+  .contact-page__end {
+    grid-template-columns: 1fr 72px 1fr;
+    margin-top: 64px;
   }
 }
 
-@media (max-width: 640px) {
-  .contact-form__send {
-    width: 100%;
+@media (prefers-reduced-motion: reduce) {
+  .contact-page__body,
+  .contact-page__end {
+    animation: none;
   }
 }

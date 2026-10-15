@@ -4,6 +4,7 @@ import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
 import Capabilities from "./components/Capabilities";
 import ContactPage from "./components/ContactPage";
+import TeamPage from "./components/TeamPage";
 import EdgeMotifs from "./components/EdgeMotifs";
 import FlashProductPage from "./components/FlashProductPage";
 import Footer from "./components/Footer";
@@ -39,6 +40,7 @@ const PAGE_TITLE: Record<Page, string> = {
   landing: "QuantHive | Financial Analytics Made Easy",
   product: "Flash | QuantHive",
   about: "About | QuantHive",
+  team: "Team | QuantHive",
   contact: "Contact | QuantHive",
 };
 
@@ -152,8 +154,7 @@ function Site() {
   const [waitlist, setWaitlist] = useState(false);
   useEffect(() => onWaitlistRequest(() => setWaitlist(true)), []);
   const closeWaitlist = useCallback(() => setWaitlist(false), []);
-  const openAbout = () => goTo("about");
-  const openContact = () => goTo("contact");
+
 
   return (
     <>
@@ -163,6 +164,8 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "team" ? (
+        <TeamPage />
       ) : page === "contact" ? (
         <ContactPage />
       ) : (
@@ -180,7 +183,7 @@ function Site() {
       )}
       <Footer />
       <WaitlistDialog open={waitlist} onClose={closeWaitlist} />
-      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onAboutSelect={openAbout} onContactSelect={openContact} page={page} intro={introOnLanding && page === "landing"} />
+      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onPageSelect={goTo} page={page} intro={introOnLanding && page === "landing"} />
     </>
   );
 }
