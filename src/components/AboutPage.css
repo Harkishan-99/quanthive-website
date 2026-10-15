@@ -467,9 +467,40 @@
     gap: 12px;
   }
 
-  /* Leaders one above the other; partners two to a row. */
+  /* Leaders one above the other, each a row: the portrait, its text beside it. */
   .about-page__leader-list {
     grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .about-page__leader {
+    display: grid;
+    grid-template-columns: 38% minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+  }
+
+  .about-page__leader-text {
+    margin-top: 0;
+  }
+
+  .about-page__leader-name {
+    font-size: 16px;
+  }
+
+  .about-page__leader-role {
+    font-size: 12.5px;
+  }
+
+  .about-page__leader-bio {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .about-page__linkedin {
+    margin-top: 10px;
+    font-size: 12px;
   }
 
   /* Partners: the heading above, then two across with hairlines between. */
