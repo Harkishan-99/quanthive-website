@@ -806,3 +806,28 @@
   transform-origin: 0 50%;
   scale: max(0, var(--p, 0)) 1;
 }
+
+/* --- The outro (full screen, large displays) ------------------------------------
+   After the shot has faded: the QuantHive lockup in white, centred, resolving out
+   of a soft blur and a touch of scale (--outro-in), then fading away (--outro);
+   both are set per frame from the shot's own clock, so they scrub and loop with
+   it. Playing once, it rests fully shown. */
+.video-outro {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  opacity: var(--outro, 0);
+  pointer-events: none;
+}
+
+.video-outro__logo {
+  width: min(46%, 980px);
+  aspect-ratio: 13266 / 2665.401;
+  background: #ffffff;
+  -webkit-mask: url("../assets/icons/quanthive-lockup.svg") center / 100% 100% no-repeat;
+  mask: url("../assets/icons/quanthive-lockup.svg") center / 100% 100% no-repeat;
+  scale: calc(1.05 - 0.05 * var(--outro-in, 0));
+  filter: blur(calc((1 - var(--outro-in, 0)) * 14px));
+}

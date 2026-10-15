@@ -19,6 +19,17 @@ export default function Showcase({ onClose, compare = false }: { onClose?: () =>
   const [fullscreen, setFullscreen] = useState(() => !!document.fullscreenElement);
   const idleTimer = useRef(0);
   const canFullscreen = typeof document.documentElement.requestFullscreen === "function";
+  // A large landscape screen ends each run on the QuantHive logo, and can loop or
+  // play once (the stage there is the whole screen — see Showcase.css).
+  const LARGE = "(min-aspect-ratio: 1/1) and (min-width: 900px)";
+  const [large, setLarge] = useState(() => window.matchMedia(LARGE).matches);
+  useEffect(() => {
+    const query = window.matchMedia(LARGE);
+    const update = () => setLarge(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const [loop, setLoop] = useState(true);
 
   const wake = useCallback(() => {
     setIdle(false);
@@ -81,10 +92,44 @@ export default function Showcase({ onClose, compare = false }: { onClose?: () =>
       aria-label="Flash demo, full screen"
     >
       <div className="showcase__stage">
-        <VideoPromptGlass variant="showcase" compare={compare} />
+        <VideoPromptGlass variant="showcase" compare={compare} outro={large} loop={!large || loop} />
       </div>
 
       <div className="showcase__controls">
+        {/* Large screens: loop the whole thing, or play it once and rest on the logo. */}
+        {large && (
+          <div className="showcase__mode" role="group" aria-label="Playback">
+            <button
+              type="button"
+              aria-pressed={loop}
+              onClick={(event) => {
+                event.stopPropagation();
+                setLoop(true);
+              }}
+              title="Loop"
+            >
+              <svg viewBox="0 0 16 16" aria-hidden>
+                <path d="M3 7.5A4.5 4.5 0 0 1 11.6 5.6M13 8.5a4.5 4.5 0 0 1-8.6 1.9" />
+                <path d="M11.9 2.8l-.3 2.8-2.8-.3M4.1 13.2l.3-2.8 2.8.3" />
+              </svg>
+              <span>Loop</span>
+            </button>
+            <button
+              type="button"
+              aria-pressed={!loop}
+              onClick={(event) => {
+                event.stopPropagation();
+                setLoop(false);
+              }}
+              title="Play once"
+            >
+              <svg viewBox="0 0 16 16" aria-hidden>
+                <path d="M3 8h8.5M8.5 4.5 12 8l-3.5 3.5M13.5 3.5v9" />
+              </svg>
+              <span>Once</span>
+            </button>
+          </div>
+        )}
         {canFullscreen && (
           <button
             type="button"

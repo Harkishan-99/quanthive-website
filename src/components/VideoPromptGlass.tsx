@@ -212,6 +212,14 @@ const HOLD_MS = 1600;
 const FADE_MS = 600;
 const LOOP_MS = START_DELAY_MS + END_MS + HOLD_MS + FADE_MS;
 const LOOP_COMPARE_MS = START_DELAY_MS + END_COMPARE_MS + HOLD_MS + FADE_MS;
+// The outro (full screen on a large display only): once the shot has faded, the
+// QuantHive logo resolves in the middle, holds for 3s, and fades before the next
+// loop — or, playing once, stays.
+const OUTRO_GAP_MS = 200;
+const OUTRO_IN_MS = 1200;
+const OUTRO_HOLD_MS = 3000;
+const OUTRO_OUT_MS = 900;
+const OUTRO_TAIL_MS = 400;
 
 /** Marks an element to be revealed `at` ms into the extra blocks, over `dur` ms.
  *  `ease`: "smooth" (default), "spring" (overshoots), "linear", or "count"
@@ -813,8 +821,15 @@ export default function VideoPromptGlass({
   variant = "panel",
   seekerShown = false,
   compare = false,
+  outro = false,
+  loop = true,
 }: {
   variant?: ShotVariant;
+  /** End each run on the QuantHive logo (full screen, large displays). */
+  outro?: boolean;
+  /** Start over after each run; false plays once and rests on the final frame
+   *  (the logo, with an outro). */
+  loop?: boolean;
   /** Compare: Claude answers the same question in a window alongside. */
   compare?: boolean;
   /** Whether the panel's dial is showing: the reply then keeps clear of it. */
@@ -838,6 +853,9 @@ export default function VideoPromptGlass({
   progressRef.current = onProgress;
   const seekerShownRef = useRef(seekerShown);
   seekerShownRef.current = seekerShown;
+  // Read each frame, so switching between looping and playing once doesn't restart.
+  const loopRef = useRef(loop);
+  loopRef.current = loop;
   const controlImpl = useRef<VideoControl>({ seek: () => {}, scrub: () => {} });
   useImperativeHandle(
     controlRef,
@@ -874,7 +892,15 @@ export default function VideoPromptGlass({
     const claudeDots = claudeRoot?.querySelector<HTMLElement>(".claude-think__dots") ?? null;
     // The loop runs long enough for whichever answer finishes last.
     const endMs = compare ? END_COMPARE_MS : END_MS;
-    const loopMs = compare ? LOOP_COMPARE_MS : LOOP_MS;
+    // With the outro, each run goes on past the shot's fade: the logo comes in,
+    // holds, and leaves before the loop starts over.
+    const sceneGoneMs = START_DELAY_MS + endMs + HOLD_MS + FADE_MS;
+    const outroInAt = sceneGoneMs + OUTRO_GAP_MS;
+    const outroHeldAt = outroInAt + OUTRO_IN_MS;
+    const outroOutAt = outroHeldAt + OUTRO_HOLD_MS;
+    const loopMs = outro ? outroOutAt + OUTRO_OUT_MS + OUTRO_TAIL_MS : compare ? LOOP_COMPARE_MS : LOOP_MS;
+    // Playing once, the run stops here: on the logo, or on the finished answer.
+    const stopAt = outro ? outroHeldAt : START_DELAY_MS + endMs;
     const panel = root?.parentElement;
     if (!root || !canvas || !text || !answer || !scroller || !panel) return;
     const words = Array.from(answer.children) as HTMLElement[];
@@ -1017,9 +1043,21 @@ export default function VideoPromptGlass({
     let loopIndex = 0;
     let typed = -1;
     const wordProgress: number[] = [];
+    let wasLooping = loopRef.current;
     const elapsedAt = (now: number) => {
       if (held !== null) return held;
       if (origin === null) return -1;
+      // Playing once: the current run stops at its rest frame and stays there.
+      const runAt = now - origin - loopIndex * loopMs;
+      if (!loopRef.current) {
+        wasLooping = false;
+        if (runAt >= stopAt) return stopAt;
+      } else if (!wasLooping) {
+        // Switched back to looping while resting: carry on from the rest frame
+        // rather than jumping to wherever the clock has got to.
+        wasLooping = true;
+        if (runAt > stopAt) origin = now - loopIndex * loopMs - stopAt;
+      }
       const index = Math.floor((now - origin) / loopMs);
       if (index !== loopIndex) {
         loopIndex = index;
@@ -1095,6 +1133,13 @@ export default function VideoPromptGlass({
       progressRef.current?.(Math.max(0, elapsed) / loopMs);
       // The loop's end: the whole scene fades out before it starts over.
       root.style.setProperty("--scene-in", (1 - smootherstep(at0(t, endMs + HOLD_MS, FADE_MS))).toFixed(4));
+      if (outro) {
+        const into = smootherstep(clamp01((elapsed - outroInAt) / OUTRO_IN_MS));
+        const away = smootherstep(clamp01((elapsed - outroOutAt) / OUTRO_OUT_MS));
+        // On the panel: the logo sits beside the shot, outside its fade.
+        panel.style.setProperty("--outro-in", into.toFixed(4));
+        panel.style.setProperty("--outro", (into * (1 - away)).toFixed(4));
+      }
       const at = (from: number, span: number) => (live ? (t - from) / span : 0);
       const { h, pillW, cy, midX, sendCx } = layout;
       const { u } = scene;
@@ -1478,7 +1523,7 @@ export default function VideoPromptGlass({
         tileTexture && gl.deleteTexture(tileTexture);
       }
     };
-  }, [variant, compare]);
+  }, [variant, compare, outro]);
 
   const kick = () => kickRef.current();
 
@@ -1504,6 +1549,7 @@ export default function VideoPromptGlass({
   };
 
   return (
+    <>
     <div
       className="video-prompt"
       ref={rootRef}
@@ -1798,5 +1844,13 @@ export default function VideoPromptGlass({
         <path d="M4.71429 2.83171C4.71429 1.77414 5.94 1.18957 6.76264 1.85507L20.0255 12.595C20.8254 13.2424 20.3673 14.5357 19.338 14.5357H11.9704C11.7069 14.5358 11.4468 14.5947 11.209 14.7082C10.9712 14.8217 10.7618 14.9869 10.5961 15.1918L6.69743 20.0114C6.03586 20.8293 4.71429 20.3618 4.71429 19.3097V2.83171Z" />
       </svg>
     </div>
+    {/* The outro: the QuantHive logo after the shot (full screen, large displays),
+        beside the shot rather than in it, so the shot's fade doesn't take it too. */}
+    {outro && (
+      <div className="video-outro" aria-hidden>
+        <span className="video-outro__logo" />
+      </div>
+    )}
+    </>
   );
 }
