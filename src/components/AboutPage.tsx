@@ -1,3 +1,4 @@
+import { navigate } from "../lib/router";
 import "./AboutPage.css";
 
 // The About page (frames 17:3946 and 18:4116, stacked, the frames' empty space
@@ -14,7 +15,7 @@ const LOREM_SHORT = "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut e
  *  changes page); opened directly, with nothing before it, to the landing page. */
 function goBack() {
   if (document.documentElement.dataset.prevPage) window.history.back();
-  else window.location.hash = "";
+  else navigate("/");
 }
 
 export default function AboutPage() {

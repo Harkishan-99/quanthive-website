@@ -3,10 +3,10 @@
 The QuantHive marketing site and the Flash product page: a React 19 app served
 by [Bun](https://bun.sh) (`server.ts`), with a small API for the Flash waitlist.
 
-Pages (hash-routed, one app):
+Pages (one app; moving between them never reloads):
 
 - `/` — QuantHive landing page (hero, capabilities, about section)
-- `/#flash` — Flash product page (hero with the waitlist form, partner logos)
+- `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
 - `/#about-us` — About page
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
@@ -82,6 +82,10 @@ On any Linux VM / VPS (or a container platform such as Railway, Render, Fly.io):
 bun install --production
 NODE_ENV=production PORT=4173 bun run start      # runs: bun server.ts
 ```
+
+`server.ts` serves the app at both `/` and `/flash`. If you put another server or
+CDN in front, pass `/flash` through to the app (or rewrite it to `/`); don't
+let it 404.
 
 Then put it behind your web server / load balancer (e.g. nginx or Caddy) for
 HTTPS and your domain, and keep it running with a process manager, e.g.:

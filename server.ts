@@ -43,6 +43,8 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 4173),
   routes: {
     "/": index,
+    "/flash": index, // Flash's page (App.tsx / src/lib/router.ts pick the page)
+    "/flash/": index,
     "/showcase": index, // the demo alone, full screen (App renders Showcase)
     "/icons/:file": (req) =>
       new Response(Bun.file(join(ICON_DIR, safeName(req.params.file)))),

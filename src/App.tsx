@@ -12,24 +12,13 @@ import About from "./components/About";
 import AboutPage from "./components/AboutPage";
 import WaitlistDialog, { onWaitlistRequest } from "./components/WaitlistDialog";
 import Showcase from "./components/Showcase";
+import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageFrom, type Page } from "./lib/router";
 import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
 
-type Page = "landing" | "product" | "about";
-// Pages by hash: #flash is Flash's page (#product, its old address, still opens
-// it), #about-us the About page (#about is
-// the landing page's own About section, so it stays on the landing page).
-const pageFromHash = (): Page =>
-  window.location.hash === "#flash" || window.location.hash === "#product"
-    ? "product"
-    : window.location.hash === "#about-us"
-      ? "about"
-      : "landing";
-
-// An old #product link: shown as #flash, without adding a history entry.
-if (typeof window !== "undefined" && window.location.hash === "#product") {
-  window.history.replaceState(null, "", "#flash");
-}
+// Pages and their addresses: src/lib/router.ts. (#about, unlike #about-us, is the
+// landing page's own About section, so it stays on the landing page.)
+if (typeof window !== "undefined") canonicaliseAddress();
 
 // The old app shell (sidebar, chat, watchlist, clock, palette, both glass themes)
 // is still on disk and untouched — only this entry point changed, so
@@ -68,9 +57,9 @@ function Site() {
   // Only a visit that starts on the landing page plays the hero hand-over, so only
   // then does the nav's wordmark wait for it.
   const [introOnLanding] = useState(
-    () => typeof window !== "undefined" && pageFromHash() !== "product",
+    () => typeof window !== "undefined" && pageFrom() !== "product",
   );
-  const [page, setPage] = useState<Page>(() => (typeof window !== "undefined" ? pageFromHash() : "landing"));
+  const [page, setPage] = useState<Page>(() => (typeof window !== "undefined" ? pageFrom() : "landing"));
   // Arrived from the other hero by the page change below: the arriving hero waits
   // for the change (--page-t0) and its edge marks morph across rather than enter.
   const [handoff, setHandoff] = useState(false);
@@ -88,8 +77,8 @@ function Site() {
   // motion) just swap.
   useEffect(() => {
     const go = () => {
-      if (window.location.hash === "#product") window.history.replaceState(null, "", "#flash");
-      const next = pageFromHash();
+      canonicaliseAddress();
+      const next = pageFrom();
       // Moving within the landing page (its #about section, say) isn't a page change.
       if (next === document.documentElement.dataset.page) return;
       // Remember where the reader came from (the About page's back arrow).
@@ -111,33 +100,50 @@ function Site() {
       if (!animated) apply();
       else document.startViewTransition(apply);
     };
-    window.addEventListener("hashchange", go);
-    return () => window.removeEventListener("hashchange", go);
+    return onAddressChange(go);
+  }, []);
+
+  // Links to the site's own pages (the nav's logos, the footer, …) change page in
+  // place rather than reloading. A link to a spot on the same page is left alone.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = (event.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+      const url = new URL(link.href);
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname !== "/" && url.pathname.replace(/\/+$/, "") !== "/flash") return;
+      if (pageFrom(url) === pageFrom() && url.pathname === window.location.pathname) return;
+      event.preventDefault();
+      navigate(url.pathname + url.hash);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
   }, []);
 
   // Going to another page from the menu: the menu folds away first, then the
   // page changes (the drawer's fold is ~0.4s, Nav.css).
   const menuOpenRef = useRef(menuOpen);
   menuOpenRef.current = menuOpen;
-  const goTo = (hash: string) => {
-    if (window.location.hash === `#${hash}`) return setMenuOpen(false);
+  const goTo = (target: Page) => {
+    if (pageFrom() === target) return setMenuOpen(false);
     const wasOpen = menuOpenRef.current;
     setMenuOpen(false);
-    if (wasOpen) window.setTimeout(() => (window.location.hash = hash), 420);
-    else window.location.hash = hash;
+    if (wasOpen) window.setTimeout(() => navigate(PAGE_URL[target]), 420);
+    else navigate(PAGE_URL[target]);
   };
-  const openProduct = () => goTo("flash");
+  const openProduct = () => goTo("product");
 
   // The waitlist form, over whichever page is showing (WaitlistDialog.openWaitlist).
   const [waitlist, setWaitlist] = useState(false);
   useEffect(() => onWaitlistRequest(() => setWaitlist(true)), []);
   const closeWaitlist = useCallback(() => setWaitlist(false), []);
-  const openAbout = () => goTo("about-us");
+  const openAbout = () => goTo("about");
 
   return (
     <>
       {/* "Explore now" opens Flash's page. */}
-      <AnnouncementBar ctaHref="#flash" onCtaClick={openProduct} />
+      <AnnouncementBar ctaHref="/flash" onCtaClick={openProduct} />
       {page === "product" ? (
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
