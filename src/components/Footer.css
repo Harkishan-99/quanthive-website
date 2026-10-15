@@ -1,0 +1,264 @@
+.site-footer {
+  --footer-bg: #2a2a2a;
+  --footer-line: rgba(255, 255, 255, 0.08);
+  --footer-text: #f2f2f2;
+  --footer-muted: rgba(255, 255, 255, 0.5);
+  --footer-gutter: clamp(16px, 3.2vw, 44px);
+  --footer-pad: clamp(18px, 1.6vw, 22px);
+
+  /* The lockup SVG holds the hive mark and the wordmark; this crop keeps only the
+     wordmark. */
+  --wordmark-mask: url("../assets/icons/quanthive-lockup.svg");
+  --wordmark-mask-size: 124.8% 166.4%;
+  --wordmark-mask-position: 94.5% 38.2%;
+  --wordmark-ratio: 10626.33 / 1601.672;
+
+  position: relative;
+  z-index: -1;
+  width: 100%;
+  padding: 0;
+  color: var(--footer-text);
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+.site-footer__panel {
+  overflow: hidden;
+  width: 100%;
+  background: var(--footer-bg);
+}
+
+/* ---------- Ruled grid ---------- */
+
+.site-footer__body {
+  position: relative;
+}
+
+/* Vertical gutter rules run the full height of the body. */
+.site-footer__body::before,
+.site-footer__body::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--footer-line);
+  content: "";
+  pointer-events: none;
+}
+
+.site-footer__body::before { left: var(--footer-gutter); }
+.site-footer__body::after { right: var(--footer-gutter); }
+
+.site-footer__row {
+  display: grid;
+  grid-template-columns: var(--footer-gutter) minmax(0, 3fr) minmax(0, 5fr) var(--footer-gutter);
+  border-bottom: 1px solid var(--footer-line);
+}
+
+.site-footer__row--legal {
+  border-bottom: 0;
+}
+
+.site-footer__cell {
+  min-width: 0;
+  padding: clamp(44px, 5.4vw, 96px) var(--footer-pad);
+}
+
+.site-footer__cell:first-child { grid-column: 2; }
+
+.site-footer__cell + .site-footer__cell {
+  grid-column: 3;
+  border-left: 1px solid var(--footer-line);
+  padding-left: clamp(22px, 2.2vw, 30px);
+}
+
+.site-footer__cell--end {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.site-footer__row--legal .site-footer__cell {
+  padding-block: clamp(30px, 3.4vw, 56px);
+}
+
+.site-footer__row--legal .site-footer__cell--end {
+  align-items: center;
+}
+
+/* ---------- Brand ---------- */
+
+.site-footer__logo {
+  display: block;
+  width: clamp(150px, 13vw, 240px);
+  aspect-ratio: var(--wordmark-ratio);
+  background: var(--footer-text);
+  -webkit-mask: var(--wordmark-mask) var(--wordmark-mask-position) / var(--wordmark-mask-size) no-repeat;
+  mask: var(--wordmark-mask) var(--wordmark-mask-position) / var(--wordmark-mask-size) no-repeat;
+}
+
+.site-footer__tagline {
+  max-width: 30em;
+  margin: clamp(22px, 2.4vw, 40px) 0 0;
+  color: var(--footer-muted);
+  font-size: clamp(15px, 1.2vw, 20px);
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+.site-footer__top {
+  display: grid;
+  width: clamp(36px, 2.8vw, 48px);
+  height: clamp(36px, 2.8vw, 48px);
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--footer-text);
+  transition: background 180ms ease;
+}
+
+.site-footer__top:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.site-footer__top:focus-visible,
+.site-footer a:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}
+
+.site-footer__top svg {
+  width: 45%;
+  height: 45%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Link columns ---------- */
+
+.site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 40px 20px;
+}
+
+.site-footer__column h2 {
+  margin: 0 0 clamp(18px, 1.6vw, 26px);
+  color: var(--footer-muted);
+  font-size: clamp(11px, 0.85vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.site-footer__column ul {
+  display: grid;
+  gap: clamp(12px, 1.05vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__column a {
+  color: var(--footer-text);
+  font-size: clamp(14px, 1.1vw, 18px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 180ms ease;
+}
+
+.site-footer__column a:hover {
+  opacity: 0.55;
+}
+
+/* ---------- Legal row ---------- */
+
+.site-footer__copyright {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(13px, 1vw, 17px);
+  letter-spacing: -0.01em;
+}
+
+.site-footer__social {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__social a {
+  display: grid;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 180ms ease;
+}
+
+.site-footer__social a:hover {
+  color: #fff;
+}
+
+.site-footer__social svg {
+  width: clamp(17px, 1.3vw, 22px);
+  height: clamp(17px, 1.3vw, 22px);
+  fill: currentColor;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+  .site-footer__row {
+    grid-template-columns: var(--footer-gutter) minmax(0, 1fr) var(--footer-gutter);
+  }
+
+  .site-footer__cell + .site-footer__cell {
+    grid-column: 2;
+    border-top: 1px solid var(--footer-line);
+    border-left: 0;
+    padding-left: var(--footer-pad);
+  }
+
+  /* Brand and legal rows keep their two halves side by side, without a rule. */
+  .site-footer__row--brand,
+  .site-footer__row--legal {
+    grid-template-columns: var(--footer-gutter) minmax(0, 1fr) auto var(--footer-gutter);
+  }
+
+  .site-footer__row--brand .site-footer__cell + .site-footer__cell,
+  .site-footer__row--legal .site-footer__cell + .site-footer__cell {
+    grid-column: 3;
+    border-top: 0;
+  }
+
+}
+
+@media (max-width: 560px) {
+  .site-footer__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__row--legal {
+    grid-template-columns: var(--footer-gutter) minmax(0, 1fr) var(--footer-gutter);
+  }
+
+  .site-footer__row--legal .site-footer__cell + .site-footer__cell {
+    grid-column: 2;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer a,
+  .site-footer__top {
+    transition: none;
+  }
+}

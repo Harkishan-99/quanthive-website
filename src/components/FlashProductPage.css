@@ -1,0 +1,603 @@
+.flash-product {
+  /* The hero above (Hero.tsx, variant "flash") now carries the wordmark and the
+     headline, so the artboard is lifted by their 211 units and the section is
+     that much shorter. */
+  --flash-product-offset-y: calc(-36px - 211 * 100vw / 1920);
+
+  position: relative;
+  height: calc(56.25vw - 211 * 100vw / 1920);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Keep the Figma artboard and its exported assets at native dimensions. The
+   artboard itself is what scales on desktop, so no vector's root size is warped. */
+.flash-product__artboard {
+  position: absolute;
+  top: var(--flash-product-offset-y);
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  translate: -50% 0;
+  scale: calc(100vw / 1920px);
+  transform-origin: top center;
+}
+
+.flash-product__wordmark {
+  position: absolute;
+  top: 212px;
+  left: 852.5px;
+  width: 215px;
+  height: auto;
+  display: block;
+  opacity: 0;
+  animation: flash-product-rise 520ms 110ms cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+.flash-product__headline {
+  position: absolute;
+  top: 260px;
+  left: 0;
+  width: 100%;
+  color: #a1a1a1;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 37px;
+  text-align: center;
+  opacity: 0;
+  animation: flash-product-rise 560ms 190ms cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+.flash-product__headline p {
+  margin: 0;
+}
+
+.flash-product__headline p + p {
+  margin-top: -14px;
+}
+
+.flash-product__corner {
+  position: absolute;
+  width: 105px;
+  height: 105px;
+  opacity: 0;
+  animation: flash-product-rise 620ms 300ms cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+.flash-product__corner span {
+  position: absolute;
+  top: var(--pixel-top);
+  left: var(--pixel-left);
+  display: grid;
+  width: 22.799px;
+  height: 22.799px;
+  place-items: center;
+}
+
+.flash-product__corner span::after {
+  width: 16.121px;
+  height: 16.121px;
+  background: #e0e0e0;
+  content: "";
+  rotate: 45deg;
+}
+
+.flash-product__corner i {
+  position: absolute;
+  top: 28.32px;
+  left: 28.5px;
+  display: grid;
+  width: 21.045px;
+  height: 21.045px;
+  place-items: center;
+}
+
+.flash-product__corner i::after {
+  width: 12.401px;
+  height: 17.361px;
+  background: #e0e0e0;
+  content: "";
+  rotate: 45deg;
+}
+
+.flash-product__corner--top-left { top: 291px; left: 354px; }
+.flash-product__corner--top-right { top: 291px; right: 354px; scale: -1 1; }
+.flash-product__corner--bottom-left { top: 758px; left: 354px; scale: 1 -1; }
+.flash-product__corner--bottom-right { top: 758px; right: 354px; scale: -1 -1; }
+
+.flash-product__grid-stage {
+  position: absolute;
+  top: 364px;
+  left: 429px;
+  width: 1066px;
+  height: 426px;
+  opacity: 0;
+  animation: flash-product-rise 700ms 290ms cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+.flash-product__grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  z-index: 1;
+  opacity: 0.75;
+}
+
+.flash-product__grid-wash {
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 230px 205px at 0% 8%, rgba(211, 212, 213, 0.28), transparent 70%),
+    radial-gradient(ellipse 310px 255px at 100% 92%, rgba(207, 208, 209, 0.3), transparent 72%),
+    radial-gradient(ellipse 360px 245px at 62% 36%, rgba(255, 255, 255, 0.52), transparent 78%);
+}
+
+.flash-product__prompt-mark {
+  position: absolute;
+  top: 188px;
+  z-index: 1;
+  width: 50.996px;
+  height: 51.474px;
+  opacity: 0.92;
+}
+
+.flash-product__prompt-mark--left { left: 218px; }
+.flash-product__prompt-mark--right { right: 233px; }
+
+.flash-product__prompt-mark span {
+  position: absolute;
+  display: block;
+  top: var(--mark-top);
+  left: var(--mark-left);
+  width: 8.863px;
+  height: 8.863px;
+  background: #d3d4d4;
+}
+
+.flash-product__prompt-mark-cap {
+  position: absolute;
+  left: 22.15px;
+  display: block;
+  width: 6.818px;
+  height: 9.545px;
+  background: #d3d4d4;
+}
+
+.flash-product__prompt-mark-cap--top { top: 0; }
+.flash-product__prompt-mark-cap--bottom { top: 41.93px; }
+
+.flash-product__prompt-mark i {
+  position: absolute;
+  top: 19.71px;
+  left: 19.3px;
+  display: grid;
+  width: 12.534px;
+  height: 12.534px;
+  place-items: center;
+}
+
+.flash-product__prompt-mark i::after {
+  width: 8.863px;
+  height: 8.863px;
+  background: #d3d4d4;
+  content: "";
+  rotate: 45deg;
+}
+
+.flash-product__terminal {
+  position: absolute;
+  top: 895px;
+  left: 420px;
+  width: 1082px;
+  height: 868px;
+  display: block;
+  translate: 0 20px;
+  opacity: 0;
+  animation: flash-product-terminal 820ms 620ms cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+/* Prompt styles deliberately live in this page stylesheet rather than a second
+   CSS module. Bun's dev HMR can otherwise retain a stale CSS-module request
+   when the product route is added to a running server. */
+.product-prompt {
+  --intro-appear: 0;
+  --logo-grow: 0;
+  --logo-leave: 0;
+  --logo-opacity: 0;
+  --logo-scale: 0.78;
+  --logo-offset-y: 0px;
+  --logo-stretch-x: 1;
+  --logo-stretch-y: 1;
+  --prompt-expand: 0;
+  --send-separate: 0;
+  --text-in: 0;
+  --send-hover-x: 0px;
+  --send-hover-y: 0px;
+  --send-press-scale: 1;
+
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+}
+
+.product-prompt__glass {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The SVG is only a graceful fallback for browsers without WebGL2. */
+.product-prompt__fallback {
+  position: absolute;
+  top: 50%;
+  left: 47.8424%;
+  width: 26.454%;
+  height: 8.9202%;
+  translate: -50% -50%;
+  border-radius: 100px;
+  background: rgba(67, 68, 70, 0.52);
+  -webkit-mask: url("../assets/images/figma-product/prompt-mask.svg") center / 100% 100% no-repeat;
+  mask: url("../assets/images/figma-product/prompt-mask.svg") center / 100% 100% no-repeat;
+}
+
+.product-prompt__flash-intro {
+  position: absolute;
+  top: 50%;
+  left: 47.8424%;
+  z-index: 3;
+  width: 29px;
+  height: 26px;
+  overflow: visible;
+  opacity: var(--logo-opacity);
+  scale: calc(var(--logo-scale) * var(--logo-stretch-x)) calc(var(--logo-scale) * var(--logo-stretch-y));
+  translate: -50% calc(-50% + var(--logo-offset-y));
+  pointer-events: none;
+  transform-origin: center;
+  will-change: opacity, scale;
+}
+
+.product-prompt__flash-intro path {
+  fill: #f7faf6;
+  fill-opacity: 0;
+  stroke: #f7faf6;
+  stroke-width: 0.85;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: flash-prompt-logo-draw 500ms var(--flash-logo-draw-delay) cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+.product-prompt__flash-intro path + path {
+  animation-delay: calc(var(--flash-logo-draw-delay) + 60ms);
+}
+
+@keyframes flash-prompt-logo-draw {
+  0% { fill-opacity: 0; stroke-dashoffset: 1; }
+  68% { fill-opacity: 0; stroke-dashoffset: 0; }
+  100% { fill-opacity: 1; stroke-dashoffset: 0; }
+}
+
+.product-prompt__input-clip {
+  position: absolute;
+  top: 50%;
+  left: 47.8424%;
+  width: calc(3.5647% + 22.8893% * var(--prompt-expand));
+  height: 8.9202%;
+  overflow: hidden;
+  border-radius: 100px;
+  translate: -50% -50%;
+}
+
+.product-prompt__input {
+  position: absolute;
+  top: 0;
+  left: 4.61%;
+  width: calc(100% - 26px);
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  opacity: var(--text-in);
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.product-prompt__input[readonly] {
+  cursor: default;
+}
+
+.product-prompt__input:not([readonly]) {
+  cursor: text;
+}
+
+.product-prompt__loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 71.0526%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.product-prompt[data-loading] .product-prompt__loader {
+  opacity: 1;
+  transition-delay: 300ms;
+}
+
+.product-prompt__loader-orbit {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+.product-prompt[data-loading] .product-prompt__loader-orbit {
+  animation: product-prompt-loader-spin 1.08s 300ms linear infinite;
+}
+
+.product-prompt__loader-dot {
+  position: absolute;
+  top: var(--loader-y);
+  left: var(--loader-x);
+  width: 22.2222%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    rgb(12.446 12.446 12.446) 0%,
+    rgb(26.535 26.535 26.535 / 70%) 50.4808%,
+    rgb(40.356 40.356 40.356 / 0%) 100%
+  );
+  opacity: 0;
+  scale: 0.35;
+  transform: translate(-50%, -50%);
+}
+
+.product-prompt[data-loading] .product-prompt__loader-dot {
+  animation: product-prompt-loader-dot-in 260ms var(--loader-delay) cubic-bezier(0.22, 0.76, 0.24, 1) forwards;
+}
+
+@keyframes product-prompt-loader-dot-in {
+  from {
+    opacity: 0;
+    scale: 0.35;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes product-prompt-loader-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.product-prompt__send {
+  position: absolute;
+  top: 50%;
+  /* Matches the WebGL send centre: full prompt's right edge → final gap. */
+  left: calc(61.0694% + 2.1576% * var(--send-separate));
+  display: grid;
+  width: 3.5647%;
+  aspect-ratio: 1;
+  height: auto;
+  padding: 0;
+  place-items: center;
+  translate: calc(-50% + var(--send-hover-x)) calc(-50% + var(--send-hover-y));
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: var(--send-separate);
+  overflow: hidden;
+  pointer-events: none;
+  scale: var(--send-press-scale);
+  will-change: translate, scale;
+}
+
+.product-prompt__send[data-ready] {
+  pointer-events: auto;
+}
+
+.product-prompt__send:disabled {
+  cursor: default;
+}
+
+.product-prompt__send img {
+  display: block;
+  width: 42.105%;
+  height: auto;
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 260ms ease,
+    scale 320ms cubic-bezier(0.22, 0.76, 0.24, 1);
+}
+
+.product-prompt[data-loading] .product-prompt__send img {
+  opacity: 0;
+  scale: 0.35;
+}
+
+.product-prompt[data-loading] .product-prompt__send {
+  overflow: visible;
+}
+
+.product-prompt__send:focus-visible {
+  outline: 1px solid rgba(29, 29, 31, 0.72);
+  outline-offset: 3px;
+}
+
+@keyframes flash-product-rise {
+  from { opacity: 0; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes flash-product-terminal {
+  from { opacity: 0; translate: 0 20px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes flash-product-terminal-mobile {
+  from { opacity: 0; translate: -50% 20px; }
+  to { opacity: 1; translate: -50% 0; }
+}
+
+@media (max-width: 760px) {
+  .flash-product {
+    min-height: 100svh;
+    height: auto;
+  }
+
+  .flash-product__artboard {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: flex;
+    width: 100%;
+    min-height: 100svh;
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 18px 0; /* under the hero now, not the nav */
+    translate: none;
+    scale: none;
+    box-sizing: border-box;
+  }
+
+  .flash-product__wordmark,
+  .flash-product__headline,
+  .flash-product__grid-stage,
+  .flash-product__terminal {
+    position: relative;
+    top: auto;
+    left: auto;
+  }
+
+  .flash-product__wordmark {
+    margin-bottom: 18px;
+    scale: 0.78;
+  }
+
+  .flash-product__headline {
+    width: 100%;
+    font-size: clamp(13px, 3.1vw, 18px);
+    line-height: 1.45;
+  }
+
+  .flash-product__headline p + p {
+    margin-top: 2px;
+  }
+
+  .flash-product__corner {
+    display: none;
+  }
+
+  .flash-product__grid-stage {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1066 / 426;
+    margin-top: 42px;
+  }
+
+  .flash-product__grid {
+    width: 100%;
+    height: auto;
+  }
+
+  .flash-product__prompt-mark {
+    top: 44.1%;
+    scale: 0.72;
+  }
+
+  .flash-product__prompt-mark--left { left: 17.5%; }
+  .flash-product__prompt-mark--right { right: 18.5%; }
+
+  .flash-product__terminal {
+    left: 50%;
+    width: 111%;
+    height: auto;
+    max-width: none;
+    margin-top: 64px;
+    translate: -50% 20px;
+    animation-name: flash-product-terminal-mobile;
+  }
+
+  .product-prompt__input {
+    font-size: clamp(8px, 1.42vw, 11px);
+  }
+
+  .product-prompt__send img {
+    width: 42.105%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-product__wordmark,
+  .flash-product__headline,
+  .flash-product__corner,
+  .flash-product__grid-stage,
+  .flash-product__terminal {
+    animation: none;
+    opacity: 1;
+  }
+
+  .flash-product__terminal {
+    translate: 0 0;
+  }
+
+  .product-prompt__input,
+  .product-prompt__send {
+    transition: none;
+  }
+
+  .product-prompt__send img {
+    transition: none;
+  }
+
+  .product-prompt[data-loading] .product-prompt__loader {
+    transition-delay: 0s;
+  }
+
+  .product-prompt[data-loading] .product-prompt__loader-orbit,
+  .product-prompt[data-loading] .product-prompt__loader-dot {
+    animation: none;
+  }
+
+  .product-prompt[data-loading] .product-prompt__loader-dot {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .flash-product__terminal {
+    translate: -50% 0;
+  }
+}
+
+/* Carried by the hero above. */
+.flash-product__wordmark,
+.flash-product__headline {
+  display: none;
+}

@@ -1,0 +1,42 @@
+/* Lines draw as the title enters and are fully drawn when the solution composition
+   settles. Their completed geometry then moves with the section without resizing. */
+:root {
+  --feat-lines: clamp(0, var(--feat-through, 0), 1);
+}
+
+.abstract-lines {
+  position: fixed;
+  inset: 0;
+  z-index: 0; /* behind the sections, with the edge ornaments */
+  transform: translateY(var(--solution-design-y, 0px));
+  will-change: transform;
+  pointer-events: none;
+  overflow: hidden;
+  overflow: clip;
+}
+
+.abstract-line {
+  position: absolute;
+  width: 1px;
+  /* 1722:127's own stroke. */
+  background: #c5c5c5;
+
+  /* Its own slice of the window. Each stroke starts before the last has finished, so
+     they read as a sequence rather than as a queue that stalls between entries. --n
+     is the stroke's index and --n-max the number of gaps, both written from the
+     markup, so the first starts at 0 and the last finishes exactly at 1 whatever the
+     count is. */
+  --span: 0.3;
+  --start: calc(var(--n) * (1 - var(--span)) / var(--n-max));
+  --draw: clamp(0, calc((var(--feat-lines) - var(--start)) / var(--span)), 1);
+
+  /* Scaled rather than stroked. The dash is the obvious reading of "stroke
+     animation", but a dash in a box stretched to the whole viewport is exactly
+     where dash length and `vector-effect: non-scaling-stroke` disagree — the dash is
+     measured in screen pixels while `pathLength` normalises in user ones, and the
+     two differ by whatever the box is scaled by. (`pathLength` is an SVG attribute,
+     not a CSS property, so setting it in a stylesheet does nothing at all.) A
+     straight line growing from one end is what a stroke draw LOOKS like, and this is
+     exact at every viewport. */
+  transform: scaleY(var(--draw));
+}

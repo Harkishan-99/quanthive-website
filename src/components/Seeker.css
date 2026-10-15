@@ -1,0 +1,147 @@
+/* Radio-dial scrubber along the foot of the video panel. Sized from the panel
+   (a size container), so the margin and height follow it at every breakpoint. */
+
+.seeker {
+  --seeker-orange: #d39532; /* = the CTA key, the shot's gold */
+  --seeker-pad: max(10px, 5cqmin);
+
+  position: absolute;
+  right: var(--seeker-pad);
+  bottom: var(--seeker-pad);
+  left: var(--seeker-pad);
+  z-index: 1;
+  height: max(26px, 9cqh);
+  cursor: ew-resize;
+  touch-action: none; /* a horizontal drag scrubs instead of scrolling */
+  user-select: none;
+}
+
+.seeker:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 6px;
+}
+
+.seeker__ticks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 100%;
+  transition: opacity 500ms ease;
+}
+
+.seeker__tick {
+  width: 1px;
+  height: 24%;
+  background: rgba(255, 255, 255, 0.22);
+  transition:
+    background-color 160ms ease,
+    height 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+}
+
+.seeker__tick[data-major] {
+  height: 58%;
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.seeker__tick[data-mid] {
+  height: 38%;
+}
+
+/* Already played: a lighter grey. */
+.seeker__tick[data-passed] {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.seeker__tick[data-major][data-passed] {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Under the needle: orange, and standing a little taller. */
+.seeker__tick[data-near] {
+  height: 46%;
+  background: var(--seeker-orange);
+}
+
+.seeker__needle {
+  position: absolute;
+  transition: opacity 500ms ease;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--seeker-orange);
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+/* A small square cap, the sharp-edged take on a dial pointer. */
+.seeker__needle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--seeker-orange);
+  translate: -50% 0;
+  transition: scale 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.seeker[data-mode="hover"] .seeker__needle::before {
+  scale: 1.35;
+}
+
+/* On a narrow panel the full set would blur into a solid band, so every other
+   minor tick drops out (they keep their slots, so the spacing stays even). */
+@container (max-width: 420px) {
+  .seeker__tick:nth-child(even):not([data-near]) {
+    visibility: hidden;
+  }
+}
+
+/* Three states, set by Seeker.tsx (data-mode):
+   - hover: everything at full strength (the default styles above).
+   - scrub: the needle at full, the ticks at 20% except the few around the needle,
+     which glow up to full (--glow, 0–1, set per tick).
+   - idle:  a second untouched — the needle at 65%, every tick at 20%.
+   Waking is quicker than dimming. */
+.seeker[data-mode="idle"] .seeker__ticks {
+  opacity: 0.2;
+}
+
+.seeker[data-mode="idle"] .seeker__needle {
+  opacity: 0.65;
+}
+
+.seeker[data-mode="scrub"] .seeker__tick {
+  opacity: calc(0.2 + 0.8 * var(--glow, 0));
+}
+
+.seeker[data-mode="idle"] .seeker__ticks,
+.seeker[data-mode="idle"] .seeker__needle {
+  transition-duration: 700ms;
+}
+
+.seeker:not([data-mode="idle"]) .seeker__ticks,
+.seeker:not([data-mode="idle"]) .seeker__needle {
+  transition-duration: 200ms;
+}
+
+/* Hidden (the panel's menu turns it on and off): it slips down and fades out. */
+.seeker {
+  transition:
+    opacity 380ms ease,
+    translate 460ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+.seeker[data-hidden] {
+  opacity: 0;
+  translate: 0 8px;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 300ms ease,
+    translate 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s 380ms;
+}

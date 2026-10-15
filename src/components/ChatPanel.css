@@ -1,0 +1,1479 @@
+.chat {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: var(--color-chat-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --- Tab bar --- */
+.chat__tabs {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 45.5px; /* 30px +35% +25% -10% */
+  flex-shrink: 0;
+  padding: 0 11px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chat__tab {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 15px; /* 12px + 25% */
+  line-height: 24px;
+  letter-spacing: -0.3px;
+  color: var(--color-tab-inactive);
+}
+
+.chat__tab--active {
+  color: var(--color-text);
+}
+
+/* --- Stage: holds the hero, pull-up button, and research desk --- */
+.chat__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* --- Hero (headline + prompt + tagline) --- */
+.chat__hero {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  transform: translateY(-40px);
+  /* No opacity animation: fading an ancestor isolates a compositing group
+     that disables the prompt box's backdrop-filter (glass) and makes it
+     lag on the way back. Slide it out instead, and keep it promoted. */
+  will-change: transform;
+  /* gentle overshoot spring → the hero settles with a small, smooth bounce */
+  transition: transform 0.85s cubic-bezier(0.25, 1.1, 0.5, 1);
+}
+
+.chat__stage--up .chat__hero {
+  transform: translateY(-150%);
+  pointer-events: none;
+}
+
+.chat__headline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.22px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* --- Prompt box (430 x 85, +15%, then +10%) --- */
+.prompt {
+  width: 544px; /* 494.5 * 1.1 */
+  min-height: 107.5px; /* grows taller as the field wraps */
+  margin-top: 65px;
+  background: #ffffff;
+  border: 1px solid var(--color-prompt-border);
+  border-radius: 10.1px;
+  padding: 8.86px 16.45px 7.59px;
+  display: flex;
+  flex-direction: column;
+}
+
+.prompt__input {
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  width: 100%;
+  min-height: 30px;
+  max-height: 108px; /* 6 lines (6 * 18px) — then scroll */
+  overflow-y: auto;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 13.34px; /* placeholder: 9.2 * 1.45 */
+  line-height: 18px;
+  letter-spacing: -0.27px;
+  color: var(--color-text);
+  margin-bottom: 9px; /* gap between the text and the button row */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+/* Sleek, slim scrollbar (WebKit) */
+.prompt__input::-webkit-scrollbar {
+  width: 4px;
+}
+
+.prompt__input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.prompt__input::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+}
+
+.prompt__input::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.prompt__input::placeholder {
+  color: var(--color-placeholder);
+}
+
+.prompt__row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12.02px;
+}
+
+.prompt__attach {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24.97px; /* 22.7 * 1.1 */
+  height: 24.97px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-attach-border);
+  background: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 17.71px; /* 16.1 * 1.1 */
+  line-height: 1;
+  color: var(--color-text);
+  letter-spacing: -0.354px;
+}
+
+.prompt__chip {
+  flex-shrink: 0;
+  height: 25.47px; /* 23.15 * 1.1 */
+  display: flex;
+  align-items: center;
+  padding: 0 10.12px;
+  background: var(--color-chip-bg);
+  border: 0.8px solid var(--color-chip-border);
+  border-radius: 3.16px;
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: 9.49px; /* 8.625 * 1.1 */
+  letter-spacing: -0.19px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* Circular dark-glass send button (button mode: hover lift + press) */
+.prompt__send {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(20, 24, 32, 0.62);
+  -webkit-backdrop-filter: blur(6px) saturate(1.3);
+  backdrop-filter: blur(6px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.35),
+    0 3px 8px -3px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+
+.prompt__send:hover {
+  transform: translateY(-1px);
+  background: rgba(28, 34, 46, 0.72);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.34),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.35),
+    0 6px 14px -4px rgba(0, 0, 0, 0.5);
+}
+
+.prompt__send:active {
+  transform: translateY(0) scale(0.92);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.45),
+    0 2px 5px -3px rgba(0, 0, 0, 0.4);
+}
+
+.prompt__send img {
+  width: 13px;
+  height: 13px;
+}
+
+/* --- Tagline (+40%) --- */
+.chat__tagline {
+  margin-top: 2px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 12.36px; /* 9.2 * 1.4 * 0.96 */
+  line-height: 28px;
+  letter-spacing: -0.494px;
+  color: var(--color-tab-inactive);
+  text-align: center;
+}
+
+/* --- Research Desk panel (peeks from bottom, rises to fill) --- */
+.chat__desk {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  transform: translateY(66%);
+  transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat__stage--up .chat__desk {
+  transform: translateY(0);
+}
+
+/* Apple-style "glass stretch": a slow, gentle single vertical stretch as the
+   desk settles (on both rise and lower). Lives on the scroll layer so it
+   composes with the parent's slide transform without fighting it. */
+.chat__stage--bounce .chat__desk-scroll {
+  animation: desk-land 0.85s cubic-bezier(0.33, 0, 0.25, 1);
+  will-change: transform;
+}
+
+@keyframes desk-land {
+  0% {
+    transform: scaleY(1);
+  }
+  55% {
+    transform: scaleY(1.014);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.chat__desk-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform-origin: center bottom;
+  padding-top: 12px;
+}
+
+/* BlurLayer — bottom fade-to-white scrim with a soft backdrop blur
+   (Figma: gradient rgba(252,255,249,0) -> #fcfff9, backdrop-blur 2px). */
+.chat__blur {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 167px;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(252, 255, 249, 0) 0%,
+    #fcfff9 100%
+  );
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 65%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 65%);
+}
+
+/* --- Pull-up button (cycles the desk up / down) --- */
+.chat__pull {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 37%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: #b0b0ac;
+  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.15);
+  transition:
+    bottom 0.85s cubic-bezier(0.25, 1.1, 0.5, 1),
+    color 0.15s ease;
+}
+
+.chat__pull:hover {
+  color: var(--color-text);
+}
+
+.chat__pull svg {
+  width: 10.5px;
+  height: 10.5px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat__stage--up .chat__pull {
+  bottom: 20px;
+}
+
+.chat__stage--up .chat__pull svg {
+  transform: rotate(180deg);
+}
+
+/* ============================================================
+   Conversation view — streamed answer content + docked prompt
+   ============================================================ */
+.chat__convo-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Frosted backdrop — blurs the page background (photo) behind the thread.
+   Works for the plain-glass theme (CSS photo) and is a harmless no-op on the
+   solid themes. The liquid-glass (WebGL) theme blurs the photo in the shader
+   instead (see GlassLayer u_bgBlur), so this backdrop-filter is disabled there —
+   otherwise it would blur the whole WebGL canvas, glass surfaces included. */
+.chat__bg-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(26px) saturate(1.1);
+  backdrop-filter: blur(26px) saturate(1.1);
+}
+
+:root[data-theme="liquid-glass"] .chat__bg-blur {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Fills the whole playground; the prompt floats over its bottom and content
+   scrolls behind it. */
+.chat__convo {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* content stays sharp, above the frosted backdrop */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+.chat__convo::-webkit-scrollbar {
+  width: 5px;
+}
+.chat__convo::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+}
+.chat__convo::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* Centered reading column. Animate the thread (not the wrap) so the docked
+   prompt's backdrop-filter glass isn't isolated into a compositing group. */
+.chat__thread {
+  width: 100%;
+  max-width: 928px; /* 640 + 45% — more room for content + user bubbles */
+  margin: 0 auto;
+  /* bottom pad ≈ the floating prompt's height, so the last message rests just
+     above it at max scroll while earlier content scrolls behind it */
+  padding: 30px 24px 150px;
+  animation: thread-in 0.45s cubic-bezier(0.25, 1.1, 0.5, 1);
+}
+
+@keyframes thread-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- One response turn --- */
+.msg {
+  margin-bottom: 30px;
+}
+
+/* An AI response first appears as ONE merged white box (thought + text +
+   skeletons + actions all inside it). After a short delay the wrapper flips to
+   `--split` and everything transitions apart: the box "hands off" from the
+   wrapper to just the text, while the thought lifts out, the skeletons drop
+   below, and the actions round into standalone buttons. */
+.msg__group {
+  position: relative;
+}
+
+/* --- Non-glass themes: NO white boxes ---------------------------------------
+   The white liquid-glass cards (content box, placeholder boxes, button chips)
+   and the whole goo merge/separate motion are only meant for the glass themes
+   (glass + liquid-glass). For bw / blue / green the content is plain and
+   transparent: no box containers at all. We simply hide the white "gel" layer,
+   drop the placeholder boxes, and keep every piece static (no merge motion). */
+:root:not([data-theme*="glass"]) .msg__gel {
+  display: none;
+}
+:root:not([data-theme*="glass"]) .skel-cards {
+  display: none;
+}
+/* Charts DO still render on the other themes — they're real content, not empty
+   boxes. They just show without any white box behind them and without the goo
+   merge motion (nothing to merge into): static, already separated, full radius. */
+:root:not([data-theme*="glass"]) .skel-charts {
+  transform: none !important;
+  animation: none !important;
+  gap: 22px;
+}
+:root:not([data-theme*="glass"]) .skel-charts .skel--chart {
+  border-radius: 14px;
+}
+:root:not([data-theme*="glass"]) .msg__actions {
+  transform: none !important;
+  animation: none !important;
+  margin-top: 14px;
+}
+
+/* bw / blue / green: the AI (left) answer is PLAIN — no box, border, glass, or
+   liquid-glass merge. Just dark text on the theme background. */
+:root:not([data-theme*="glass"]) .msg__fg .msg__content {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+}
+:root:not([data-theme*="glass"]) .msg__fg .msg__content .msg__body p {
+  color: var(--color-text);
+  text-shadow: none;
+}
+/* buttons → a plain static icon row after the text (no glass circle, no slide) */
+:root:not([data-theme*="glass"]) .msg__content--actions {
+  padding-bottom: 14px !important;
+}
+:root:not([data-theme*="glass"]) .msg__content .msg__actions {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none !important;
+  margin: 10px 0 0;
+}
+:root:not([data-theme*="glass"]) .msg__fg .msg__act::before {
+  display: none;
+}
+/* chart cards: no box/glass either — the chart sits plain on the background */
+:root:not([data-theme*="glass"]) .msg__fg .skel--chart {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+}
+/* "Thought for …" text + its icons, and the action icons → black */
+:root:not([data-theme*="glass"]) .msg__thought,
+:root:not([data-theme*="glass"]) .msg__act {
+  color: #000;
+}
+/* No animation on these themes — the action buttons + chart sit at their FINAL
+   resting position from the very start (no emergence / collapse). */
+:root:not([data-theme*="glass"]) .skel--chart .msg__actions {
+  transform: translateY(74px) !important;
+}
+:root:not([data-theme*="glass"]) .skel--chart:first-child .chart {
+  bottom: 18px !important;
+}
+:root:not([data-theme*="glass"]) .skel--chart .msg__actions,
+:root:not([data-theme*="glass"]) .skel--chart:first-child .chart,
+:root:not([data-theme*="glass"]) .msg__content--actions,
+:root:not([data-theme*="glass"]) .msg__content .msg__actions {
+  transition: none !important;
+}
+
+/* Two overlaid copies of the same answer layout:
+   .msg__gel = white shapes only, run through the #goo metaball filter, so the
+     content box + skeletons + buttons FUSE while merged and NECK apart as the
+     skeletons/buttons slide down to separate.
+   .msg__fg  = the sharp text + icons (transparent boxes), on top. */
+/* The gel is now a DARK goo backing behind the frosted fg cards: it paints dark
+   shapes that the #goo metaball fuses/necks, so a dark liquid bridge stretches
+   between the pieces as they separate. It's translucent (opacity) so the frosted
+   fg cards on top keep some of their see-through glass look. */
+.msg__gel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Uniform flat dark (no gradient of its own — a faded gel bands through the
+     goo's hard threshold, which caused the seam). The merge is transient: the gel
+     is OPAQUE while the pieces fuse/separate (so the goo neck reads boldly), then
+     fades to near-transparent at rest so the cards settle to smooth frosted glass.
+     The smooth black-to-clear gradient itself comes from the frosted fg on top. */
+  opacity: 0.7;
+  pointer-events: none;
+  filter: url(#goo) drop-shadow(0 4px 11px rgba(0, 0, 0, 0.28));
+  animation: gel-settle 9s cubic-bezier(0.37, 0, 0.25, 1) forwards;
+}
+@keyframes gel-settle {
+  0%,
+  72% {
+    opacity: 0.7; /* bold while merging, separating, AND the buttons neck out */
+  }
+  100% {
+    opacity: 0.12; /* faded → cards become smooth transparent glass at rest */
+  }
+}
+.msg__fg {
+  position: relative;
+  z-index: 1;
+  /* Establish a block formatting context so the thought's margin-top stays
+     INSIDE this layer — matching the .msg__gel layer (absolute = already a BFC).
+     Without this, the two layers drift ~14px apart (margin collapses out of fg
+     but not the gel), so text/icons sit high inside the white shapes. */
+  display: flow-root;
+}
+
+/* Text box: sized/positioned identically in both layers. It's now a dark
+   black-to-clear liquid-glass bubble (same as the user bubble), so it's painted
+   in the FOREGROUND (real backdrop-filter glass) — not as a white goo shape. */
+.msg__content {
+  position: relative;
+  z-index: 1;
+  padding: 20px 24px;
+  border-radius: 14px;
+}
+/* the gel paints a flat dark shape behind the text box → goo neck for the buttons */
+.msg__gel .msg__content {
+  background: #05070b;
+}
+/* Foreground text box → black-to-clear liquid-glass bubble (all themes) */
+.msg__fg .msg__content {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 8, 12, 0.72) 0%,
+    rgba(9, 12, 17, 0.32) 48%,
+    rgba(12, 16, 22, 0.03) 100%
+  );
+  -webkit-backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+    0 12px 28px -12px rgba(0, 0, 0, 0.5);
+}
+/* text sits on dark glass now → white */
+.msg__fg .msg__content .msg__body p {
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+.msg__gel .msg__body p {
+  color: transparent !important; /* keeps the box's size, but shows no text */
+}
+/* gel copy of the report: keep the layout (for the box shape) but no visible ink */
+.msg__gel .report {
+  color: transparent;
+}
+.msg__gel .report__rule {
+  border-color: transparent;
+}
+
+/* --- Equity-research note layout inside the answer text box ------------------
+   Header (company + key metrics | ticker/HQ/price/segment/date) → rule → summary
+   text with two small side charts. Ink is light on the dark glass; a non-glass
+   override below switches it to dark on the plain themes. */
+/* Report content sits ABOVE the tint ::before (z-index:0) so the tint no longer
+   paints over the text; a shadow keeps it legible where the tint goes clear. */
+.report__head,
+.report__rule,
+.report__body {
+  position: relative;
+  z-index: 1;
+}
+.report__head {
+  display: flex;
+  gap: 26px;
+  align-items: flex-start;
+}
+.report__title {
+  flex: 1;
+  min-width: 0;
+}
+.report__company {
+  margin: 0 0 5px;
+  font-family: "PT Serif", Georgia, "Times New Roman", serif;
+  font-size: 32.67px;
+  font-weight: 400;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+  color: #eef3fb;
+}
+.report__tagline {
+  margin: 0 0 11px;
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(230, 236, 245, 0.72);
+}
+.report__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  font-size: 12px;
+}
+.report__metric {
+  display: inline-flex;
+  gap: 5px;
+}
+.report__metric-k {
+  color: rgba(230, 236, 245, 0.5);
+}
+.report__metric-v {
+  color: #eef3fb;
+  font-weight: 600;
+}
+.report__meta {
+  flex: none;
+  width: 196px;
+  margin: 3px 0 0;
+  font-size: 12px;
+}
+.report__meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2.5px 0;
+}
+.report__meta-row dt {
+  color: rgba(230, 236, 245, 0.5);
+}
+.report__meta-row dd {
+  margin: 0;
+  color: #eef3fb;
+  font-weight: 600;
+  text-align: right;
+}
+.report__rule {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 13px 0 15px;
+}
+.report__body {
+  display: block;
+}
+.report__body::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Sidebar floats right; the summary text wraps around it and flows full-width
+   below (or takes the whole width where there's no sidebar). */
+.report__side {
+  float: right;
+  width: 372px;
+  margin: 2px 0 22px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.report__text {
+  min-width: 0;
+}
+.report__chart {
+  position: relative;
+  height: 262px;
+  margin: 0;
+}
+.report__chart .chart {
+  inset: 2px 2px 18px; /* small side chart — minimal breathing room */
+}
+.report__chart figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(230, 236, 245, 0.58);
+}
+
+/* Small key-financials table under the charts */
+.report__table {
+  font-size: 11.5px;
+}
+.report__table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.report__table th,
+.report__table td {
+  padding: 4px 6px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #eef3fb;
+}
+.report__table th:first-child,
+.report__table td:first-child {
+  text-align: left;
+  color: rgba(230, 236, 245, 0.72);
+}
+.report__table thead th {
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.report__table-cap {
+  margin-top: 6px;
+  font-size: 10px;
+  color: rgba(230, 236, 245, 0.55);
+}
+:root:not([data-theme*="glass"]) .report__table th,
+:root:not([data-theme*="glass"]) .report__table td {
+  color: #16202e;
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+:root:not([data-theme*="glass"]) .report__table th:first-child,
+:root:not([data-theme*="glass"]) .report__table td:first-child,
+:root:not([data-theme*="glass"]) .report__table-cap {
+  color: rgba(20, 30, 44, 0.62);
+}
+:root:not([data-theme*="glass"]) .report__table thead th {
+  border-bottom-color: rgba(0, 0, 0, 0.3);
+}
+
+.report__section {
+  margin-bottom: 20px;
+}
+.report__section:last-child {
+  margin-bottom: 0;
+}
+.report__section-head {
+  margin: 0 0 6px;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  color: #bcd4ff;
+}
+.report__text p {
+  line-height: 25px;
+  margin-bottom: 0;
+}
+:root:not([data-theme*="glass"]) .report__section-head {
+  color: var(--accent-dark, #1c3d66);
+}
+/* glass themes: shadow so the text stays legible where the tint fades to clear */
+:root[data-theme*="glass"] .report__company,
+:root[data-theme*="glass"] .report__tagline,
+:root[data-theme*="glass"] .report__metrics,
+:root[data-theme*="glass"] .report__meta,
+:root[data-theme*="glass"] .report__text p,
+:root[data-theme*="glass"] .report__section-head,
+:root[data-theme*="glass"] .report__chart figcaption,
+:root[data-theme*="glass"] .report__table {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.62);
+}
+
+/* plain themes: dark ink on the light background */
+:root:not([data-theme*="glass"]) .report__company,
+:root:not([data-theme*="glass"]) .report__metric-v,
+:root:not([data-theme*="glass"]) .report__meta-row dd {
+  color: #16202e;
+}
+:root:not([data-theme*="glass"]) .report__tagline,
+:root:not([data-theme*="glass"]) .report__metric-k,
+:root:not([data-theme*="glass"]) .report__meta-row dt,
+:root:not([data-theme*="glass"]) .report__chart figcaption {
+  color: rgba(20, 30, 44, 0.6);
+}
+:root:not([data-theme*="glass"]) .report__rule {
+  border-top-color: rgba(0, 0, 0, 0.16);
+}
+/* the thought is plain text, never a box → no gel shape (but keep its space) */
+.msg__gel .msg__thought {
+  visibility: hidden;
+}
+
+/* --- User message bubble (right-aligned) --- */
+.msg__user {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* Dark liquid-glass bubble (same treatment across all themes). */
+.msg__bubble {
+  --glow: 0;
+  position: relative;
+  isolation: isolate; /* keep the sheen/glare blend inside the bubble */
+  max-width: 80%;
+  padding: 11px 15px;
+  border-radius: 15px 15px 5px 15px;
+  /* black-to-clear liquid-glass gradient: darker at the top, fading to
+     near-transparent at the bottom so the frosted backdrop shows through */
+  background: linear-gradient(
+    180deg,
+    rgba(6, 8, 12, 0.72) 0%,
+    rgba(9, 12, 17, 0.32) 48%,
+    rgba(12, 16, 22, 0.03) 100%
+  );
+  /* No url(#liquid-glass) displacement here: on a small element its large
+     displacement scale warps the backdrop chaotically at the edges, giving a
+     pixelated/dashed border. Plain frost + tint reads as clean dark glass. */
+  -webkit-backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  /* rim light (top) + inner shadow (bottom) + drop shadow for depth */
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+    0 12px 28px -12px rgba(0, 0, 0, 0.6),
+    0 2px 6px -3px rgba(0, 0, 0, 0.4);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  /* match the left-side answer text */
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: -0.13px;
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  animation: bubble-in 0.5s cubic-bezier(0.34, 1.4, 0.5, 1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* diagonal specular sheen across the top */
+.msg__bubble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.28),
+    rgba(255, 255, 255, 0.06) 20%,
+    transparent 42%
+  );
+  mix-blend-mode: screen;
+}
+
+/* cursor-following glare (position + intensity set from JS) */
+.msg__bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    130px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(255, 255, 255, 0.32),
+    transparent 55%
+  );
+  opacity: var(--glow, 0);
+  mix-blend-mode: screen;
+  transition: opacity 0.25s ease;
+}
+
+.msg__bubble-txt {
+  position: relative;
+  z-index: 2; /* keep text above the sheen/glare layers */
+}
+
+.msg__bubble:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+    0 16px 34px -12px rgba(0, 0, 0, 0.62),
+    0 3px 8px -3px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Non-glass themes (bw / blue / green): the user bubble is a subtle, brighter
+   grey solid — NO glass, frost, border, or sheen. */
+:root:not([data-theme*="glass"]) .msg__bubble {
+  padding: 14px 19px;
+  border-radius: 18px 18px 6px 18px;
+  background: #ececec;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  color: #2b2b2b;
+  text-shadow: none;
+}
+:root:not([data-theme*="glass"]) .msg__bubble::before,
+:root:not([data-theme*="glass"]) .msg__bubble::after {
+  display: none; /* no sheen / glare */
+}
+:root:not([data-theme*="glass"]) .msg__bubble:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.msg__thought {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 14px 0 8px;
+  padding: 0 16px; /* align with the box's text inset */
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: -0.15px;
+  color: var(--color-tab-inactive);
+  /* always outside any box — plain text above the content box */
+  position: relative;
+  z-index: 1;
+}
+
+.msg__spark {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+}
+
+.msg__chev {
+  width: 7px;
+  height: 5px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.msg__body p {
+  margin: 0 0 12px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: -0.13px;
+  color: var(--color-text);
+}
+
+.msg__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Action row: flat glyphs on the box → circular white buttons on the photo --- */
+.msg__actions {
+  position: relative;
+  z-index: 0; /* behind the content box while merged */
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 22px 16px 0; /* > goo bridge so it fully de-merges */
+  --merge-y: var(--act-y, -60px);
+  transform: translateY(var(--merge-y));
+}
+
+/* The copy/share pair starts INSIDE whatever card it belongs to (chart card for
+   chart turns, the main/text card otherwise), pinned to that card's bottom as
+   icons (its ::before glass circle hidden). It's a child of the card, so it
+   travels WITH the card. On --btnsplit it slides DOWN out of the card and the
+   gel necks it out (goo) while the glass circle grows in — it becomes a real
+   button only as it separates. Applies to EVERY card type. */
+.skel.skel--chart,
+.msg__content--actions {
+  overflow: visible; /* let the buttons slide out of the card */
+}
+
+/* ONE timing for the whole split-out gesture: the buttons sliding out, and the
+   card reclaiming the space they leave. Both duration AND easing are shared — with
+   equal durations but different curves the two still drift apart mid-flight, so the
+   gap would visibly close ahead of the buttons that vacated it. */
+:root {
+  --btn-split-dur: 2.4s;
+  --btn-split-ease: cubic-bezier(0.32, 0, 0.18, 1);
+}
+
+.msg__content--actions {
+  padding-bottom: 48px; /* room for the buttons while they sit inside the card */
+  transition: padding-bottom var(--btn-split-dur) var(--btn-split-ease);
+}
+/* once the buttons have separated out, reclaim that reserved space smoothly */
+.msg__group--btnsplit .msg__content--actions {
+  padding-bottom: 14px;
+}
+.skel--chart .msg__actions,
+.msg__content .msg__actions {
+  position: absolute;
+  left: 20px;
+  bottom: 14px;
+  z-index: 2;
+  gap: 14px;
+  margin: 0;
+  transform: translateY(0);
+  /* Slow glide out of the bubble. The travel is only 74px, so duration is what
+     sells the goo necking apart — at 1.3s it read as a quick pop. */
+  transition: transform var(--btn-split-dur) var(--btn-split-ease);
+}
+.msg__group--btnsplit .skel--chart .msg__actions,
+.msg__group--btnsplit .msg__content .msg__actions {
+  transform: translateY(74px); /* slides well clear of the card bottom */
+}
+.skel--chart:first-child .chart {
+  inset: 18px 18px 62px; /* only extra BOTTOM room while the buttons sit inside */
+  /* chart cards reclaim the same gap the same way text does */
+  transition: bottom var(--btn-split-dur) var(--btn-split-ease);
+}
+
+/* Reserve room BELOW the answer for the buttons that sit/emerge beneath it, so
+   the next (user) message always keeps a clear gap and never overlaps them.
+   (All themes: charts reserve on the grid; glass text answers on the box. On the
+   plain themes the text buttons are in-flow, so the normal .msg gap suffices.) */
+.skel-charts {
+  padding-bottom: 90px;
+}
+:root[data-theme*="glass"] .msg__content--actions {
+  margin-bottom: 90px;
+}
+/* buttons gone → chart grows back to match the other card exactly (base 18px) */
+.msg__group--btnsplit .skel--chart:first-child .chart {
+  bottom: 18px;
+}
+
+/* Circular buttons: transparent in the foreground (icon only); the gel paints the
+   white circle & the goo necks it apart from the rest. */
+.msg__act {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(235, 240, 248, 0.9); /* light icon on the dark glass */
+  transition:
+    color 0.2s ease,
+    transform 0.14s ease;
+}
+/* The gel paints dark circles behind the buttons; the goo necks each circle out
+   of the card as it separates (the liquid emergence). */
+.msg__gel .msg__act {
+  background: #05070b;
+}
+.msg__gel .msg__act svg {
+  display: none; /* no icon in the gel */
+}
+/* The button's frosted glass circle lives on ::before so it can GROW IN as the
+   button emerges: while merged the button reads as just an icon (::before hidden),
+   and its border/background engulfs the icon only once it separates out. */
+.msg__fg .msg__act::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 8, 12, 0.72) 0%,
+    rgba(12, 16, 22, 0.3) 100%
+  );
+  -webkit-backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.35),
+    0 6px 14px -8px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: scale(0.72);
+  transform-origin: center top;
+  transition:
+    opacity 1.4s cubic-bezier(0.33, 0, 0.2, 1),
+    transform 1.4s cubic-bezier(0.33, 0, 0.2, 1);
+}
+/* once the buttons separate out, the glass circle grows in around the icon */
+.msg__group--btnsplit .msg__fg .msg__act::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.msg__act svg {
+  position: relative;
+  z-index: 1; /* icon stays above its ::before glass circle */
+  width: 14px;
+  height: 14px;
+}
+
+.msg__act:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.msg__act:active {
+  transform: translateY(0) scale(0.92);
+}
+
+/* --- Skeleton placeholders — settle down as the box shrinks off them --- */
+.skel-cards {
+  position: relative;
+  z-index: 0; /* behind the content box while merged */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* left edge flush with the content box (no horizontal inset) */
+  margin: 22px 0 0;
+  /* merged: lifted up behind the box; the `settle` animation slides it back to
+     Y=0 on split. Only Y position changes. */
+  --merge-y: var(--skel-y, -40px);
+  transform: translateY(var(--merge-y));
+}
+
+.skel-charts {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  /* Equal boxes side by side (wrapping to stack when one is widened). The cards
+     are STATIC — no horizontal movement, flush to the edges (no indent). The gap
+     is small enough that the strong #goo-lg BRIDGES the two gel shapes into one
+     fused block while the gel is opaque (the merge), then it settles into two
+     cards as the gel fades. */
+  flex-wrap: wrap;
+  align-items: flex-start; /* legend cards can be taller without stretching the rest */
+  align-content: flex-start;
+  gap: 13px;
+  margin: 22px 0 0;
+  --merge-y: var(--skel-y, -40px);
+  transform: translateY(var(--merge-y));
+}
+
+/* Each piece slides from its merged Y back to 0 with a smooth glide and a very
+   subtle settle wobble. Skeletons go on stage 1 (--split); the buttons wait for
+   the last stage (--btnsplit), after the placeholders have separated. */
+.msg__group--split .skel-cards,
+.msg__group--split .skel-charts {
+  animation: settle 3.3s both;
+}
+/* Only the STANDALONE action row (direct child of a layer) does the settle
+   tuck/merge. The in-card buttons (nested in .skel--chart) must NOT — their
+   `both` fill was pinning the buttons' transform and blocking the slide-out. */
+.msg__group--btnsplit .msg__gel > .msg__actions,
+.msg__group--btnsplit .msg__fg > .msg__actions {
+  animation: settle 3.3s both;
+}
+
+/* One continuous, smooth glide down — no bounce, tiny cushion at the very end. */
+@keyframes settle {
+  0% {
+    transform: translateY(var(--merge-y));
+    animation-timing-function: cubic-bezier(0.22, 0.55, 0.2, 1);
+  }
+  88% {
+    transform: translateY(0.5px); /* whisper-soft cushion, no wobble */
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Placeholder boxes: transparent in the foreground (the gel paints them white &
+   the goo necks them); the fg still carries the shimmer sweep. */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+.msg__gel .skel {
+  background: #ffffff;
+}
+.msg__gel .skel::after {
+  display: none; /* no shimmer in the gel */
+}
+
+/* (shimmer removed — placeholders are plain solid white) */
+.skel::after {
+  content: none;
+}
+
+@keyframes skel-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skel--card {
+  width: 300px;
+  max-width: 100%;
+  height: 50px;
+  border-radius: 14px; /* match the content box */
+}
+
+/* Chart boxes are EQUAL by default (flex-basis 0 + grow → they split the row).
+   A box marked data-span="full" takes the whole row, so the other wraps below
+   and stacks. Width/reflow changes are animated by the FLIP pass in JS, so no
+   CSS transition on transform here. */
+.skel--chart {
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 1 / 1; /* square — height tracks the (flex) width */
+  border-radius: 14px; /* match the content box */
+  cursor: pointer;
+}
+/* Cards with a legend (the bar chart) are a little TALLER so the legend gets its
+   own strip at the bottom and the plot area stays square — matching the other
+   cards' plots. The row is top-aligned so the shorter cards don't stretch. */
+.skel--chart[data-chart="bar"] {
+  aspect-ratio: 1 / 1.09;
+}
+.skel--chart[data-span="full"] {
+  flex-basis: 100%;
+}
+
+/* Chart cards → frosted glass in the FG; the gel paints dark shapes behind them
+   with a STRONG goo so a thick dark liquid neck bridges the two cards as they
+   slide apart (visible through/around the frosted fg). */
+.msg__gel .skel--chart {
+  background: #05070b;
+}
+.msg__gel .skel-charts {
+  filter: url(#goo-lg);
+}
+.msg__fg .skel--chart {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 8, 12, 0.72) 0%,
+    rgba(9, 12, 17, 0.32) 48%,
+    rgba(12, 16, 22, 0.03) 100%
+  );
+  -webkit-backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  backdrop-filter: blur(9px) saturate(1.5) brightness(0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+    0 12px 28px -12px rgba(0, 0, 0, 0.5);
+}
+/* No focus ring / tap highlight when the box is clicked to resize. */
+.skel--chart,
+.skel--chart:focus,
+.skel--chart:focus-visible,
+.skel--chart *:focus,
+.skel--chart *:focus-visible {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Floating prompt over the bottom of the conversation --- */
+.chat__dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6; /* ABOVE the conversation/bubbles so the pill stays on top */
+  display: flex;
+  justify-content: center;
+  padding: 8px 16px 22px;
+  pointer-events: none; /* transparent sides let scroll pass to the thread */
+}
+
+.chat__dock .prompt {
+  pointer-events: auto; /* but the prompt itself is interactive */
+}
+
+/* Fade behind the docked prompt: content fades into the page colour just ABOVE
+   the prompt, then stays solid all the way down to the bottom of the screen
+   (behind the prompt) so nothing peeks out beside/under it. */
+/* Sits BEHIND the prompt, covering the dock area down to the very bottom of the
+   screen (not floating above the prompt). Messages fade into the page colour as
+   they scroll down behind the prompt; the prompt (z-index:1) stays on top. */
+.chat__dock-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -64px; /* extend upward so the blur has room to ramp in gradually */
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* colour scrim: fade content into the page colour (smooth, no hard band).
+     Also masked so its own top edge is soft. */
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 250, 248, 0) 0%,
+    color-mix(in srgb, var(--color-chat-bg, #fafaf8) 60%, transparent) 55%,
+    var(--color-chat-bg, #fafaf8) 82%
+  );
+  /* gentlest blur layer, eased in from the top so nothing is cut sharply */
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 26%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 26%);
+}
+/* Progressive (layered) blur: two more stacked bands with INCREASING blur radius,
+   each revealed lower down via a gradient mask. Because each layer frosts the one
+   beneath it, the blur strength ramps up smoothly toward the prompt instead of a
+   single hard-edged blur. */
+.chat__dock-fade::before,
+.chat__dock-fade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.chat__dock-fade::before {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 28%, #000 55%);
+  mask-image: linear-gradient(to bottom, transparent 28%, #000 55%);
+}
+.chat__dock-fade::after {
+  -webkit-backdrop-filter: blur(13px);
+  backdrop-filter: blur(13px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 52%, #000 80%);
+  mask-image: linear-gradient(to bottom, transparent 52%, #000 80%);
+}
+
+.chat__dock .prompt {
+  position: relative;
+  z-index: 1; /* keep the prompt above its fade */
+  margin-top: 0;
+  width: 100%;
+  max-width: 880px; /* wider pill */
+}
+
+/* ---- Chat-playground (docked) prompt → input pill with FLANKING buttons -----
+   Per Figma (node 1015:281): the rounded input sits in the middle, the attach
+   (+) circle OUTSIDE to its left and the send button OUTSIDE to its right. The
+   form is just a transparent flex row. LAYOUT props apply to every theme; the
+   SURFACE (white pill / circles) is scoped to the non-glass themes so glass.css
+   can supply the glass surface for the glass themes. */
+.chat__dock .prompt {
+  flex-direction: row;
+  /* Bottom-aligned, not centred: the input grows upward as it wraps, and centring
+     dragged the two buttons up with it so they drifted away from the send line.
+     `.prompt__input` sets align-self: stretch, so it still fills the row. The
+     buttons carry a margin-bottom that reproduces their single-line inset exactly,
+     so a 1-line pill looks unchanged and only taller ones differ. */
+  align-items: flex-end;
+  gap: 9px;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.chat__dock .prompt__row {
+  display: contents; /* attach + send become row items flanking the input */
+}
+
+/* the input itself is now the capsule (layout for all themes) */
+.chat__dock .prompt__input {
+  order: 2;
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-height: 46px;
+  /* exactly 5 lines, then scroll: 5 * 20px line-height + 26px vertical padding.
+     autoGrow() keeps writing the full scrollHeight to style.height, but max-height
+     wins, so the box stops growing and overflow-y:auto takes over. */
+  max-height: 126px;
+  margin: 0;
+  padding: 13px 18px; /* vertical-centre the single line + small left padding */
+  font-size: 14.5px;
+  line-height: 20px;
+  /* Capped, not 999px. At one line the browser clamps this to half the height so it
+     still renders as a true pill; as the field wraps it becomes a rounded RECTANGLE
+     instead of stretching into a stadium. Applies to every theme — Liquid Glass Pro
+     had its own 26px override for this, and the oval was every other theme still
+     inheriting 999px. */
+  border-radius: 26px;
+}
+/* non-glass surface: white pill */
+:root:not([data-theme*="glass"]) .chat__dock .prompt__input {
+  background: #ffffff;
+  border: 1px solid var(--color-prompt-border);
+  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.28);
+}
+/* glass surface comes from glass.css; just centre the placeholder + left pad
+   (overrides the theme's default .prompt__input padding of 4px 8px) */
+:root[data-theme*="glass"] .chat__dock .prompt__input {
+  padding: 13px 18px;
+}
+
+/* attach (+) circle — layout (all themes) */
+.chat__dock .prompt__attach {
+  order: 1;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  margin-bottom: 5px; /* (46 min-height − 36 button) / 2 — matches old centring */
+}
+/* attach surface — white circle w/ hairline border (Figma Ellipse 625) */
+:root:not([data-theme*="glass"]) .chat__dock .prompt__attach {
+  border: 1px solid var(--color-attach-border);
+  background: #ffffff;
+  color: var(--color-text);
+  box-shadow: 0 6px 18px -13px rgba(0, 0, 0, 0.3);
+}
+
+/* send circle — layout (all themes) */
+.chat__dock .prompt__send {
+  order: 3;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin-left: 0;
+  margin-bottom: 5px; /* (46 min-height − 36 button) / 2 — matches old centring */
+  border-radius: 50%;
+}
+/* Non-glass themes: light circle + the EXACT Figma send triangle glyph
+   (node 1015:290 "Vector"), recoloured to the theme text colour via a mask. */
+:root:not([data-theme*="glass"]) .chat__dock .prompt__send {
+  background: var(--color-chip-bg, #fafaf8);
+  border: 1px solid var(--color-attach-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 6px 18px -13px rgba(0, 0, 0, 0.3);
+  color: var(--color-text);
+}
+:root:not([data-theme*="glass"]) .chat__dock .prompt__send:hover {
+  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.34);
+}
+:root:not([data-theme*="glass"]) .chat__dock .prompt__send:active {
+  transform: scale(0.93);
+}
+:root:not([data-theme*="glass"]) .chat__dock .prompt__send img {
+  display: none;
+}
+:root:not([data-theme*="glass"]) .chat__dock .prompt__send::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19.35 20.1316'%3E%3Cpath d='M6.37406 13.2955V6.7742L14.1181 10.0348L6.37406 13.2955ZM7.18922 12.0727L12.019 10.0348L7.18922 7.99694V9.42346L9.6347 10.0348L7.18922 10.6462V12.0727Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19.35 20.1316'%3E%3Cpath d='M6.37406 13.2955V6.7742L14.1181 10.0348L6.37406 13.2955ZM7.18922 12.0727L12.019 10.0348L7.18922 7.99694V9.42346L9.6347 10.0348L7.18922 10.6462V12.0727Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}

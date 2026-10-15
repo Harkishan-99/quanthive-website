@@ -1,0 +1,373 @@
+/* Figma frame 1920:4749 (1920 × 1080). Desktop uses the frame's native scale;
+   the mobile rules below intentionally recompose it instead of making the five
+   cards too small to read. */
+
+.solution-overview {
+  --cards-in: 0;
+
+  position: relative;
+  z-index: 1;
+  height: calc(56.25vw + 100dvh);
+  background: transparent;
+}
+
+.solution-overview__canvas {
+  /* A length divided by the Figma canvas width yields the native artboard scale. */
+  --solution-scale: calc(100vw / 1920px);
+
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 56.25vw;
+  overflow: hidden;
+}
+
+/* The heading and product board are one incoming composition. Keeping their
+   shared travel here makes their Figma spacing stable throughout the entrance. */
+.solution-overview__content {
+  position: absolute;
+  inset: 0;
+  /* Start just inside the lower edge of the incoming frame. A full viewport of
+     offset created an empty slide between the problem and this composition. */
+  translate: 0 calc((1 - var(--cards-in)) * 55dvh);
+  will-change: translate;
+}
+
+/* --- Heading --------------------------------------------------------------- */
+
+.solution-overview__heading {
+  position: absolute;
+  top: 8.4259%;
+  left: 50%;
+  width: 258px;
+  height: 55px;
+  translate: -50% 0;
+  scale: var(--solution-scale);
+  transform-origin: center top;
+}
+
+.solution-overview__title-frame {
+  position: absolute;
+  inset: 0;
+  width: 258px;
+  height: 55px;
+}
+
+.solution-overview__title-rule {
+  position: absolute;
+  top: 26px;
+  left: -27px;
+  width: 55px;
+  height: 2px;
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+.solution-overview__heading h2 {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  width: max-content;
+  margin: 0;
+  transform: translateX(-50%);
+  color: #000;
+  font-family: var(--font-display, "PP Pangaia", Georgia, serif);
+  font-size: 45px;
+  font-weight: 500;
+  line-height: 55px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.solution-overview__title-strike {
+  position: absolute;
+  top: 26px;
+  left: 2px;
+  width: 253px;
+  height: 10px;
+}
+
+/* --- Product board --------------------------------------------------------- */
+
+.solution-overview__board {
+  position: absolute;
+  top: 27.963%;
+  left: 21.25%;
+  width: 1125px;
+  height: 500px;
+  scale: var(--solution-scale);
+  transform-origin: left top;
+}
+
+.solution-overview__product-card,
+.solution-overview__card {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.solution-overview__product-card {
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 500px;
+  background: #080808;
+  color: #fff;
+}
+
+.solution-overview__product-preview {
+  position: absolute;
+  top: 11px;
+  left: 10px;
+  width: 300px;
+  height: 287px;
+  border-radius: 5px;
+  background: #dedede;
+}
+
+.solution-overview__product-copy {
+  position: absolute;
+  top: 309px;
+  left: 10px;
+}
+
+.solution-overview__product-copy h3,
+.solution-overview__product-copy p,
+.solution-overview__card p {
+  margin: 0;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.solution-overview__product-copy h3 {
+  font-size: 20px;
+  line-height: 45px;
+}
+
+.solution-overview__product-copy p {
+  margin-top: -11px;
+  font-size: 16px;
+  line-height: 45px;
+}
+
+.solution-overview__product-cta {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  width: 115px;
+  height: 34px;
+  border: 1px solid #9e9e9e;
+  border-radius: 2px;
+  color: #9e9e9e;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+
+.solution-overview__product-cta > span:first-child {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+}
+
+.solution-overview__product-arrow {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  background: #b8d4ef;
+  border-radius: 1px;
+}
+
+.solution-overview__product-arrow img {
+  width: 18px;
+  height: 18px;
+  transform: scaleY(-1);
+}
+
+.solution-overview__card {
+  background: #e8e8e8;
+  color: #000;
+}
+
+.solution-overview__card--top-left {
+  top: 0;
+  left: 328px;
+  width: 282px;
+  height: 230px;
+}
+
+.solution-overview__card--top-right {
+  top: 0;
+  left: 623px;
+  width: 502px;
+  height: 230px;
+}
+
+.solution-overview__card--bottom-left {
+  top: 240px;
+  left: 328px;
+  width: 440px;
+  height: 260px;
+}
+
+.solution-overview__card--bottom-right {
+  top: 240px;
+  left: 778px;
+  width: 347px;
+  height: 260px;
+}
+
+.solution-overview__card p {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.solution-overview__card--bottom-left p {
+  top: 13px;
+}
+
+/* --- Responsive reflow ----------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .solution-overview {
+    height: auto;
+    min-height: 0;
+  }
+
+  .solution-overview__canvas {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .solution-overview__content {
+    position: relative;
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px clamp(18px, 5vw, 40px) 42px;
+    translate: none;
+  }
+
+  .solution-overview__heading,
+  .solution-overview__board {
+    position: relative;
+    top: auto;
+    left: auto;
+    translate: none;
+    scale: none;
+  }
+
+  .solution-overview__heading {
+    flex: 0 0 55px;
+    width: 258px;
+    max-width: 100%;
+    transform: none;
+  }
+
+  .solution-overview__board {
+    display: grid;
+    width: min(100%, 620px);
+    height: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: clamp(74px, 12vw, 106px);
+    translate: none;
+    transform: none;
+  }
+
+  .solution-overview__product-card,
+  .solution-overview__card {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    min-width: 0;
+    height: auto;
+  }
+
+  .solution-overview__product-card {
+    grid-column: 1 / -1;
+    min-height: 320px;
+  }
+
+  .solution-overview__product-preview {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    height: min(48vw, 236px);
+  }
+
+  .solution-overview__product-copy {
+    top: min(52vw, 254px);
+    left: 16px;
+  }
+
+  .solution-overview__product-cta {
+    bottom: 14px;
+    left: 16px;
+  }
+
+  .solution-overview__card {
+    min-height: clamp(130px, 28vw, 174px);
+  }
+
+  .solution-overview__card--top-left {
+    grid-column: 1 / -1;
+  }
+
+  .solution-overview__card p,
+  .solution-overview__card--bottom-left p {
+    top: 12px;
+    left: 12px;
+    font-size: clamp(14px, 2.5vw, 18px);
+  }
+
+}
+
+@media (max-width: 430px) {
+  .solution-overview__content {
+    padding-top: 34px;
+  }
+
+  .solution-overview__board {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-overview__card {
+    min-height: 128px;
+  }
+
+  .solution-overview__product-card {
+    min-height: 290px;
+  }
+
+  .solution-overview__product-preview {
+    height: 154px;
+  }
+
+  .solution-overview__product-copy {
+    top: 170px;
+  }
+}
+
+@media (max-width: 300px) {
+  .solution-overview__heading {
+    transform: scale(0.88);
+    transform-origin: center top;
+  }
+}

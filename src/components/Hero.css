@@ -1,0 +1,1126 @@
+/* Hero: the QuantHive lockup in liquid metal on a near-white ground.
+   Shader lives in src/shaders/liquidMetal.ts, mask pipeline in src/lib/heroMask.ts. */
+
+.hero {
+  --hero-bg: #ffffff;
+  --hero-caption: #8b8b87;
+  /* Named so .hero__grid can cancel it and bleed out to the border box. */
+  --hero-pad: clamp(24px, 6vw, 80px);
+  /* Grid: a light grey a couple of steps darker than the ground. Any closer to the
+     background and it stops reading at all — this is the one dial for that. */
+  --hero-grid-line: #d7d7d4;
+  /* Whole pixels, deliberately not a vw expression. A fractional pitch (5.4vw =
+     77.76px at 1440) puts every 1px line across two device pixels, and the
+     antialiasing halves its weight — the grid then renders visibly lighter than
+     --hero-grid-line actually specifies, so darkening the colour barely shows. */
+  --hero-grid-cell: 52px;
+  --hero-grid-line-w: 2px;
+  /* How far the hero's contents pull back while the menu is down. The edge motifs
+     match it from their own layer (--motif-recess in EdgeMotifs.css); they are no
+     longer inside this section, so they can't read this one. */
+  --hero-recess: 0.94;
+  /* Bundler-relative, not the /icons runtime route Hero.tsx loads the same file
+     from: Bun resolves CSS url() at build time, so an absolute path fails to
+     resolve (same reason the palette's mask icons are written this way). */
+  --hero-lockup: url("../assets/icons/quanthive-lockup.svg");
+
+  min-height: 100dvh;
+  display: grid;
+  /* An explicit 1fr column, not the implicit `auto` one. With `auto`, the column is
+     sized to its item's max-content contribution — which the caption dominates at
+     roughly 420px on one line — and .hero__inner's `width: 100%` then resolves
+     against THAT rather than the viewport. The lockup came out stuck at ~420px on
+     a 1920px screen while simultaneously overflowing a 390px one. 1fr makes the
+     column definite and independent of its content, so the percentage resolves
+     against the real available width. */
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  background: transparent;
+  /* Contains the grid's z-index, so it sits behind the lockup without reaching past
+     the hero into anything else that might later share the page. */
+  position: relative;
+  /* Deliberately NOT a stacking context — no z-index, no isolation. The grid has to
+     paint *below* the fixed .motifs layer (which sits at z-index 0 in the root)
+     while the lockup paints above it. Interleaving a fixed layer with two children
+     of this section is only possible if those children take part in the root
+     stacking context, so .hero must not contain them. */
+}
+
+/* The page ground has to match, or an overscroll bounce flashes the old app's
+   colour behind the hero.
+
+   The doubled selectors are deliberate. main.tsx imports App (and so, transitively,
+   this file) BEFORE styles/global.css, which sets `html, body { background: ... }`
+   at specificity 0,0,1 — so at equal specificity global.css wins on order. Bundlers
+   are also free to reorder the two, which has bitten this codebase before, so these
+   win on specificity (0,0,2) instead of relying on order at all. */
+:root:root {
+  background: #ffffff; /* every page and section sits on white */
+  /* No scroll-behavior here: Lenis (src/lib/smoothScroll.ts) smooths wheel, trackpad
+     and anchor scrolling, and a CSS smooth behaviour would fight it. */
+}
+/* Transparent on purpose, and it must stay that way. The ground is painted by the
+   html background, which propagates to the canvas and so sits under everything. A
+   background on BODY instead would paint in the block-backgrounds step, which comes
+   AFTER negative z-index children — and that would bury .hero__grid. This rule
+   exists to override global.css's `html, body` background, not to add one. */
+:root body {
+  background: transparent;
+}
+
+/* global.css pins html, body and #root to height: 100%, which was right when the
+   hero was the whole page. There is a second section below it now, so they need to
+   be free to grow. Same doubled-selector reason as above: this file is bundled
+   before global.css, so it has to win on specificity rather than order. */
+:root:root,
+:root body,
+:root #root {
+  height: auto;
+  min-height: 100%;
+}
+
+.hero__inner {
+  --lockup-aspect: 4.977; /* 13266 / 2665.401, the padded lockup viewBox */
+
+  position: relative;
+  z-index: 1; /* above .hero__grid */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  --sub-gap: clamp(22px, 2.865vw, 55px); /* 55 on the 1920 frame */
+
+  /* Width-led, but never so wide that the lockup outgrows a short viewport. The
+     reserve covers the page's own padding (up to 160px for the pair) plus the gap
+     and the caption; the floor keeps the expression from collapsing on a viewport
+     shorter than the reserve itself. */
+  width: min(1080px, calc(100% - 2 * var(--hero-pad)));
+  max-width: max(260px, calc((100dvh - 250px) * var(--lockup-aspect)));
+}
+
+/* The headline sets the layout; the lockup sits over it, centred on the same
+   point, so the hand-over happens in place. justify-content: center (rather than
+   grid centring) lets a headline wider than the column overflow evenly both ways. */
+.hero__stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* margin-top % resolves against the stage's width, which is the lockup's width,
+   so -50% / aspect is exactly half the lockup's height. */
+.hero__lockup {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  margin-top: calc(-50% / var(--lockup-aspect));
+  aspect-ratio: 13266 / 2665.401;
+}
+
+/* Frame 4034:1457: PP Pangaia Medium 70 / 75 on a 1920 frame, black, centred. */
+.hero__headline {
+  margin: 0;
+  color: #000;
+  font-family: "PP Pangaia", var(--font-display);
+  font-size: clamp(38px, 5.6vw, 108px); /* the frame's 70, enlarged ~54% */
+  font-weight: 500;
+  line-height: 1.0714; /* 75 / 70 */
+  text-align: center;
+  white-space: nowrap;
+}
+
+.hero__headline-line {
+  display: block;
+}
+
+.hero__glyph--pg { font-family: var(--font-wordmark); font-weight: 400; }
+.hero__glyph--hg { font-family: "Host Grotesk", var(--font-ui); font-weight: 400; }
+.hero__glyph--sg { font-family: "Schibsted Grotesk", var(--font-ui); font-weight: 500; }
+
+/* "At" is tracked in at -4.2px on 70px. */
+.hero__glyph[data-tight] { letter-spacing: -0.06em; }
+
+/* No WebGL2, or the shader/artwork failed to load: a static brushed-steel gradient
+   clipped to the same lockup. Flat next to the real thing, but it keeps the hero
+   legible instead of blank. */
+.hero__lockup[data-metal="off"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    #6d727a 0%,
+    #c6cbd1 13%,
+    #54585e 29%,
+    #edf0f3 45%,
+    #7c828a 57%,
+    #4a4e54 71%,
+    #b8bdc4 85%,
+    #5d6167 100%
+  );
+  -webkit-mask-image: var(--hero-lockup);
+  mask-image: var(--hero-lockup);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* The mark is pixels in a canvas, so the name has to be in the DOM for it to have
+   one. Clipped rather than `display: none` so screen readers still reach it. */
+.hero__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hero__sub {
+  /* Frame 4034:1457: Nata Sans Medium 16 / 28, tracked 3.2px, upper case, black,
+     its top 55px below the headline's foot (the gap on .hero__inner). */
+  margin: 0;
+  max-width: 100%;
+  color: #000;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(10.5px, 0.82vw, 15.5px); /* the frame's 16, trimmed slightly */
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.75;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Out of flow, so .hero__inner is exactly the headline's height and the headline
+   is what the hero centres, both ways. Centred with transform here, on a wrapper,
+   because the subtitle itself animates `translate` and recesses with `transform`. */
+.hero__sub-wrap {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  margin-top: var(--sub-gap);
+  transform: translateX(-50%);
+}
+
+/* Two lines, broken after "actionable", wherever both fit. */
+.hero__sub span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* On phones the lines can't hold whole, so the caption wraps naturally (balanced),
+   and may run wider than the lockup's narrow column up to a 16px page gutter. */
+@media (max-width: 640px) {
+  .hero__headline {
+    font-size: clamp(31px, 8.6vw, 50px); /* clears the edge motifs */
+  }
+
+  .hero__sub {
+    text-wrap: balance;
+    font-size: 8.75px;
+  }
+
+  .hero__sub span {
+    display: inline;
+    white-space: normal;
+  }
+
+  /* Phones break after "data", so "into" opens the second line. */
+  .hero__sub .hero__sub-break {
+    display: inline;
+  }
+}
+
+/* Only phones take the break (see the phone block above). */
+.hero__sub-break {
+  display: none;
+}
+
+/* --- Grid, rising out of the bottom edge -------------------------------------
+   Two repeating gradients rather than an SVG tile: one pass of 1px lines each way,
+   so cell size stays a single length to tune and the lines land on device pixels
+   instead of being resampled from a bitmap.
+
+   `inset: auto 0 0 0` works here only because .hero carries NO padding — the page
+   inset lives on .hero__inner's width instead. An absolutely positioned child is
+   laid out against its container's PADDING box, so with padding on .hero this had
+   to be negative --hero-pad to reach the border box, and that dragged the grid's
+   origin onto a fractional pixel at any width where 6vw isn't whole, blurring every
+   vertical line. Zero insets keep the origin integral at every viewport size. */
+.hero__grid {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: clamp(200px, 40dvh, 460px);
+  /* Negative, so it lands under the motif layer. It still clears the page ground,
+     which is painted by html/body rather than by any positioned element. */
+  z-index: -1;
+  pointer-events: none; /* the lockup's pointermove drives the specular */
+
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--hero-grid-line) 0 var(--hero-grid-line-w),
+      transparent var(--hero-grid-line-w) var(--hero-grid-cell)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--hero-grid-line) 0 var(--hero-grid-line-w),
+      transparent var(--hero-grid-line-w) var(--hero-grid-cell)
+    );
+
+  /* Transparent at the top, opaque at the bottom — but the boundary DIPS in the
+     middle, so the grid surfaces much lower at the horizontal centre than it does
+     at the sides.
+
+     That dip is why this is a radial gradient and not a `to bottom` linear one. A
+     linear ramp's iso-alpha lines are horizontal by definition, and no combination
+     of a vertical ramp with a horizontal one can bend them — compositing two masks
+     attenuates alpha, it cannot shift the height at which the ramp starts. Centring
+     an ellipse ABOVE the band does bend them: distance from that centre grows both
+     downward and outward, so every iso-line sits at its lowest directly under the
+     centre and rises toward the edges. One mask layer, no mask-composite.
+
+     Stop positions are percentages of the ellipse radius, so they read as distances
+     rather than heights. The geometry is deliberately self-similar: the horizontal
+     term is always (0.5 / 0.62) of a radius regardless of viewport width, so the
+     dip keeps its shape from 320px to 1920px instead of flattening out on wide
+     screens. Half-opacity lands around 0.56 of the band's height at the edges and
+     0.96 at the centre. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 125% at 50% -50%,
+    transparent 42%,
+    transparent 80%,
+    rgba(0, 0, 0, 0.1) 92%,
+    rgba(0, 0, 0, 0.34) 104%,
+    rgba(0, 0, 0, 0.7) 116%,
+    #000 124%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 125% at 50% -50%,
+    transparent 42%,
+    transparent 80%,
+    rgba(0, 0, 0, 0.1) 92%,
+    rgba(0, 0, 0, 0.34) 104%,
+    rgba(0, 0, 0, 0.7) 116%,
+    #000 124%
+  );
+}
+
+/* --- Pattern ground (Figma 2065:75, "homepage bkg") ------------------------------
+   The frame's fill is a lattice pattern the Figma export doesn't carry, so the tile
+   was cut from the frame's own render: 125 x 126 px is four repeats each way and
+   tiles seamlessly at that size. It is stored as darkness-as-alpha rather than with
+   the base colour baked in, so it reads the same over this ground and fades out
+   cleanly into the plain white the next section sits on.
+
+   Same negative z-index as the grid had, for the same reason: under the fixed motif
+   layer, above the html ground. The grid itself is switched off below — two
+   textures fight each other. */
+.hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* The white veil on top lifts the lattice lines toward the ground: raise its
+     alpha to make the pattern lighter still, lower it to bring the lines back. */
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+    url("../assets/images/landing-pattern.png") 50% 50% / 125px 126px repeat,
+    #ffffff;
+  content: "";
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+}
+
+.hero__grid {
+  display: none;
+}
+
+/* --- Light through the lattice ------------------------------------------------
+   A layer that shows only where the pattern's lines are: masked by a full-strength
+   copy of the tile (landing-pattern-mask.png — the visible tile is ~2% alpha, far
+   too faint to mask with), aligned to it exactly, and faded at the foot the same
+   way. Whatever is painted inside lights the lattice up and nothing else.
+
+   Inside: soft, heavily blurred blobs of light that drift and breathe constantly —
+   two big, one medium of changing shape, three small — and over them two rays of
+   the same light and blur. Each ray is pinned to a point on the hero's top edge; Hero.tsx swings its
+   far end toward the pointer (--ray-a, eased in JS). */
+.hero__light {
+  /* Barely off the #ffffff ground, and one shared blur, so blobs and rays read as
+     the same soft light. */
+  --blob: rgba(246, 246, 247, 0.9);
+  --blob-soft: rgba(250, 250, 251, 0.7);
+  --light-blur: 48px;
+
+  position: absolute;
+  inset: 0;
+  z-index: -1; /* with the pattern: under the motif layer, over the page ground */
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask:
+    url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat,
+    linear-gradient(to bottom, #000 78%, transparent);
+  -webkit-mask-composite: source-in;
+  mask:
+    url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat,
+    linear-gradient(to bottom, #000 78%, transparent);
+  mask-composite: intersect;
+}
+
+/* ---------- Blobs ---------- */
+
+.hero__blob {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--blob), var(--blob-soft) 55%, transparent);
+  filter: blur(var(--light-blur));
+  will-change: translate, scale;
+}
+
+.hero__blob--big-a {
+  top: -12%;
+  left: -8%;
+  width: 52vmax;
+  aspect-ratio: 1;
+  animation: hero-drift-a 26s ease-in-out infinite alternate;
+}
+
+.hero__blob--big-b {
+  right: -14%;
+  bottom: -10%;
+  width: 46vmax;
+  aspect-ratio: 1;
+  animation: hero-drift-b 31s ease-in-out infinite alternate;
+}
+
+/* The medium blob changes shape as well as place. */
+.hero__blob--medium {
+  top: 22%;
+  left: 54%;
+  width: 26vmax;
+  aspect-ratio: 1.2;
+  border-radius: 42% 58% 63% 37% / 45% 38% 62% 55%;
+  background: var(--blob);
+  filter: blur(var(--light-blur));
+  animation:
+    hero-morph 14s ease-in-out infinite alternate,
+    hero-drift-c 22s ease-in-out infinite alternate;
+}
+
+.hero__blob--small {
+  width: 9vmax;
+  aspect-ratio: 1;
+  /* Less blur than the rest, or a blob this size would dissolve entirely. */
+  filter: blur(calc(var(--light-blur) * 0.5));
+}
+
+.hero__blob--small-a { top: 14%; left: 30%; animation: hero-drift-small 11s ease-in-out infinite alternate; }
+.hero__blob--small-b { top: 64%; left: 18%; animation: hero-drift-small 14s -4s ease-in-out infinite alternate-reverse; }
+.hero__blob--small-c { top: 70%; left: 72%; animation: hero-drift-small 12s -7s ease-in-out infinite alternate; }
+
+@keyframes hero-drift-a {
+  0% { translate: 0 0; scale: 1; }
+  50% { translate: 14vw 10vh; scale: 1.08; }
+  100% { translate: 6vw 22vh; scale: 0.94; }
+}
+
+@keyframes hero-drift-b {
+  0% { translate: 0 0; scale: 1; }
+  50% { translate: -16vw -8vh; scale: 0.92; }
+  100% { translate: -6vw -20vh; scale: 1.06; }
+}
+
+@keyframes hero-drift-c {
+  0% { translate: 0 0; }
+  50% { translate: -18vw 12vh; }
+  100% { translate: -8vw -6vh; }
+}
+
+@keyframes hero-morph {
+  0% { border-radius: 42% 58% 63% 37% / 45% 38% 62% 55%; rotate: 0deg; }
+  50% { border-radius: 63% 37% 41% 59% / 58% 61% 39% 42%; rotate: 25deg; }
+  100% { border-radius: 36% 64% 52% 48% / 33% 52% 48% 67%; rotate: -15deg; }
+}
+
+@keyframes hero-drift-small {
+  0% { translate: 0 0; scale: 1; }
+  50% { translate: 5vw -4vh; scale: 1.3; }
+  100% { translate: -3vw 5vh; scale: 0.8; }
+}
+
+/* ---------- Rays ----------
+   A long, soft beam hanging from its anchor on the top edge. It is drawn pointing
+   straight down and rotated about that anchor, so only its far end travels. */
+.hero__ray {
+  position: absolute;
+  top: 0;
+  width: clamp(140px, 13vw, 240px);
+  height: 160vmax;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--blob-soft) 35%,
+    var(--blob) 50%,
+    var(--blob-soft) 65%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent 85%);
+  filter: blur(var(--light-blur));
+  opacity: 0;
+  transform-origin: 50% 0;
+  translate: -50% 0;
+  rotate: var(--ray-a, 0deg);
+  transition: opacity 700ms ease;
+}
+
+/* Same light as the blobs, anchored a third of the way in from each side. */
+.hero__ray--a { left: 28%; }
+.hero__ray--b { left: 72%; }
+
+.hero__light[data-rays] .hero__ray {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__blob {
+    animation: none;
+  }
+
+  .hero__ray {
+    transition: none;
+  }
+}
+
+/* Bigger cells once there is room for them, still whole pixels. */
+@media (min-width: 700px) {
+  .hero {
+    --hero-grid-cell: 76px;
+  }
+}
+
+/* --- Phones ------------------------------------------------------------------
+   640px is this page's one mobile boundary; Problem.css and EdgeMotifs.css use the
+   same number so the three move together.
+
+   The padding is what sets the lockup's width (see .hero__inner), and 6vw of it is
+   far too little down here: at 444px it left the mark 391px wide, 88% of the
+   viewport, running under the edge motifs on both sides. 16.5vw holds it at 67%
+   whatever the phone, which both reads as a mark rather than a banner and leaves
+   the motifs somewhere to be.
+
+   It is also what sets the clearance: the motifs are 27vw wide with half of each
+   off screen, so the gap is 16.5vw - 13.5vw = 3vw at every phone width. Raising
+   the marks means raising this in step, or they close back over the lockup. */
+@media (max-width: 640px) {
+  .hero {
+    --hero-pad: clamp(26px, 16.5vw, 106px);
+  }
+}
+
+/* --- Recessed while the menu is down ----------------------------------------
+   The lockup and the caption each scale about their OWN centre, so both shrink in
+   place and the gap between them is unchanged — they read as receding from the
+   viewer rather than as a group being pulled together.
+
+   Note the pointer handler in Hero.tsx still measures with getBoundingClientRect,
+   which is correct there (it wants the transformed, on-screen box so the specular
+   tracks where the lockup actually is); the canvas backing store is sized from
+   offsetWidth instead, which transforms don't touch. */
+.hero__lockup,
+.hero__headline,
+.hero__sub {
+  transform-origin: 50% 50%;
+  /* Closing: come back a touch faster and without the delay, so the lockup is
+     already settling as the panel collapses. */
+  transition: transform 0.5s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+
+
+.hero[data-recessed] .hero__lockup,
+.hero[data-recessed] .hero__headline,
+.hero[data-recessed] .hero__sub {
+  transform: scale(var(--hero-recess));
+  /* Opening: a beat behind the panel's fill, so the recession reads as caused by
+     the menu coming down rather than as a simultaneous, separate animation. */
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.24, 1) 0.04s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__lockup,
+  .hero__headline,
+  .hero__sub,
+  .hero[data-recessed] .hero__lockup,
+  .hero[data-recessed] .hero__headline,
+  .hero[data-recessed] .hero__sub {
+    transition-duration: 0.01ms;
+    transition-delay: 0s;
+  }
+}
+
+
+/* --- Entrance ----------------------------------------------------------------
+   One shot, on load: the lockup resolves out of a larger, blurred ghost of itself
+   down onto its final size, and the caption follows it up. (The edge motifs have
+   their own entrance, in EdgeMotifs.css, since they no longer live in this
+   section.)
+
+   Both sets below declare only `from`. The implicit 100% keyframe is the element's
+   own computed value, so each rest state — including the recessed variant, if the
+   menu is opened mid-entrance — stays defined in exactly one place instead of being
+   copied into an animation end state that could then fall out of sync.
+
+   Fill is `backwards`, never `forwards` or `both`. The lockup animates `filter`,
+   and a filter that stays applied — blur(0) very much included — keeps a
+   compositing layer alive for the life of the page and costs subpixel antialiasing
+   on the type under it. Ending with no fill drops back to the clean base style,
+   which is already the intended final state. */
+
+@keyframes hero-lockup-in {
+  from {
+    opacity: 0;
+    transform: scale(1.14);
+    filter: blur(18px);
+  }
+  /* Explicit, so the blur resolves to a real zero rather than relying on
+     interpolation toward an absent filter list. */
+  to {
+    filter: blur(0);
+  }
+}
+
+/* --- Hand-over ----------------------------------------------------------------
+   0.12–1.32s  lockup resolves (hero-lockup-in, above)
+   2.30–3.70s  lockup lifts and dissolves; hidden at the end so its canvas stops
+               drawing for nobody and can't take the pointer
+   2.80–4.40s  headline rises and sharpens into the lockup's place — starting while
+               the lockup is still half there, so the two cross-fade
+   3.70–5.00s  subtitle rises in under it
+   Ease-in-out on the way out and a long ease-out on the way in, with short
+   travels, so neither move has a hard start or stop.
+
+   These move with `translate`, not `transform`, so the menu's recess (a transform
+   scale) still composes with them. Fills are `forwards` for the lockup — its end
+   state is "gone" — and `backwards` for the text, whose rest state is its base
+   style, so nothing keeps a filter or layer alive afterwards. */
+@keyframes hero-lockup-out {
+  to {
+    opacity: 0;
+    translate: 0 -24px;
+    filter: blur(10px);
+    visibility: hidden;
+  }
+}
+
+@keyframes hero-rise-in {
+  from {
+    opacity: 0;
+    translate: 0 22px;
+    filter: blur(10px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-sub-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+/* Every time here runs from --page-t0: 0 on a fresh load; on arriving from the
+   other page, the length of the page change (page-transition.css), so the hero
+   starts once the ground has turned and the old centre has gone. */
+.hero__lockup {
+  animation:
+    hero-lockup-in 1.2s cubic-bezier(0.2, 0.68, 0.2, 1) calc(var(--page-t0, 0s) + 0.12s) backwards,
+    hero-lockup-out 1.4s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 2.3s) forwards;
+}
+
+/* Arriving from the other page, the logo doesn't resolve out of a blur: it fades
+   in rising slightly into the centre the old one has just left. */
+:root[data-handoff] .hero__lockup {
+  animation:
+    hero-lockup-rise 1s cubic-bezier(0.22, 1, 0.36, 1) var(--page-t0, 0s) backwards,
+    hero-lockup-out 1.4s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 2.3s) forwards;
+}
+
+@keyframes hero-lockup-rise {
+  from {
+    opacity: 0;
+    translate: 0 22px;
+    filter: blur(6px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+.hero__headline {
+  animation: hero-rise-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 2.8s) backwards;
+}
+
+.hero__sub {
+  animation: hero-sub-in 1.3s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 3.7s) backwards;
+}
+
+/* No motion: go straight to the final frame. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__headline,
+  .hero__sub {
+    animation: none;
+  }
+
+  .hero__lockup {
+    animation: none;
+    visibility: hidden;
+  }
+}
+
+/* --- Flash (the product page's hero, frame 5:3615) ----------------------------
+   The landing hero's stage, headline and timeline on a dark ground. Flash's logo
+   opens it in solid white (no shader) with the landing caption under it, then
+   hands over exactly as the lockup does: the logo lifts away, the headline rises
+   into its place, and a line of Flash's own and the waitlist key come up under it.
+
+   Arriving from the landing page (App.tsx, a view transition), the page around it
+   crossfades while the caption and the edge marks carry across in place — see
+   the view-transition names at the end of this section. */
+
+.hero--flash {
+  --flash-logo-w: clamp(200px, 21.2vw, 560px); /* the frame's 407 of 1920 */
+  /* = the landing hero's ornaments (--motif-w, --motif-y in EdgeMotifs.css), so
+     the two pages' marks are the same size and in the same place. */
+  --flash-motif-w: clamp(173px, 23.4375vw, 496px);
+  --flash-motif-y: 47%;
+
+  color: #ffffff;
+}
+
+/* A solid #050505 ground, the lattice drawn faintly light on it (as the About
+   panel does), running the full height with no fade. */
+.hero--flash::before {
+  background: #050505;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.hero--flash .hero__grid {
+  display: block;
+  inset: 0;
+  height: auto;
+  background: rgba(255, 255, 255, 0.032);
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+}
+
+/* The light through the lattice, here a faint glow on the dark lines. */
+.hero--flash .hero__light {
+  --blob: rgba(255, 255, 255, 0.05);
+  --blob-soft: rgba(255, 255, 255, 0.025);
+
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+}
+
+/* The rays carry a little more light than the blobs here, just enough for their
+   sweep (the auto pass in Hero.tsx, or the pointer) to show softly through the
+   lattice on the dark ground. */
+/* Each ray is a beam of light, not a bar: a narrow wedge fanning out from its
+   anchor on the top edge (a conic gradient about that point), one smooth shaft
+   brightest along its middle, brightest near the source and fading out with
+   distance. Faint —
+   just enough for its sweep (the auto pass in Hero.tsx, or the pointer) to show
+   through the lattice on the dark ground. */
+.hero--flash .hero__ray {
+  --ray-hi: rgba(255, 255, 255, 0.075);
+  --ray-lo: rgba(255, 255, 255, 0.03);
+  --ray-half: 16deg; /* half the beam's spread; LiquidGlassPill reads it too */
+
+  width: 110vmax;
+  height: 150vmax;
+  background: conic-gradient(
+    from calc(180deg - var(--ray-half)) at 50% 0%,
+    transparent 0deg,
+    var(--ray-lo) calc(var(--ray-half) * 0.5),
+    var(--ray-hi) var(--ray-half),
+    var(--ray-lo) calc(var(--ray-half) * 1.5),
+    transparent calc(var(--ray-half) * 2)
+  );
+  -webkit-mask-image: radial-gradient(ellipse 55% 75% at 50% 0%, #000 0%, rgba(0, 0, 0, 0.55) 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 55% 75% at 50% 0%, #000 0%, rgba(0, 0, 0, 0.55) 40%, transparent 100%);
+  filter: blur(14px);
+  transition: opacity 1400ms ease; /* and they come up slowly */
+}
+
+.hero--flash .hero__headline,
+.hero--flash .hero__sub {
+  color: #ffffff;
+}
+
+/* The logo, centred on the headline's centre like the lockup. */
+.hero__lockup--flash {
+  left: calc(50% - var(--flash-logo-w) / 2);
+  width: var(--flash-logo-w);
+  height: auto;
+  margin-top: calc(var(--flash-logo-w) * -45.918 / 407 / 2);
+  aspect-ratio: 407 / 45.918;
+}
+
+/* The caption sits under the logo at the frame's spacing (39 under a 46-tall
+   logo 407 wide), not under the headline. */
+.hero__sub-wrap--logo {
+  top: calc(50% + var(--flash-logo-w) * (45.918 / 2 + 39) / 407);
+  margin-top: 0;
+}
+
+/* Flash's own line and the waitlist key under the headline (frame 5:3695): a
+   little closer under it than the landing caption (41 of 1920), the key 41 below
+   that. */
+.hero--flash .hero__sub-wrap:not(.hero__sub-wrap--logo) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(22px, 2.14vw, 41px);
+  margin-top: calc(var(--sub-gap) * 0.76);
+}
+
+/* Nata Sans Medium 14 / 28, tracked 2.8px, upper case, white; in two lines. */
+.hero__sub--flash {
+  font-size: clamp(9.5px, 0.72vw, 13.5px); /* the frame's 14, trimmed as the landing caption's 16 is */
+}
+
+.hero__sub--flash span {
+  display: block;
+}
+
+/* --- The waitlist key: liquid glass ------------------------------------------
+   Frame 5:3695: a 193 × 42 pill, "JOIN WAITLIST" in the caption's type at #c7c7c7,
+   and a 32px white disc carrying an up arrow 5px in from its right end. The pill
+   is clear liquid glass, no frost: LiquidGlassPill draws the hero's lattice bent
+   through it and its rim. Sized in em off its type, so the whole key keeps the
+   frame's proportions at every width.
+
+   It sits under the caption on wider screens; on phones, at the hero's foot. */
+.hero__cta-slot--dock {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .hero__cta-slot--inline {
+    display: none;
+  }
+
+  .hero__cta-slot--dock {
+    position: absolute;
+    bottom: calc(max(28px, 4.5dvh) + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    z-index: 1;
+    display: block;
+    translate: -50% 0;
+  }
+}
+
+.hero__cta {
+  /* The frame's 42 on 14, all of it trimmed by a tenth. Phones set their own. */
+  --cta-h: max(34px, 3em);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(12em / 14);
+  height: var(--cta-h);
+  padding: 0 calc(5em / 14) 0 calc(15em / 14);
+  border-radius: 100px;
+  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.9);
+  color: #c7c7c7;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(10px, 0.656vw, 12.6px); /* 0.9 × the frame's 14 */
+  font-weight: 500;
+  letter-spacing: 0.2em; /* 2.8 on 14 */
+  line-height: 2;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    box-shadow 360ms ease,
+    color 300ms ease,
+    scale 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.liquid-glass-pill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* No WebGL2: a clear pill with just its rim. */
+.hero__cta[data-glass="off"] {
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 28px -12px rgba(0, 0, 0, 0.9);
+}
+
+.hero__cta[data-glass="off"] .liquid-glass-pill {
+  display: none;
+}
+
+.hero__cta:hover {
+  scale: 1.03;
+  color: #ffffff;
+}
+
+.hero__cta:active {
+  scale: 0.97;
+}
+
+.hero__cta:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 4px;
+}
+
+.hero__cta-label,
+.hero__cta-disc {
+  position: relative;
+  z-index: 1;
+}
+
+/* The white disc and its arrow (32 of the pill's 42). */
+.hero__cta-disc {
+  display: grid;
+  width: calc(var(--cta-h) * 32 / 42);
+  height: calc(var(--cta-h) * 32 / 42);
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: rotate 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero__cta-disc svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #000000;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero__cta:hover .hero__cta-disc {
+  rotate: 45deg;
+}
+
+/* --- Flash's edge marks --------------------------------------------------------
+   The landing ornaments (hero-motif.svg) in the same liquid-metal shader, here in
+   white metal (PEARL), centred on each edge, at the landing hero's size. */
+.hero__motif {
+  position: absolute;
+  top: var(--flash-motif-y, 50%);
+  z-index: 0;
+  width: var(--flash-motif-w);
+  aspect-ratio: 450 / 453.649;
+  pointer-events: none;
+}
+
+/* No WebGL2: the shape in flat white instead. */
+.hero__motif[data-metal="off"] {
+  background: linear-gradient(168deg, #d9dadd, #ffffff 35%, #e4e5e8 60%, #ffffff);
+  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+}
+
+.hero__motif--left {
+  left: 0;
+  translate: -50% -50%;
+  animation: motif-in-left 1.05s cubic-bezier(0.22, 0.68, 0.2, 1) calc(var(--page-t0, 0s) + 0.05s) backwards;
+}
+
+.hero__motif--right {
+  right: 0;
+  translate: 50% -50%;
+  animation: motif-in-right 1.05s cubic-bezier(0.22, 0.68, 0.2, 1) calc(var(--page-t0, 0s) + 0.05s) backwards;
+}
+
+/* The hero's own box, not the page, clips the marks' outer halves. */
+.hero--flash {
+  overflow-x: clip;
+}
+
+/* --- Flash's timeline ----------------------------------------------------------
+   The lockup's own: the logo resolves (0.12s) and lifts away (2.3s), and the
+   headline rises into its place (2.8s). The caption comes up under the logo just
+   after it and leaves with it; Flash's line follows the headline (3.7s), the key
+   a beat later. */
+@keyframes hero-sub-out {
+  to {
+    opacity: 0;
+    translate: 0 -16px;
+    filter: blur(6px);
+    visibility: hidden;
+  }
+}
+
+.hero__sub--logo {
+  animation:
+    hero-sub-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 0.5s) backwards,
+    hero-sub-out 1.2s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 2.3s) forwards;
+}
+
+.hero__cta {
+  animation: hero-sub-in 1.3s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 4s) backwards;
+}
+
+/* Carried over from the other page (they morph across in the page change), so
+   the edge marks have no entrance of their own. */
+.hero--flash[data-handoff] .hero__motif {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__sub--logo {
+    animation: none;
+    visibility: hidden;
+  }
+
+  .hero__cta,
+  .hero__motif--left,
+  .hero__motif--right {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Phones: narrower, shorter beams, scaled to the screen's width rather than its
+     height, so a ray reads as a beam across a narrow screen, not a wash over all
+     of it; and a gentler glint on the smaller headline. */
+  .hero--flash .hero__ray {
+    --ray-half: 9deg;
+
+    width: 90vw;
+    height: 150vw;
+    filter: blur(9px);
+  }
+
+  .hero__glint {
+    filter: url(#hero-glint-sm);
+  }
+
+  .hero--flash {
+    --flash-logo-w: min(48vw, 225px); /* a quarter smaller than 64vw / 300px */
+    --flash-motif-w: clamp(63px, 19.125vw, 124px); /* = the landing ornaments on phones */
+    --flash-motif-y: 50%;
+  }
+
+  .hero__sub--flash span {
+    display: block;
+  }
+
+  /* Smaller on phones: 32 tall, as the frame's 42 is to its 14px type. */
+  .hero__cta {
+    --cta-h: 32px;
+
+    font-size: 9.5px;
+  }
+}
+
+/* --- Between the two pages (App.tsx, page-transition.css) -----------------------
+   The hero's centre — logo, headline, caption — is named so it stays put over the
+   wave that turns the ground, then lifts away; the edge marks carry across in
+   place. */
+.hero__inner {
+  view-transition-name: hero-center;
+}
+
+.hero__motif--left {
+  view-transition-name: edge-motif-left;
+}
+
+.hero__motif--right {
+  view-transition-name: edge-motif-right;
+}
+
+/* --- Flash: light glinting off the headline -------------------------------------
+   A copy of the headline over it, shown only through the hero-glint filter
+   (Hero.tsx): a white glow standing just off the letters' edges, bumpy where
+   turbulence pushes it out, like light catching a raised edge. A soft band sweeps
+   it across the words, left to right, then rests before the next pass — the
+   first once the headline has settled (2.8s + 1.6s). */
+.hero__glint-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.hero__glint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  filter: url(#hero-glint);
+  -webkit-mask: linear-gradient(100deg, transparent 42%, #000 50%, transparent 58%) 100% 0 / 280% 100% no-repeat;
+  mask: linear-gradient(100deg, transparent 42%, #000 50%, transparent 58%) 100% 0 / 280% 100% no-repeat;
+  opacity: 0.85;
+  animation: hero-glint-sweep 7.5s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 4.4s) infinite;
+}
+
+/* The copy is only a shape for the filter; it isn't the headline. */
+.hero__headline--glint {
+  view-transition-name: none;
+  animation: none;
+}
+
+@keyframes hero-glint-sweep {
+  0% {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  55%,
+  100% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__glint {
+    display: none;
+  }
+}
+
+/* The logo's glint: one pass while it holds, between resolving (ends 1.32s) and
+   lifting away (2.3s). The copy inside keeps the logo's own entrance and exit,
+   so the glow arrives and leaves with it. */
+.hero__glint--logo {
+  display: block;
+  filter: url(#hero-glint-fine);
+  animation: hero-glint-sweep-once 1.25s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 1.05s);
+}
+
+@keyframes hero-glint-sweep-once {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}

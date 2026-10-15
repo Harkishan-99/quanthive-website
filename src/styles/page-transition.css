@@ -1,0 +1,119 @@
+/* The landing page ↔ Flash: one view transition (App.tsx), in three beats.
+
+   1. The pulse (0–1.25s). The arriving page's colour spreads out from the middle
+      of the hero's foot, up and out across the screen, through the lattice first
+      and then the ground — a soft front, never a visible shape. The nav and edge
+      marks change with it; the hero's centre — named hero-center in Hero.css —
+      stays above it, still showing the old page's logo or headline.
+   2. The old centre lifts and fades away (1.0–1.65s), as the hero's own lockup
+      does when it hands over.
+   3. The new centre rises in (from 1.5s, --page-t0): the arriving hero's whole
+      timeline is pushed back by that much (Hero.css, Nav.css), so its logo
+      fades in rising into the centre the old one left. */
+
+/* The pulse's radius, animatable (a registered length). */
+@property --pulse {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* The old page stays as it was underneath; the new one is revealed over it by a
+   pulse spreading out from the middle of the hero's foot — no shape to see: a
+   very soft, wide front that runs through the lattice first (its lines take the
+   new colour just ahead) and the ground fills in behind it. */
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  /* Layers, top to bottom: the ground filling in; the lattice; the front just
+     ahead of it. The lattice is cut to the front (intersect), then the fill is
+     added (add) — so the lines change a little before the ground between them. */
+  mask-image:
+    radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 34vmax), transparent var(--pulse)),
+    url("../assets/images/landing-pattern-mask.png"),
+    radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 6vmax), transparent calc(var(--pulse) + 16vmax));
+  mask-position: 0 0, 50% 50%, 0 0;
+  mask-size: 100% 100%, 125px 126px, 100% 100%;
+  mask-repeat: no-repeat, repeat, no-repeat;
+  mask-composite: add, intersect;
+  animation: page-pulse 1.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes page-pulse {
+  from {
+    --pulse: 0px;
+  }
+  to {
+    --pulse: 190vmax;
+  }
+}
+
+/* The centre: the old one holds through the pulse, then lifts away; the new one
+   is live (its own entrance, delayed by --page-t0, brings it in). */
+::view-transition-group(hero-center) {
+  animation: none;
+}
+
+/* As the pulse reaches the middle of the screen the old centre inverts with the
+   ground — black type on the new dark ground turns white, white on the new light
+   one turns black — so it stays legible until it leaves. */
+::view-transition-old(hero-center) {
+  animation:
+    page-center-invert 1.25s linear both,
+    page-center-out 650ms cubic-bezier(0.45, 0, 0.55, 1) 1s forwards;
+}
+
+@keyframes page-center-invert {
+  0%,
+  22% {
+    filter: invert(0);
+  }
+  52%,
+  100% {
+    filter: invert(1);
+  }
+}
+
+::view-transition-new(hero-center) {
+  animation: none;
+}
+
+@keyframes page-center-out {
+  from {
+    filter: invert(1);
+  }
+  to {
+    opacity: 0;
+    translate: 0 -24px;
+    filter: invert(1) blur(10px);
+  }
+}
+
+/* The edge marks change across with the pulse, from one page's to the other's. */
+::view-transition-group(edge-motif-left),
+::view-transition-group(edge-motif-right) {
+  animation-duration: 1.25s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(edge-motif-left),
+::view-transition-new(edge-motif-left),
+::view-transition-old(edge-motif-right),
+::view-transition-new(edge-motif-right) {
+  height: 100%;
+  object-fit: contain;
+  animation-duration: 1.25s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* The arriving page's own timeline waits for the change (see above). */
+:root[data-handoff] {
+  --page-t0: 1.5s;
+}
+
+/* The page ground under Flash, so an overscroll shows dark, not white. */
+:root:root[data-page="product"] {
+  background: #050505;
+}
