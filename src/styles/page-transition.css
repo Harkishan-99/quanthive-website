@@ -1,73 +1,114 @@
-/* The landing page ↔ Flash: one view transition (App.tsx), in three beats.
+/* A page change: one view transition (App.tsx).
 
-   1. The pulse (0–1.25s). The arriving page's colour spreads out from the middle
-      of the hero's foot, up and out across the screen, through the lattice first
-      and then the ground — a soft front, never a visible shape. The nav and edge
-      marks change with it.
-   2. The old centre lifts and fades away at once (0–0.18s), as the hero's own lockup
-      does when it hands over.
-   3. The new centre rises in (from 0.19s — 15% in — --page-t0): the arriving hero's whole
-      timeline is pushed back by that much (Hero.css, Nav.css), so its logo
-      fades in rising into the centre the old one left. */
+   Everything here animates only opacity and transform, which the browser runs
+   on the compositor — so a change stays smooth on any device, even while the new
+   page is still being built on the main thread (its WebGL waits for the change
+   to start: lib/pageTransition.ts).
 
-/* The pulse's radius, animatable (a registered length). */
-@property --pulse {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
+   Between the two heroes (landing <-> Flash, data-handoff):
+   1. The bloom (0–1.15s). The arriving page's ground rises from the middle of
+      the hero's foot as a soft, growing disc (.page-bloom) over the old page;
+      the new page fades in under it, and it melts away as it fills the screen.
+   2. The old centre lifts and fades away at once (0–0.18s), as the hero's own
+      lockup does when it hands over.
+   3. The new centre rises in (from 0.19s — 15% in — --page-t0): the arriving
+      hero's whole timeline is pushed back by that much (Hero.css, Nav.css), so
+      its logo fades in rising into the centre the old one left.
 
-/* The old page stays as it was underneath; the new one is revealed over it by a
-   pulse spreading out from the middle of the hero's foot — no shape to see: a
-   very soft, wide front that runs through the lattice first (its lines take the
-   new colour just ahead) and the ground fills in behind it. */
+   To and from the other pages: the new page simply fades in over the old. */
+
+/* The new page is drawn over the old one, so it fades in (the old one holds). */
 ::view-transition-old(root) {
   animation: none;
 }
 
 ::view-transition-new(root) {
-  /* Layers, top to bottom: the ground filling in; the lattice; the front just
-     ahead of it. The lattice is cut to the front (intersect), then the fill is
-     added (add) — so the lines change a little before the ground between them. */
-  mask-image:
-    radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 34vmax), transparent var(--pulse)),
-    url("../assets/images/landing-pattern-mask.png"),
-    radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 6vmax), transparent calc(var(--pulse) + 16vmax));
-  mask-position: 0 0, 50% 50%, 0 0;
-  mask-size: 100% 100%, 125px 126px, 100% 100%;
-  mask-repeat: no-repeat, repeat, no-repeat;
-  mask-composite: add, intersect;
-  animation: page-pulse 1.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: page-fade-in 480ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* Weaker devices (lib/perf.ts): the same pulse without the lattice layer, which
-   is what made it costly — a full-screen tiled mask re-composited every frame.
-   The ground and lines then turn together. */
-:root[data-perf="low"]::view-transition-new(root) {
-  mask-image: radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 6vmax), transparent calc(var(--pulse) + 16vmax));
-  mask-position: 0 0;
-  mask-size: 100% 100%;
-  mask-repeat: no-repeat;
-  mask-composite: add;
+/* Hero to hero, the bloom carries the change of ground; the new page comes up
+   under it as it melts. */
+:root[data-handoff]::view-transition-new(root) {
+  animation: page-fade-in 760ms cubic-bezier(0.4, 0, 0.2, 1) 0.12s both;
 }
 
-@keyframes page-pulse {
+@keyframes page-fade-in {
   from {
-    --pulse: 0px;
+    opacity: 0;
+  }
+}
+
+/* The bloom: a disc of the new page's ground, centred on the hero's foot and
+   big enough to cover the screen, soft-edged. It exists only for the change
+   (App.tsx), and is seen only as the transition's own layer. */
+.page-bloom {
+  --bloom: #ffffff;
+
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: -1; /* under every other layer of the change: the marks and the centre stay over it */
+  width: 240vmax;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Feathered all the way out, so it reads as the colour spreading, never as a
+     disc with an edge. */
+  background: radial-gradient(
+    closest-side,
+    var(--bloom) 0%,
+    color-mix(in srgb, var(--bloom) 82%, transparent) 30%,
+    color-mix(in srgb, var(--bloom) 45%, transparent) 60%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  translate: -50% 50%;
+  view-transition-name: page-bloom;
+}
+
+.page-bloom[data-to="product"] {
+  --bloom: #050505;
+}
+
+/* Drawn while the change is running (data-vt), so the transition can capture it;
+   otherwise never seen. */
+:root[data-vt] .page-bloom {
+  opacity: 1;
+}
+
+::view-transition-group(page-bloom) {
+  animation: none;
+}
+
+::view-transition-new(page-bloom) {
+  animation: page-bloom 1.1s cubic-bezier(0.33, 0, 0.2, 1) both;
+}
+
+@keyframes page-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+  25% {
+    opacity: 0.85;
+  }
+  55% {
+    opacity: 0.85;
   }
   to {
-    --pulse: 190vmax;
+    opacity: 0;
+    transform: scale(1.1);
   }
 }
 
-/* The centre: the old one holds through the pulse, then lifts away; the new one
+/* The centre: the old one lifts away at once; the new one
    is live (its own entrance, delayed by --page-t0, brings it in). */
 ::view-transition-group(hero-center) {
   animation: none;
 }
 
 /* The old centre (logo, headline, caption) leaves at once, every time: lifted
-   and faded in 0.18s, before the pulse reaches the middle of the screen. So none
+   and faded in 0.18s, before the bloom reaches the middle of the screen. So none
    of one hero's centre is ever seen on the other's ground — not on a normal
    change, and not when the reader switches again mid-change and a half-faded
    logo is what gets captured. The new hero's centre then rises in (--page-t0). */
@@ -87,7 +128,7 @@
   animation: none;
 }
 
-/* The edge marks change across with the pulse, from one page's to the other's. */
+/* The edge marks change across with the bloom, from one page’s to the other’s. */
 ::view-transition-group(edge-motif-left),
 ::view-transition-group(edge-motif-right) {
   animation-duration: 1.25s;
@@ -113,7 +154,7 @@
 
 /* The arriving page's own timeline waits for the change (see above). */
 :root[data-handoff] {
-  --page-t0: 0.19s; /* 15% into the 1.25s pulse */
+  --page-t0: 0.19s; /* 15% into the change */
 }
 
 /* The page ground under Flash, so an overscroll shows dark, not white. */

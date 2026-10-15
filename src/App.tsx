@@ -17,6 +17,7 @@ import AboutPage from "./components/AboutPage";
 import WaitlistDialog, { onWaitlistRequest } from "./components/WaitlistDialog";
 import Showcase from "./components/Showcase";
 import { canonicaliseAddress, navigate, onAddressChange, PAGE_URL, pageAt, pageFrom, type Page } from "./lib/router";
+import { markTransition } from "./lib/pageTransition";
 import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
 
@@ -82,6 +83,9 @@ function Site() {
   // Arrived from the other hero by the page change below: the arriving hero waits
   // for the change (--page-t0) and its edge marks morph across rather than enter.
   const [handoff, setHandoff] = useState(false);
+  // Hero to hero, the arriving page's ground blooms up from the hero's foot
+  // (page-transition.css): this is the page it blooms for, while it plays.
+  const [bloom, setBloom] = useState<Page | null>(null);
 
   // The page's colours follow it: the nav and announcement bar invert on Flash's
   // dark hero (Nav.css, AnnouncementBar.css), and so does the page ground.
@@ -118,6 +122,7 @@ function Site() {
         flushSync(() => {
           setHandoff(heroToHero);
           setPage(next);
+          setBloom(heroToHero ? next : null);
         });
         document.documentElement.dataset.page = next;
         jumpPageTo(0);
@@ -131,8 +136,16 @@ function Site() {
       const marksAtRest = window.scrollY <= 8;
       if (heroToHero && !marksAtRest) document.documentElement.dataset.marksEnter = "";
       else delete document.documentElement.dataset.marksEnter;
-      if (!animated) apply();
-      else document.startViewTransition(apply);
+      if (!animated) return apply();
+      const html = document.documentElement;
+      html.dataset.vt = "";
+      const transition = document.startViewTransition(apply);
+      // Heavy set-up on the new page (shaders, masks) waits for this to start.
+      markTransition(transition.ready);
+      void transition.finished.finally(() => {
+        delete html.dataset.vt;
+        setBloom(null);
+      });
     };
     return onAddressChange(go);
   }, []);
@@ -205,6 +218,7 @@ function Site() {
       )}
       <Footer />
       <WaitlistDialog open={waitlist} onClose={closeWaitlist} />
+      {bloom && <div className="page-bloom" data-to={bloom} aria-hidden />}
       <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onPageSelect={goTo} page={page} intro={introOnLanding && page === "landing"} />
     </>
   );

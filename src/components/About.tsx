@@ -230,7 +230,7 @@ export default function About() {
             </span>
           </a>
 
-          <a className="about__cta" href="mailto:mail@quanthive.in">
+          <a className="about__cta" href="/contact">
             <span className="about__cta-label">Get in touch</span>
             <span className="about__cta-key" aria-hidden>
               <svg viewBox="0 0 16 16">

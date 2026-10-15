@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { buildHeroMask } from "../lib/heroMask";
 import { maxDpr, onPowerChange } from "../lib/perf";
+import { useTransitionReady } from "../lib/pageTransition";
 import { HERO_FRAG, HERO_VERT, STAINLESS, material, type Alloy } from "../shaders/liquidMetal";
 import "./MetalSurface.css";
 
@@ -89,11 +90,13 @@ export default function MetalSurface({
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Arriving by a page change, the shaders compile once the change is playing.
+  const ready = useTransitionReady();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const host = hostRef.current;
-    if (!canvas || !host) return;
+    if (!canvas || !host || !ready) return;
 
     const gl = canvas.getContext("webgl2", {
       alpha: true,
@@ -355,7 +358,7 @@ export default function MetalSurface({
       gl.deleteBuffer(buf);
       gl.deleteProgram(program);
     };
-  }, [src, artHeightShare, bevelFrac, trackPointer, toneRef, alloyRef, inkRef, preset]);
+  }, [src, artHeightShare, bevelFrac, trackPointer, toneRef, alloyRef, inkRef, preset, ready]);
 
   return (
     <div {...divProps} ref={hostRef}>
