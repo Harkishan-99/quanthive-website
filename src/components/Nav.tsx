@@ -185,7 +185,7 @@ export default function Nav({
               <a className="nav__wordmark" href="/" aria-label="QuantHive home" />
               {/* On Flash's page the wordmark hands over to Flash's logo as the
                   hero's logo leaves (Nav.css). */}
-              <a className="nav__flash" href="#product" aria-label="Flash" tabIndex={-1}>
+              <a className="nav__flash" href="#flash" aria-label="Flash" tabIndex={-1}>
                 <img src="/images/figma-product/flash-logo-white.svg" alt="" />
               </a>
             </div>
@@ -306,7 +306,7 @@ export default function Nav({
                   {/* Flash: its logo on its own dark ground, opening its page. */}
                   <div className="nav__dropdown-col nav__dropdown-col--cards">
                     <a
-                      href="#product"
+                      href="#flash"
                       className="nav__promo-card nav__promo-card--flash"
                       tabIndex={open ? 0 : -1}
                       onClick={(e) => {
@@ -333,6 +333,11 @@ export default function Nav({
                   <div className="nav__dropdown-hatch nav__dropdown-hatch--right" aria-hidden="true" />
                 </div>
               </div>
+
+              {/* Phones: the bar's "Request demo" lives here, at the drawer's foot. */}
+              <a className="nav__drawer-cta" href="mailto:mail@quanthive.in" tabIndex={open ? 0 : -1}>
+                Request demo
+              </a>
             </div>
           </div>
         </div>

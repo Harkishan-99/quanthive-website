@@ -6,7 +6,7 @@ by [Bun](https://bun.sh) (`server.ts`), with a small API for the Flash waitlist.
 Pages (hash-routed, one app):
 
 - `/` — QuantHive landing page (hero, capabilities, about section)
-- `/#product` — Flash product page (hero with the waitlist form, partner logos)
+- `/#flash` — Flash product page (hero with the waitlist form, partner logos)
 - `/#about-us` — About page
 - `/showcase` — the about-section demo alone, full screen (for a display)
 

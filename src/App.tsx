@@ -15,10 +15,20 @@ import { jumpPageTo } from "./lib/smoothScroll";
 import "./styles/page-transition.css";
 
 type Page = "landing" | "product" | "about";
-// Pages by hash: #product is Flash's page, #about-us the About page (#about is
+// Pages by hash: #flash is Flash's page (#product, its old address, still opens
+// it), #about-us the About page (#about is
 // the landing page's own About section, so it stays on the landing page).
 const pageFromHash = (): Page =>
-  window.location.hash === "#product" ? "product" : window.location.hash === "#about-us" ? "about" : "landing";
+  window.location.hash === "#flash" || window.location.hash === "#product"
+    ? "product"
+    : window.location.hash === "#about-us"
+      ? "about"
+      : "landing";
+
+// An old #product link: shown as #flash, without adding a history entry.
+if (typeof window !== "undefined" && window.location.hash === "#product") {
+  window.history.replaceState(null, "", "#flash");
+}
 
 // The old app shell (sidebar, chat, watchlist, clock, palette, both glass themes)
 // is still on disk and untouched — only this entry point changed, so
@@ -57,7 +67,7 @@ function Site() {
   // Only a visit that starts on the landing page plays the hero hand-over, so only
   // then does the nav's wordmark wait for it.
   const [introOnLanding] = useState(
-    () => typeof window !== "undefined" && window.location.hash !== "#product",
+    () => typeof window !== "undefined" && pageFromHash() !== "product",
   );
   const [page, setPage] = useState<Page>(() => (typeof window !== "undefined" ? pageFromHash() : "landing"));
   // Arrived from the other hero by the page change below: the arriving hero waits
@@ -77,6 +87,7 @@ function Site() {
   // motion) just swap.
   useEffect(() => {
     const go = () => {
+      if (window.location.hash === "#product") window.history.replaceState(null, "", "#flash");
       const next = pageFromHash();
       // Moving within the landing page (its #about section, say) isn't a page change.
       if (next === document.documentElement.dataset.page) return;
@@ -114,13 +125,13 @@ function Site() {
     if (wasOpen) window.setTimeout(() => (window.location.hash = hash), 420);
     else window.location.hash = hash;
   };
-  const openProduct = () => goTo("product");
+  const openProduct = () => goTo("flash");
   const openAbout = () => goTo("about-us");
 
   return (
     <>
       {/* "Explore now" opens Flash's page. */}
-      <AnnouncementBar ctaHref="#product" onCtaClick={openProduct} />
+      <AnnouncementBar ctaHref="#flash" onCtaClick={openProduct} />
       {page === "product" ? (
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (

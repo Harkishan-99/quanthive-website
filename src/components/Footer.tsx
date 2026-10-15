@@ -6,8 +6,8 @@ const FOOTER_COLUMNS = [
   {
     title: "Platform",
     links: [
-      ["Overview", "#product"],
-      ["Agents", "#product"],
+      ["Overview", "#flash"],
+      ["Agents", "#flash"],
       ["Intelligence", "#about"],
       ["Projects", "#about"],
       ["Watchtower", "#about"],
