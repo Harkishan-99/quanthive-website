@@ -13,7 +13,7 @@ import "./TeamPage.css";
 // The photos are stand-ins (free stock portraits from Pexels) until the team's own.
 const TEAM: { name: string; role: string; note?: string; photo?: string }[] = [
   { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },
-  { name: "Neelesh Upadhaye", role: "Co-Founder", note: "Ex Quant Desk Head, Dolat Capital", photo: "/images/team/neelesh.jpg" },
+  { name: "Neelesh Upadhaye", role: "Co-Founder", note: "Ex Quant Head, Dolat Capital", photo: "/images/team/neelesh.jpg" },
   { name: "Chirag S J", role: "Founding Member, SDE", photo: "/images/team/chirag.jpg" },
   { name: "Mahati", role: "Founding Member, Founder's Office Associate", photo: "/images/team/mahati.jpg" },
 ];
