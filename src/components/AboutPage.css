@@ -241,17 +241,25 @@
   fill: currentColor;
 }
 
-/* --- Partners: the heading, then compartments three to a row --------------------------
-   Hairlines between compartments (the grid's 1px gaps showing the rule colour
-   behind), none round the outside; rows are filled out with empty compartments
-   so every line runs whole. Logos in light grey, their colour back on hover. */
+/* --- Partners ---------------------------------------------------------------------
+   Wider screens: one grid three compartments across, the heading in the first;
+   full-width rules between the rows, and short dividers between compartments
+   that stop clear of the rules. Phones: the heading above a two-across grid of
+   hairlines (below). Logos in light grey, their colour back on hover. Blank
+   compartments complete the last row, each shown only where its layout needs it
+   (data-shows). */
 
 .about-page__partners {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: clamp(28px, 2.8vw, 53px);
 }
 
 .about-page__partners-title {
-  margin: 0 0 clamp(20px, 1.8vw, 34px);
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding-left: calc(var(--col) * 10 / 812);
   font-size: clamp(30px, 2.35vw, 45px);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -260,26 +268,55 @@
 }
 
 .about-page__logos {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
+  display: contents;
   margin: 0;
   padding: 0;
   list-style: none;
-  background: var(--rule);
+}
+
+.about-page__logo--empty:not([data-shows~="wide"]) {
+  display: none;
+}
+
+.about-page__partners-title,
+.about-page__logo {
+  position: relative;
+  min-height: clamp(110px, 8.6vw, 165px);
 }
 
 .about-page__logo {
   display: grid;
-  aspect-ratio: 16 / 9;
   place-items: center;
   container-type: inline-size;
-  background: #ffffff;
+}
+
+/* Rows after the first: a rule across the top. */
+.about-page__logo:nth-of-type(n + 3) {
+  border-top: 1px solid var(--rule);
+}
+
+/* Short dividers on the left of the second and third compartments of a row,
+   inset from the rules above and below. */
+.about-page__logo:nth-of-type(3n + 1)::before,
+.about-page__logo:nth-of-type(3n + 2)::before,
+.about-page__logo:nth-of-type(3n + 3)::before {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 0;
+  width: 1px;
+  background: var(--rule);
+  content: "";
+}
+
+/* …except the first compartment of each row (logos 3, 6, … sit in column 1). */
+.about-page__logo:nth-of-type(3n)::before {
+  display: none;
 }
 
 .about-page__logo-art {
   display: flex;
-  width: calc(var(--w, 0.4) * 100cqw);
+  width: calc(var(--w, 0.4) * 80cqw); /* airy, as in the reference */
   justify-content: center;
   filter: grayscale(1);
   opacity: 0.42;
@@ -435,12 +472,40 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .about-page__logos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Partners: the heading above, then two across with hairlines between. */
+  .about-page__partners {
+    display: block;
   }
 
-  /* Seven logos fill four rows of two: the ninth (empty) compartment goes. */
-  .about-page__logo--empty:nth-child(9) {
+  .about-page__partners-title {
+    min-height: 0;
+    margin-bottom: 20px;
+    padding-left: 0;
+  }
+
+  .about-page__logos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule);
+  }
+
+  .about-page__logo {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    border-top: 0 !important;
+    background: #ffffff;
+  }
+
+  .about-page__logo::before {
+    display: none !important;
+  }
+
+  .about-page__logo--empty[data-shows~="phone"] {
+    display: block;
+  }
+
+  .about-page__logo--empty:not([data-shows~="phone"]) {
     display: none;
   }
 }

@@ -71,8 +71,14 @@ const PARTNERS: { name: string; w: number; logo: ReactNode }[] = [
   },
   { name: "nasscom", w: 0.46, logo: <img src={`${LOGO}/logo-nasscom.svg`} alt="" /> },
 ];
-// Rows are filled out with empty compartments, so the grid's lines stay whole.
-const PARTNER_CELLS = Math.ceil(PARTNERS.length / 3) * 3;
+// Rows are filled out with empty compartments, so the grid's lines stay whole:
+// on wider screens the heading takes the first of three columns; on phones it
+// sits above two. Each layout shows only the blanks it needs (AboutPage.css).
+const BLANKS_WIDE = (3 - ((PARTNERS.length + 1) % 3)) % 3;
+const BLANKS_PHONE = PARTNERS.length % 2;
+const BLANKS = Array.from({ length: Math.max(BLANKS_WIDE, BLANKS_PHONE) }, (_, i) =>
+  [i < BLANKS_WIDE ? "wide" : "", i < BLANKS_PHONE ? "phone" : ""].filter(Boolean).join(" "),
+);
 
 /** Back to the page the reader was on before this one (App.tsx notes it as it
  *  changes page); opened directly, with nothing before it, to the landing page. */
@@ -164,18 +170,16 @@ export default function AboutPage() {
             <span className="about-page__pp">s</span>
           </h2>
           <ul className="about-page__logos">
-            {Array.from({ length: PARTNER_CELLS }, (_, index) => {
-              const partner = PARTNERS[index];
-              return partner ? (
-                <li key={partner.name} className="about-page__logo" style={{ "--w": partner.w } as CSSProperties} title={partner.name}>
-                  <span className="about-page__logo-art" role="img" aria-label={partner.name}>
-                    {partner.logo}
-                  </span>
-                </li>
-              ) : (
-                <li key={`empty-${index}`} className="about-page__logo about-page__logo--empty" aria-hidden />
-              );
-            })}
+            {PARTNERS.map((partner) => (
+              <li key={partner.name} className="about-page__logo" style={{ "--w": partner.w } as CSSProperties} title={partner.name}>
+                <span className="about-page__logo-art" role="img" aria-label={partner.name}>
+                  {partner.logo}
+                </span>
+              </li>
+            ))}
+            {BLANKS.map((shows, index) => (
+              <li key={`blank-${index}`} className="about-page__logo about-page__logo--empty" data-shows={shows} aria-hidden />
+            ))}
           </ul>
         </section>
       </article>
