@@ -113,6 +113,18 @@ function Site() {
         document.documentElement.dataset.page = next;
         jumpPageTo(0);
       };
+      // The edge marks carry across in place only if they're on screen; scrolled
+      // away (say from the landing page's third section), carrying them would slide
+      // them down from above the screen. Then they enter from their own sides
+      // instead, as the new hero starts (page-transition.css, Hero.css,
+      // EdgeMotifs.css). Set before the old page is captured.
+      const marks = Array.from(document.querySelectorAll(".motif--left, .motif--right, .hero__motif"));
+      const marksInView = marks.some((mark) => {
+        const box = mark.getBoundingClientRect();
+        return box.bottom > 0 && box.top < window.innerHeight;
+      });
+      if (heroToHero && !marksInView) document.documentElement.dataset.marksEnter = "";
+      else delete document.documentElement.dataset.marksEnter;
       if (!animated) apply();
       else document.startViewTransition(apply);
     };

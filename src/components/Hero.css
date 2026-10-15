@@ -1006,6 +1006,22 @@
   animation: none;
 }
 
+/* …unless the landing page's marks were scrolled out of view as it left (App.tsx
+   sets data-marks-enter): then these enter from their own sides, as on a fresh
+   load, once the page has changed. */
+:root[data-marks-enter] .hero__motif--left,
+:root[data-marks-enter] .hero__motif--right {
+  view-transition-name: none;
+}
+
+:root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--left {
+  animation: motif-in-left 1.05s cubic-bezier(0.22, 0.68, 0.2, 1) calc(var(--page-t0, 0s) + 0.05s) backwards;
+}
+
+:root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--right {
+  animation: motif-in-right 1.05s cubic-bezier(0.22, 0.68, 0.2, 1) calc(var(--page-t0, 0s) + 0.05s) backwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero__sub--logo {
     animation: none;

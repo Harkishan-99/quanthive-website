@@ -148,8 +148,8 @@
 
 /* Arriving from Flash's page they morph across from its marks (page change), so
    no entrance of their own. */
-:root[data-handoff] .motif--left,
-:root[data-handoff] .motif--right {
+:root[data-handoff]:not([data-marks-enter]) .motif--left,
+:root[data-handoff]:not([data-marks-enter]) .motif--right {
   animation: none;
 }
 
@@ -163,6 +163,15 @@
 /* Carried across to Flash's flat white marks when the page changes (Hero.css). */
 .motif--left { view-transition-name: edge-motif-left; }
 .motif--right { view-transition-name: edge-motif-right; }
+
+/* Arriving from the other hero while its marks were scrolled out of view
+   (App.tsx): no carry-over; the marks enter from their sides once the page has
+   changed (--page-t0). */
+:root[data-marks-enter] .motif--left,
+:root[data-marks-enter] .motif--right {
+  view-transition-name: none;
+  animation-delay: calc(var(--page-t0, 0s) + 0.05s);
+}
 
 /* --- Phones ------------------------------------------------------------------
    Same 640px boundary as Hero.css and Problem.css.
