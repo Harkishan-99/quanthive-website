@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import FlashTestimonials from "./FlashTestimonials";
 import "./FlashPartners.css";
 
 // Flash's second section (frame 11:3765): a band of logos along the top of a
@@ -109,6 +110,8 @@ export default function FlashPartners() {
           ))}
         </div>
       </div>
+      {/* Under the band, on the same light page. */}
+      <FlashTestimonials />
     </section>
   );
 }
