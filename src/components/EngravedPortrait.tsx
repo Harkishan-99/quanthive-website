@@ -70,21 +70,22 @@ function lightness(image: HTMLImageElement | null, size: number) {
     out[i] = (0.299 * data[i * 4]! + 0.587 * data[i * 4 + 1]! + 0.114 * data[i * 4 + 2]!) / 255;
   }
   // Tone it as an engraver would, from the face rather than the whole frame:
-  // the middle of the square sets the black and white points (2nd and 98th
-  // percentiles), and a gamma puts its median tone at mid-grey. So a darker
+  // the face sets the black and white points (2nd and 98th percentiles), and a
+  // gamma puts its median tone a little under mid-grey. So a darker
   // complexion or a dark backdrop still lands in the lines' mid-range, where the
   // forms read, instead of going to solid ink.
   const sample: number[] = [];
   const step = Math.max(1, Math.floor(size / 120));
-  for (let y = Math.floor(size * 0.15); y < size * 0.85; y += step) {
-    for (let x = Math.floor(size * 0.2); x < size * 0.8; x += step) sample.push(out[y * size + x]!);
+  // The face: the upper middle of a head-and-shoulders crop.
+  for (let y = Math.floor(size * 0.08); y < size * 0.55; y += step) {
+    for (let x = Math.floor(size * 0.3); x < size * 0.7; x += step) sample.push(out[y * size + x]!);
   }
   sample.sort((a, b) => a - b);
   const at = (q: number) => sample[Math.min(sample.length - 1, Math.floor(q * sample.length))] ?? 0;
   const lo = at(0.02);
   const span = Math.max(at(0.98) - lo, 0.05);
   const median = Math.min(0.95, Math.max(0.05, (at(0.5) - lo) / span));
-  const gamma = Math.min(1.6, Math.max(0.4, Math.log(0.52) / Math.log(median)));
+  const gamma = Math.min(1.6, Math.max(0.4, Math.log(0.46) / Math.log(median)));
   for (let i = 0; i < out.length; i++) {
     const l = Math.min(1, Math.max(0, (out[i]! - lo) / span));
     out[i] = Math.pow(l, gamma);
@@ -97,9 +98,9 @@ function engrave(light: Float32Array, size: number, seed: number) {
   const img = new ImageData(size, size);
   const px = img.data;
   const rand = random(seed * 7 + 1);
-  const pitch = Math.max(3, size / 96); // line spacing
+  const pitch = Math.max(3, size / 118); // line spacing: fine enough for a face to read
   const wave = size / 5; // wavelength of the lines' sway
-  const sway = pitch * 1.4;
+  const sway = pitch * 0.9; // gentle, so the lines don't fight the features
   const tilt = (rand() - 0.5) * 0.3;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -107,11 +108,11 @@ function engrave(light: Float32Array, size: number, seed: number) {
       const dark = 1 - light[i]!;
       // Lines run across, swaying, their phase bent a little by the image so they
       // follow the forms.
-      const v = (y + tilt * x + sway * Math.sin((x / wave) * Math.PI * 2 + y / (wave * 1.7)) + dark * pitch * 0.8) / pitch;
+      const v = (y + tilt * x + sway * Math.sin((x / wave) * Math.PI * 2 + y / (wave * 1.7)) + dark * pitch * 0.45) / pitch;
       const d = Math.abs((v - Math.floor(v)) - 0.5) * 2; // 0 on a line's centre, 1 between
       const grit = (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
       // Lights carry no ink at all; elsewhere a little grit roughens the edges.
-      const width = dark < 0.06 ? 0 : Math.min(1, dark * 1.1) + Math.abs(grit) * 0.1 - 0.05;
+      const width = dark < 0.06 ? 0 : Math.min(1, dark * 1.05) + Math.abs(grit) * 0.05 - 0.025;
       const ink = d < width ? 1 : 0;
       const o = i * 4;
       if (ink) {
@@ -156,32 +157,34 @@ function lineWork(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
 
 type Cell = "photo" | "ground" | "pastel" | "lines";
 
-/** Which cells show what: a blocky silhouette round the subject, with tiles —
- *  only ever round its edges, never over the face. */
+/** Which cells show what: the portrait runs from the top edge to the bottom —
+ *  narrow over the head and widening to the shoulders, its sides stepped
+ *  unevenly into the ground — with a few tiles round its edges, never over the
+ *  face. */
 function layout(seed: number) {
   const rand = random(seed);
   const cells: Cell[] = [];
-  const ring: number[] = []; // distance of each cell from the middle, no jitter
+  const edge: number[] = [];
   const c = (GRID - 1) / 2;
   for (let row = 0; row < GRID; row++) {
+    const t = row / (GRID - 1);
+    // Half-width of the silhouette in cells: the head's at the top, the
+    // shoulders' near the foot.
+    const half = 2.1 + 1.8 * (t * t * (3 - 2 * t));
     for (let col = 0; col < GRID; col++) {
-      // Distance from a centre a touch above the middle, squashed so the shape
-      // runs down to the shoulders.
-      const dx = (col - c) / c;
-      const dy = (row - c + 0.6) / (c * 1.25);
-      const d = Math.hypot(dx, dy);
-      ring.push(d);
-      cells.push(d + (rand() - 0.5) * 0.35 < 1.02 ? "photo" : "ground");
+      const off = Math.abs(col - c) - (half + (rand() - 0.5) * 0.8);
+      cells.push(off < 0 ? "photo" : "ground");
+      // Tiles only on the silhouette's edge, and never over the face (the
+      // middle of the top five rows).
+      const overFace = row < 5 && Math.abs(col - c) < 2.2;
+      if (off > -1.2 && off < 1 && !overFace) edge.push(row * GRID + col);
     }
   }
-  // A few cells swapped for tiles, picked from the outer ring only, where the
-  // silhouette meets the ground.
-  const edge = cells.map((_, i) => i).filter((i) => ring[i]! >= 0.72 && ring[i]! <= 1.25);
-  const tiles = 5 + Math.floor(rand() * 3);
+  const tiles = 3 + Math.floor(rand() * 3);
   for (let n = 0; n < tiles && edge.length; n++) {
     const i = edge.splice(Math.floor(rand() * edge.length), 1)[0]!;
     const roll = rand();
-    cells[i] = roll < 0.4 ? "pastel" : roll < 0.75 ? "lines" : cells[i] === "photo" ? "ground" : "lines";
+    cells[i] = roll < 0.45 ? "pastel" : roll < 0.85 ? "lines" : cells[i] === "photo" ? "ground" : "lines";
   }
   return cells;
 }
