@@ -3,11 +3,10 @@
    1. The pulse (0–1.25s). The arriving page's colour spreads out from the middle
       of the hero's foot, up and out across the screen, through the lattice first
       and then the ground — a soft front, never a visible shape. The nav and edge
-      marks change with it; the hero's centre — named hero-center in Hero.css —
-      stays above it, still showing the old page's logo or headline.
-   2. The old centre lifts and fades away (0.85–1.4s), as the hero's own lockup
+      marks change with it.
+   2. The old centre lifts and fades away at once (0–0.3s), as the hero's own lockup
       does when it hands over.
-   3. The new centre rises in (from 1.5s, --page-t0): the arriving hero's whole
+   3. The new centre rises in (from 1.1s, --page-t0): the arriving hero's whole
       timeline is pushed back by that much (Hero.css, Nav.css), so its logo
       fades in rising into the centre the old one left. */
 
@@ -67,23 +66,13 @@
   animation: none;
 }
 
-/* Hero to hero (landing ↔ Flash, data-handoff): as the pulse reaches the middle
-   of the screen the old centre inverts with the ground — black type on the new
-   dark ground turns white, white on the new light one turns black — so it stays
-   legible until it leaves, and the new hero's centre rises into its place. */
-:root[data-handoff]::view-transition-old(hero-center) {
-  animation:
-    page-center-invert 1.25s linear both,
-    /* Gone by 1.4s: the arriving hero's centre starts at 1.5s (--page-t0), so the
-       two never share the screen, not even for a frame. */
-    page-center-out 550ms cubic-bezier(0.45, 0, 0.55, 1) 0.85s forwards;
-}
-
-/* To a page without a hero (About, Team, Contact) nothing takes the centre's
-   place, so it doesn't hold: it lifts away at once, gone well before the pulse
-   has crossed the screen, rather than lingering over the new page. */
+/* The old centre (logo, headline, caption) leaves at once, every time: lifted
+   and faded in 0.3s, before the pulse reaches the middle of the screen. So none
+   of one hero's centre is ever seen on the other's ground — not on a normal
+   change, and not when the reader switches again mid-change and a half-faded
+   logo is what gets captured. The new hero's centre then rises in (--page-t0). */
 ::view-transition-old(hero-center) {
-  animation: page-center-leave 420ms cubic-bezier(0.45, 0, 0.55, 1) forwards;
+  animation: page-center-leave 300ms cubic-bezier(0.45, 0, 0.55, 1) forwards;
 }
 
 @keyframes page-center-leave {
@@ -94,30 +83,8 @@
   }
 }
 
-@keyframes page-center-invert {
-  0%,
-  22% {
-    filter: invert(0);
-  }
-  52%,
-  100% {
-    filter: invert(1);
-  }
-}
-
 ::view-transition-new(hero-center) {
   animation: none;
-}
-
-@keyframes page-center-out {
-  from {
-    filter: invert(1);
-  }
-  to {
-    opacity: 0;
-    translate: 0 -24px;
-    filter: invert(1) blur(10px);
-  }
 }
 
 /* The edge marks change across with the pulse, from one page's to the other's. */
@@ -146,7 +113,7 @@
 
 /* The arriving page's own timeline waits for the change (see above). */
 :root[data-handoff] {
-  --page-t0: 1.5s;
+  --page-t0: 1.1s;
 }
 
 /* The page ground under Flash, so an overscroll shows dark, not white. */
