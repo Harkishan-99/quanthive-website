@@ -42,9 +42,29 @@ function ExceptionRaisedMark() {
   );
 }
 
+/** IITM Incubation Cell's seal: a red ring round "IITM / Incubation / Cell",
+ *  the I and C of the last two in red, set in the page's faces. */
+function IncubationCellSeal() {
+  return (
+    <svg viewBox="0 0 126 126" aria-hidden>
+      <circle cx="63" cy="63" r="61" fill="#ffffff" stroke="#e23b45" strokeWidth="2" />
+      <g fontFamily="'Host Grotesk', 'Inter', sans-serif" textAnchor="middle">
+        <text x="63" y="48" fontSize="15" fill="#2b2b2b" letterSpacing="1">IITM</text>
+        <text x="63" y="70" fontSize="13" fill="#6f6f6f" letterSpacing="0.6">
+          <tspan fill="#c43a3a" fontSize="17">I</tspan>NCUBATION
+        </text>
+        <text x="63" y="92" fontSize="13" fill="#3b6fb6" letterSpacing="0.6">
+          <tspan fill="#c43a3a" fontSize="17">C</tspan>ELL
+        </text>
+      </g>
+    </svg>
+  );
+}
+
 // Each partner's logo, drawn at a matched visual weight (--w as a share of its
 // compartment's width).
-const PARTNERS: { name: string; w: number; logo: ReactNode }[] = [
+// `o`: a little more opacity for a fine-lined seal, which fades out sooner.
+const PARTNERS: { name: string; w: number; o?: number; logo: ReactNode }[] = [
   { name: "Citi", w: 0.26, logo: <img src={`${LOGO}/logo-citi.svg`} alt="" /> },
   { name: "Google", w: 0.38, logo: <img src={`${LOGO}/logo-google.svg`} alt="" /> },
   { name: "AWS", w: 0.24, logo: <img src={`${LOGO}/logo-aws.svg`} alt="" /> },
@@ -70,6 +90,8 @@ const PARTNERS: { name: string; w: number; logo: ReactNode }[] = [
     ),
   },
   { name: "nasscom", w: 0.46, logo: <img src={`${LOGO}/logo-nasscom.svg`} alt="" /> },
+  { name: "IIT Madras", w: 0.3, o: 0.55, logo: <img src={`${LOGO}/logo-iit-madras.svg`} alt="" /> },
+  { name: "IITM Incubation Cell", w: 0.29, o: 0.55, logo: <IncubationCellSeal /> },
 ];
 // Rows are filled out with empty compartments, so the grid's lines stay whole:
 // on wider screens the heading takes the first of three columns; on phones it
@@ -171,7 +193,7 @@ export default function AboutPage() {
           </h2>
           <ul className="about-page__logos">
             {PARTNERS.map((partner) => (
-              <li key={partner.name} className="about-page__logo" style={{ "--w": partner.w } as CSSProperties} title={partner.name}>
+              <li key={partner.name} className="about-page__logo" style={{ "--w": partner.w, "--o": partner.o } as CSSProperties} title={partner.name}>
                 <span className="about-page__logo-art" role="img" aria-label={partner.name}>
                   {partner.logo}
                 </span>

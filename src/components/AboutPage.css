@@ -319,7 +319,7 @@
   width: calc(var(--w, 0.4) * 80cqw); /* airy, as in the reference */
   justify-content: center;
   filter: grayscale(1);
-  opacity: 0.28; /* faint: present, never loud */
+  opacity: var(--o, 0.28); /* faint: present, never loud */
   transition:
     filter 300ms ease,
     opacity 300ms ease;
