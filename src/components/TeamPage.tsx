@@ -29,8 +29,8 @@ export default function TeamPage() {
 
         <div className="about-page__copy">
           <p>
-            Some of us met in the hostels of IIT Madras; one of us ran a quant desk. Now we&apos;re building
-            the analyst we always wanted.
+            A founding team from IIT Madras, combining deep engineering with quantitative finance to build
+            research tools that scale.
           </p>
         </div>
 
