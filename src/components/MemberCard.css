@@ -228,7 +228,7 @@
 
 @media (max-width: 640px) {
   .member-card__stage {
-    --w: min(300px, 78vw);
+    --w: min(240px, 62.4vw); /* a fifth smaller than 300px / 78vw */
   }
 
   .member-card {
@@ -283,18 +283,18 @@
   }
 
   .member-card__label {
-    font-size: 2.9cqw;
+    font-size: 3.4cqw;
   }
 
   .member-card__name {
-    font-size: calc(5.4cqw * var(--size, 1));
+    font-size: calc(6cqw * var(--size, 1));
   }
 
   .member-card__brand {
     right: auto;
     bottom: 12cqw;
     left: 12cqw;
-    width: 38cqw;
+    width: 50cqw;
   }
 
   /* No pointer to follow: a slow sway, the light drifting with it. */
