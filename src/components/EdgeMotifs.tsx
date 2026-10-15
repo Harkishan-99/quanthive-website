@@ -128,12 +128,12 @@ function BorderLine({ side }: { side: "left" | "right" }) {
 const INK_DELAY_MS = 2800;
 const INK_DURATION_MS = 2100;
 
-/** --page-t0 on the document, in ms. */
+/** --page-t0, in ms: 190 while arriving by a hero-to-hero change (data-handoff;
+ *  page-transition.css), else 0. Read from the flag rather than computed styles:
+ *  a style read mid-change forces the whole page to restyle. */
+const PAGE_T0_MS = 190;
 function pageT0Ms() {
-  const value = getComputedStyle(document.documentElement).getPropertyValue("--page-t0").trim();
-  const n = parseFloat(value);
-  if (!n) return 0;
-  return value.endsWith("ms") ? n : n * 1000;
+  return document.documentElement.dataset.handoff !== undefined ? PAGE_T0_MS : 0;
 }
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);

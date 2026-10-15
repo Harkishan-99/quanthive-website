@@ -35,3 +35,15 @@ h1 {
 img {
   display: block;
 }
+
+/* Long sections below the fold are skipped by the browser (style, layout,
+   paint) until they near the screen, so a page change — whose transition paints
+   the arriving page's first frame — and a first load only render what is in
+   view. `auto` keeps each section's last-rendered height once it has been
+   shown, so scroll positions stay stable. */
+.capabilities,
+.about,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}

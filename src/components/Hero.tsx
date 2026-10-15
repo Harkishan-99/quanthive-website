@@ -94,10 +94,22 @@ function useLightRays(auto = false, delayMs = 0) {
     // a little below the top edge, so the rays open from a gentle angle, not flat.
     const AUTO_TOP = 0.08;
 
+    // The layer's size, kept current by a ResizeObserver rather than measured on
+    // every frame (a per-frame measurement forces layout, which during a page
+    // change — its pulse restyling the page each frame — costs real smoothness).
+    // Filled by the observer's first report (which arrives with the layout already
+    // done), so mounting forces no layout of its own.
+    const box = { width: 0, height: 0 };
+    const sizeObserver = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      box.width = entry.contentRect.width;
+      box.height = entry.contentRect.height;
+    });
+    sizeObserver.observe(layer);
+
     // A ray drawn straight down, rotated by θ, points along (−sin θ, cos θ); so to
     // aim it at (x, y) from its anchor, θ = −atan2(dx, dy). x, y within the layer.
     const aim = (x: number, y: number) => {
-      const box = layer.getBoundingClientRect();
       RAY_ANCHORS.forEach((anchor, i) => {
         target[i] = (-Math.atan2(x - box.width * anchor, Math.max(y, 1)) * 180) / Math.PI;
       });
@@ -116,7 +128,6 @@ function useLightRays(auto = false, delayMs = 0) {
           autoOn = false;
           if (pointer) aim(pointer.x, pointer.y);
         } else {
-          const box = layer.getBoundingClientRect();
           aim(box.width / 2, Math.max(y, AUTO_TOP) * box.height);
           for (let i = 0; i < current.length; i++) current[i] = target[i] ?? 0;
           if (now >= autoFrom) layer.dataset.rays = "";
@@ -165,6 +176,7 @@ function useLightRays(auto = false, delayMs = 0) {
       document.documentElement.removeEventListener("pointerleave", onLeave);
       cancelAnimationFrame(frame);
       io.disconnect();
+      sizeObserver.disconnect();
     };
   }, [auto, delayMs]);
 

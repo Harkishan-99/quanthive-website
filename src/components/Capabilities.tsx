@@ -281,8 +281,9 @@ export default function Capabilities() {
     const card = track?.children[index] as HTMLElement | undefined;
     if (!track || !card) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const gutter = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-    track.scrollTo({ left: card.offsetLeft - track.offsetLeft - gutter, behavior: reduce ? "auto" : "smooth" });
+    // Scrolled so this card starts where the first one does (the track's gutter).
+    const first = track.children[0] as HTMLElement;
+    track.scrollTo({ left: card.offsetLeft - first.offsetLeft, behavior: reduce ? "auto" : "smooth" });
   }, []);
 
   // Cards snap to the leading edge, so the active one is whichever starts nearest it.
@@ -293,12 +294,13 @@ export default function Capabilities() {
     const update = () => {
       frame = 0;
       setScrollable(track.scrollWidth > track.clientWidth + 1);
-      const gutter = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-      const edge = track.scrollLeft + gutter;
+      // Each card's distance from the leading edge, in layout terms only (no
+      // style read): the first card marks where the edge is.
+      const first = (track.children[0] as HTMLElement | undefined)?.offsetLeft ?? 0;
       let nearest = 0;
       let best = Infinity;
       Array.from(track.children).forEach((child, index) => {
-        const distance = Math.abs((child as HTMLElement).offsetLeft - track.offsetLeft - edge);
+        const distance = Math.abs((child as HTMLElement).offsetLeft - first - track.scrollLeft);
         if (distance < best) {
           best = distance;
           nearest = index;
@@ -313,8 +315,7 @@ export default function Capabilities() {
     };
     const resize = new ResizeObserver(schedule);
     resize.observe(track);
-    track.addEventListener("scroll", schedule, { passive: true });
-    update();
+    track.addEventListener("scroll", schedule, { passive: true }); // the observer's first call measures it
     return () => {
       resize.disconnect();
       track.removeEventListener("scroll", schedule);

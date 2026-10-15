@@ -199,19 +199,33 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
     // is turned by --ray-a (Hero.tsx). A beam spreads 2 × --ray-half (Hero.css;
     // narrower on phones), brightest down its middle; how much of it falls on the
     // key depends on how far off its axis the key sits.
-    const rays = Array.from(hero.querySelectorAll<HTMLElement>(".hero__ray"));
+    //
+    // Nothing here forces the browser to recompute styles or layout on every
+    // frame (that cost real smoothness during page changes, whose pulse restyles
+    // the page each frame): each beam's spread and anchor are read once and on
+    // resize; the rays' fade is followed from the layer's data-rays flag rather
+    // than read back from computed styles; and the boxes below are re-measured
+    // only while something is actually moving.
+    const layer = hero.querySelector<HTMLElement>(".hero__light");
+    const rays = Array.from(hero.querySelectorAll<HTMLElement>(".hero__ray")).map((el) => ({ el, sigma: 0, left: 0 }));
+    const readRays = () => {
+      for (const ray of rays) {
+        const half = parseFloat(getComputedStyle(ray.el).getPropertyValue("--ray-half")) || 16;
+        ray.sigma = (half * 0.56 * Math.PI) / 180;
+        ray.left = ray.el.offsetLeft;
+      }
+    };
+    readRays();
+    // The rays' opacity, eased as their CSS transition does (about 1.4s).
+    let rayOpacity = 0;
     const rayLight = (cx: number, cy: number, hb: DOMRect) => {
       let strength = 0;
       let dx = 0;
       let dy = 1;
+      if (rayOpacity <= 0.01) return { dx, dy, strength };
       for (const ray of rays) {
-        const style = getComputedStyle(ray);
-        const opacity = parseFloat(style.opacity) || 0;
-        if (opacity <= 0.01) continue;
-        const half = parseFloat(style.getPropertyValue("--ray-half")) || 16;
-        const BEAM_SIGMA = ((half * 0.56) * Math.PI) / 180;
-        const angle = (parseFloat(ray.style.getPropertyValue("--ray-a")) || 0) * (Math.PI / 180);
-        const ax = hb.left + ray.offsetLeft;
+        const angle = (parseFloat(ray.el.style.getPropertyValue("--ray-a")) || 0) * (Math.PI / 180);
+        const ax = hb.left + ray.left;
         const ay = hb.top;
         // The beam's axis: straight down, turned by the angle.
         const bx = -Math.sin(angle);
@@ -220,7 +234,7 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
         const vy = cy - ay;
         const len = Math.hypot(vx, vy) || 1;
         const off = Math.acos(Math.max(-1, Math.min(1, (vx * bx + vy * by) / len)));
-        const s = opacity * Math.exp(-(off * off) / (2 * BEAM_SIGMA * BEAM_SIGMA));
+        const s = rayOpacity * Math.exp(-(off * off) / (2 * ray.sigma * ray.sigma));
         if (s > strength) {
           strength = s;
           dx = vx / len;
@@ -231,16 +245,43 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
     };
     const lit = { x: 0, y: 1, s: 0 };
 
+    // Boxes, re-measured only while the key or the page is moving: on scroll and
+    // resize, while the key animates (its entrance, the hover scale) and while
+    // the pointer comes and goes — for a moment after each.
+    let c = canvas.getBoundingClientRect();
+    let hb = hero.getBoundingClientRect();
+    let size = { w: canvas.clientWidth, h: canvas.clientHeight };
+    let measureUntil = performance.now() + 1500;
+    const remeasure = (ms = 700) => {
+      measureUntil = Math.max(measureUntil, performance.now() + ms);
+    };
+    const onScroll = () => remeasure(300);
+    const onResize = () => {
+      readRays();
+      remeasure();
+    };
+    const onKeyMotion = () => remeasure(1600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    for (const type of ["animationstart", "animationend", "transitionrun", "transitionend", "pointerenter", "pointerleave"]) {
+      key.addEventListener(type, onKeyMotion);
+    }
+    const sizeObserver = new ResizeObserver(() => {
+      size = { w: canvas.clientWidth, h: canvas.clientHeight };
+      remeasure();
+    });
+    sizeObserver.observe(canvas);
+
     let raf = 0;
     let visible = true;
-    const frame = () => {
+    let last = 0;
+    const frame = (now: number) => {
       raf = 0;
       if (!visible) return;
-      // Measured every frame: the key rises in and scales on hover, and the
-      // lattice under it has to stay put while it does.
+      const dt = last ? Math.min(now - last, 100) : 16;
+      last = now;
       const dpr = maxDpr();
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
+      const { w, h } = size;
       if (w && h) {
         const cw = Math.round(w * dpr);
         const ch = Math.round(h * dpr);
@@ -248,8 +289,12 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
           canvas.width = cw;
           canvas.height = ch;
         }
-        const c = canvas.getBoundingClientRect();
-        const hb = hero.getBoundingClientRect();
+        if (now < measureUntil) {
+          c = canvas.getBoundingClientRect();
+          hb = hero.getBoundingClientRect();
+        }
+        const raysOn = layer?.dataset.rays !== undefined;
+        rayOpacity += ((raysOn ? 1 : 0) - rayOpacity) * Math.min(1, dt / 450);
         light.x += (light.tx - light.x) * 0.12;
         light.y += (light.ty - light.y) * 0.12;
         light.hover += ((light.over ? 1 : 0) - light.hover) * 0.1;
@@ -278,16 +323,43 @@ export default function LiquidGlassPill({ ground = 5 / 255, ink = 0.032 }: { gro
       }
       raf = requestAnimationFrame(frame);
     };
+
+    // A key that is still waiting to fade in (the hero's, a few seconds after a
+    // page change) has nothing to show: start drawing as its entrance begins.
+    const entranceWaiting = () =>
+      key.getAnimations().some((animation) => {
+        const delay = Number(animation.effect?.getTiming().delay ?? 0);
+        return animation.playState === "running" && Number(animation.currentTime ?? 0) < delay;
+      });
+    let started = !entranceWaiting();
+    const start = () => {
+      if (started) return;
+      started = true;
+      remeasure(1600);
+      if (visible && !raf) raf = requestAnimationFrame(frame);
+    };
+    key.addEventListener("animationstart", start);
+
     const io = new IntersectionObserver(([entry]) => {
       visible = !!entry?.isIntersecting;
-      if (visible && !raf) raf = requestAnimationFrame(frame);
+      if (visible && started && !raf) {
+        remeasure();
+        raf = requestAnimationFrame(frame);
+      }
     });
     io.observe(key);
-    raf = requestAnimationFrame(frame);
+    if (started) raf = requestAnimationFrame(frame);
 
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
+      sizeObserver.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      for (const type of ["animationstart", "animationend", "transitionrun", "transitionend", "pointerenter", "pointerleave"]) {
+        key.removeEventListener(type, onKeyMotion);
+      }
+      key.removeEventListener("animationstart", start);
       key.removeEventListener("pointermove", onMove);
       key.removeEventListener("pointerleave", onLeave);
       gl.deleteTexture(tile);
