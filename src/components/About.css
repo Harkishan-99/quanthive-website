@@ -79,19 +79,81 @@
   box-shadow: inset -1px -1px 0 var(--about-line);
 }
 
-/* ---------- Founder card (4×4) ---------- */
+/* ---------- Blog tile (3×2) ----------
+   Dark, as the card it replaced: the faint lattice, "Blog" in the display face
+   at its foot, an arrow in the top-right corner. Opens /blog. */
 
-.about__founder {
+.about__blog {
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
   container-type: size;
-  background: #2a2a2a;
+  overflow: hidden;
+  /* Percentages, not cq units: those would measure the grid, not this tile. */
+  padding: 0 7% 6%;
+  background: #1f1f1f;
   color: #ffffff;
+  text-decoration: none;
+  transition: background 300ms ease;
 }
 
-.about__founder {
-  /* Under the wordmark's left edge, its foot on the video's. */
-  grid-column: 13 / span 2;
+.about__blog::before {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  content: "";
+  pointer-events: none;
+}
+
+.about__blog:hover {
+  background: #2c2c2c;
+}
+
+.about__blog:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -4px;
+}
+
+.about__blog-label {
+  position: relative;
+  font-family: "PP Pangaia", var(--font-display, serif);
+  font-size: min(16cqw, 34cqh);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.about__blog-key {
+  position: absolute;
+  top: 9cqh;
+  right: 6cqw;
+  display: grid;
+  width: min(11cqw, 22cqh);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.about__blog-key svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about__blog:hover .about__blog-key svg {
+  translate: 2px -2px;
+}
+
+.about__blog {
+  /* Under the wordmark's left edge, its foot on the video's: 3×2. */
+  grid-column: 13 / span 3;
   grid-row: 7 / span 2;
 }
 
@@ -127,117 +189,6 @@
   object-fit: cover;
   background: #111111;
 }
-
-.about__founder-body {
-  flex: 1;
-  min-height: 0;
-  padding: 7.5cqw 7.5cqw 0;
-  overflow: hidden;
-}
-
-.about__index {
-  display: block;
-  margin-bottom: 4cqw;
-  color: #8c8c8c;
-  font-size: max(4.6cqw, 10px);
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-
-.about__bio {
-  margin: 0;
-  font-size: max(4.6cqw, 10.5px);
-  letter-spacing: -0.015em;
-  line-height: 1.32;
-  text-wrap: pretty;
-}
-
-/* The bottom strip is one cell tall; the portrait is that
-   cell, square, in its right-hand corner. The accent rule runs under it all. */
-.about__founder-foot {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr calc(100cqh / var(--f-rows, 4)); /* one cell, square, whatever the card's width */
-  flex: none;
-  height: calc(100cqh / var(--f-rows, 4)); /* one cell */
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-.about__founder-foot::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 1.6cqw;
-  background: var(--tone);
-}
-
-.about__name {
-  align-self: center;
-  margin: 0;
-  padding: 0 4cqw 1.6cqw 7.5cqw;
-  font-size: max(3.7cqw, 10px);
-  letter-spacing: -0.01em;
-  line-height: 1.35;
-}
-
-.about__name span {
-  color: #b5b5b5;
-}
-
-.about__photo {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-left: 1px solid rgba(255, 255, 255, 0.14);
-  background: #3a3a3a;
-  color: #9a9a9a;
-  font-size: 4cqw;
-  letter-spacing: 0.04em;
-}
-
-.about__photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1);
-}
-
-/* Large screens: at 2×2 the card is too small to read, so it becomes a portrait
-   tile — the photo fills it, the name sits over its foot, the bio steps aside.
-   Tablets and phones keep the full card (see their blocks below). */
-@media (min-width: 1101px) {
-  .about__founder { position: relative; }
-  .about__founder-body { display: none; }
-  .about__founder-foot::after { z-index: 2; }
-
-  .about__founder-foot {
-    position: absolute;
-    inset: 0;
-    display: block;
-    height: auto;
-    border-top: 0;
-  }
-
-  .about__photo {
-    position: absolute;
-    inset: 0;
-    border-left: 0;
-    font-size: 12cqw;
-  }
-
-  .about__name {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    padding: 14cqw 8cqw 9cqw;
-    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.55));
-    font-size: max(7.5cqw, 9px);
-    line-height: 1.3;
-  }
-}
-
 
 /* Download: a small glass key in the panel's top-right corner, inset like the
    dial along its foot. Clicked, it renders the shot: an orange ring fills round
@@ -625,7 +576,7 @@
 
   .about__video { grid-column: 1 / span 7; grid-row: 2 / span 5; }
   /* The card's foot on the video's; under them the wordmark, the CTA footed on it. */
-  .about__founder { grid-column: 9 / span 4; grid-row: 3 / span 4; }
+  .about__blog { grid-column: 9 / span 3; grid-row: 5 / span 2; }
   .about__brand { --span: 7; grid-column: 1 / span var(--span); grid-row: 8 / span 2; }
   .about__cta { grid-column: 10 / span 3; grid-row: 9; }
 }
@@ -636,23 +587,16 @@
 @media (max-width: 640px) {
   .about {
     --cols: 8;
-    --rows: 26;
-    --f-rows: 5; /* founder card height, in cells */
+    --rows: 23;
   }
 
   .about__video { grid-column: 1 / span 8; grid-row: 2 / span 13; }
   .about__brand { --span: 8; grid-column: 1 / span var(--span); grid-row: 16 / span 2; }
-  .about__founder { grid-column: 2 / span 6; grid-row: 19 / span 5; }
-  .about__cta { grid-column: 5 / span 3; grid-row: 25; font-size: 12px; }
+  .about__blog { grid-column: 2 / span 3; grid-row: 19 / span 2; }
+  .about__cta { grid-column: 5 / span 3; grid-row: 22; font-size: 12px; }
 
   /* The panel's "⋯" menu, a touch larger and further apart for a thumb. */
   .about__video .glass-menu { --key: max(36px, 10cqmin); --key-gap-min: 14; }
-
-  /* The taller card has room to set its copy larger. */
-  .about__index { margin-bottom: 4.5cqw; font-size: 5cqw; }
-  .about__bio { font-size: 5.4cqw; line-height: 1.38; }
-  .about__name { font-size: 4.4cqw; }
-  .about__photo { font-size: 4.4cqw; }
 }
 
 /* ---------- Reveal ---------- */
@@ -662,7 +606,7 @@
 .about__title-line,
 .about__video,
 .about__brand,
-.about__founder {
+.about__blog {
   opacity: 0;
   translate: 0 18px;
   transition:
@@ -679,7 +623,7 @@
 .about[data-revealed] .about__title-line,
 .about[data-revealed] .about__video,
 .about[data-revealed] .about__brand,
-.about[data-revealed] .about__founder {
+.about[data-revealed] .about__blog {
   opacity: 1;
   translate: 0 0;
   filter: blur(0);
@@ -693,7 +637,7 @@
 .about[data-revealed] .about__title-line + .about__title-line { transition-delay: 150ms; }
 .about[data-revealed] .about__video { transition-delay: 260ms; }
 .about[data-revealed] .about__brand { transition-delay: 300ms; }
-.about[data-revealed] .about__founder { transition-delay: 340ms; }
+.about[data-revealed] .about__blog { transition-delay: 340ms; }
 
 /* The wordmark's handles pop onto its corners once the box is in, as a layer
    being selected. */
@@ -729,7 +673,7 @@
   .about__title-line,
   .about__video,
   .about__brand,
-  .about__founder,
+  .about__blog,
   .about__cta {
     opacity: 1;
     translate: 0 0;

@@ -10,26 +10,13 @@ import "./About.css";
 
 // The third section (frames 4040:3614, 2:28): the heading top-left, then a ruled
 // grid of square cells. A video panel (10×7; 7×5 on tablets, 8×13 on phones), the
-// framed QuantHive wordmark beside it, a founder card (2×2 on large screens) and a
+// framed QuantHive wordmark beside it, a Blog tile (3×2) and a
 // 3×1 call to action sit on it, so every edge lands on a grid line.
 //
 // Set VIDEO_SRC (and optionally VIDEO_POSTER) to fill the panel; until then it is
 // an empty dark frame.
 const VIDEO_SRC: string | undefined = undefined;
 const VIDEO_POSTER: string | undefined = undefined;
-
-// Placeholder copy and portrait — swap in the name, role, a line or two, and a
-// `photo` URL (a square, ideally monochrome) when they're ready.
-const FOUNDERS = [
-  {
-    name: "Founder Name",
-    role: "Co-founder & CTO",
-    initials: "FN",
-    photo: undefined as string | undefined,
-    tone: "#76826f",
-    bio: "Builds the agents and data systems behind Flash, turning raw market data, filings and calls into sourced answers an investor can trust.",
-  },
-];
 
 type Face = "ghost" | "schibsted" | "bricolage" | "hanken" | "host";
 
@@ -232,32 +219,16 @@ export default function About() {
             <BrandLogo className="about__brand-logo" />
           </div>
 
-          {FOUNDERS.map((founder, index) => (
-            <article
-              className="about__founder"
-              key={index}
-              style={{ "--tone": founder.tone } as CSSProperties}
-            >
-              <div className="about__founder-body">
-                <span className="about__index">{String(index + 1).padStart(2, "0")}</span>
-                <p className="about__bio">{founder.bio}</p>
-              </div>
-              <footer className="about__founder-foot">
-                <p className="about__name">
-                  {founder.name},
-                  <br />
-                  <span>{founder.role}</span>
-                </p>
-                <div className="about__photo">
-                  {founder.photo ? (
-                    <img src={founder.photo} alt={founder.name} loading="lazy" />
-                  ) : (
-                    <span aria-hidden>{founder.initials}</span>
-                  )}
-                </div>
-              </footer>
-            </article>
-          ))}
+          {/* The blog, 3×2: its name and an arrow; opens /blog (App.tsx takes the
+              link and changes page in place). */}
+          <a className="about__blog" href="/blog">
+            <span className="about__blog-label">Blog</span>
+            <span className="about__blog-key" aria-hidden>
+              <svg viewBox="0 0 16 16">
+                <path d="M4.5 11.5l7-7M5.5 4.5h6v6" />
+              </svg>
+            </span>
+          </a>
 
           <a className="about__cta" href="mailto:mail@quanthive.in">
             <span className="about__cta-label">Get in touch</span>
