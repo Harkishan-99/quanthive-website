@@ -1,0 +1,581 @@
+/* Card row in place of the clock section, laid out after the reference: heading
+   on the left with its copy in the right half, then four portrait cards edge to
+   edge, each with its title and copy top-left and its artwork below. Narrower
+   screens keep the same cards and scroll them, with dots and arrows.
+
+   Card widths are percentages of the track's content box. A card's padding is a
+   percentage of that same box, which is what keeps --card-pad in step with the
+   card's width.
+
+   Each card's ground is a muted tone taken down from its Figma colour (node
+   4020:234); the last card is near-black.
+
+   Square corners throughout — the site's edges are sharp. */
+
+.capabilities {
+  --cap-gutter: clamp(20px, 6.5vw, 140px);
+  --card-gap: clamp(14px, 1.6vw, 30px);
+  --card-w: calc((100% - 3 * var(--card-gap)) / 4);
+  --cap-ink: #151515;
+
+  position: relative;
+  z-index: 1; /* above the fixed .motifs layer, as the clock section was */
+  padding: clamp(64px, 7vw, 128px) 0 clamp(56px, 6vw, 112px);
+  overflow: hidden;
+  background: #ffffff; /* the page ground, so the hero's fade lands on it */
+  color: var(--cap-ink);
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+/* ---------- Heading ---------- */
+
+.capabilities__header {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 24px var(--card-gap);
+  margin: 0 0 clamp(56px, 6.5vw, 128px);
+  padding-inline: var(--cap-gutter);
+}
+
+.capabilities__header h2 {
+  margin: 0;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(28px, 2.25vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.03em; /* the frame's -1.14px on 38px */
+  line-height: 1.08;
+}
+
+/* Always two lines, broken after "needs," (each half may still wrap on phones). */
+.capabilities__title-line {
+  display: block;
+}
+
+.capabilities__title-line--light {
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+/* The faces the frame mixes letter by letter. */
+.cap-face--ghost { font-family: "TWK Ghost", serif; }
+.cap-face--schibsted { font-family: "Schibsted Grotesk", sans-serif; }
+.cap-face--bricolage {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-variation-settings: "opsz" 14, "wdth" 100;
+}
+.cap-face--power { font-family: var(--font-wordmark); }
+.cap-face--host { font-family: "Host Grotesk", sans-serif; }
+
+.cap-face[data-track="open"] { letter-spacing: 0.01em; }
+.cap-face[data-track="tight"] { letter-spacing: -0.01em; }
+/* The "t" is set at 40 against the line's 38. */
+.cap-face[data-large] { font-size: 1.0526em; }
+
+.capabilities__header p {
+  max-width: 36em;
+  margin: 0;
+  color: #3a3a3a;
+  font-size: clamp(15px, 1vw, 18px);
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+/* ---------- Track ---------- */
+
+.capabilities__track {
+  display: flex;
+  gap: var(--card-gap);
+  padding-inline: var(--cap-gutter);
+  scroll-padding-inline: var(--cap-gutter);
+  /* The track scrolls sideways, so it clips vertically too; room below lets the
+     cards rise in from under their rest position without being cut off. */
+  padding-bottom: 48px;
+  margin-bottom: -48px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.capabilities__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Card ---------- */
+
+.capabilities__card {
+  --go-size: clamp(30px, 8.5cqw, 38px);
+
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: var(--card-w);
+  aspect-ratio: 450 / 610;
+  container-type: inline-size;
+  overflow: hidden;
+  /* One value on every side. (cqw would resolve against the card's content box,
+     not its border box, and come out smaller.) */
+  --card-pad: calc(var(--card-w) * 0.078);
+  padding: var(--card-pad);
+  /* A quiet, photographic ground in the manner of the reference: one muted tone,
+     a soft key light from the upper right, and a broad pale surface curving up
+     from the foot. Each card's tone is a greyed-down cousin of its Figma colour. */
+  background:
+    radial-gradient(120% 70% at 85% 0%, color-mix(in srgb, var(--tone-key) 70%, #fff) 0%, transparent 60%),
+    radial-gradient(140% 55% at 15% 112%, color-mix(in srgb, var(--tone-key) 55%, #fff) 0%, transparent 62%),
+    linear-gradient(180deg, var(--tone) 0%, var(--tone-deep) 100%);
+  color: #fff;
+  scroll-snap-align: start;
+}
+
+/* Reveal: the cards rise and fade in as a chain, each a hair behind the one before;
+   on the way out they sink and fade the same way in reverse, last card first. The delays live on
+   each state, so whichever way the section is going, the stagger runs from the
+   right end. Uses `translate`, leaving `transform` free. */
+.capabilities__card {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity 700ms cubic-bezier(0.45, 0, 0.55, 1),
+    translate 800ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.capabilities__card:nth-child(3) { transition-delay: 60ms; }
+.capabilities__card:nth-child(2) { transition-delay: 120ms; }
+.capabilities__card:nth-child(1) { transition-delay: 180ms; }
+
+.capabilities[data-revealed] .capabilities__card {
+  opacity: 1;
+  translate: 0 0;
+  /* A chain: all four rise as one movement, each just 80ms behind its neighbour, on
+     a smooth ease-out — less four entrances than one row lifting in a ripple. */
+  transition:
+    opacity 900ms cubic-bezier(0.33, 1, 0.68, 1),
+    translate 1100ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.capabilities[data-revealed] .capabilities__card:nth-child(1) { transition-delay: 100ms; }
+.capabilities[data-revealed] .capabilities__card:nth-child(2) { transition-delay: 180ms; }
+.capabilities[data-revealed] .capabilities__card:nth-child(3) { transition-delay: 260ms; }
+.capabilities[data-revealed] .capabilities__card:nth-child(4) { transition-delay: 340ms; }
+
+/* The heading arrives just ahead of the cards: each title line lifts out of a
+   soft blur, then the paragraph follows. Leaves in the same way, quicker. */
+.capabilities__title-line,
+.capabilities__header p {
+  opacity: 0;
+  translate: 0 14px;
+  filter: blur(6px);
+  transition:
+    opacity 900ms cubic-bezier(0.45, 0, 0.55, 1),
+    translate 1000ms cubic-bezier(0.45, 0, 0.55, 1),
+    filter 900ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.capabilities[data-revealed] .capabilities__title-line,
+.capabilities[data-revealed] .capabilities__header p {
+  opacity: 1;
+  translate: 0 0;
+  filter: blur(0);
+  transition:
+    opacity 1400ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate 1700ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.capabilities[data-revealed] .capabilities__title-line + .capabilities__title-line { transition-delay: 150ms; }
+.capabilities[data-revealed] .capabilities__header p { transition-delay: 320ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .capabilities__card,
+  .capabilities__title-line,
+  .capabilities__header p {
+    opacity: 1;
+    translate: 0 0;
+    filter: none;
+    transition: none;
+  }
+}
+
+.capabilities__title {
+  margin: 0;
+  color: #fff;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(22px, 6.9cqw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.capabilities__body {
+  margin: 3.6cqw 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(15px, 4.4cqw, 21px);
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  /* Three lines reserved, so every card's artwork starts at the same height. */
+  min-height: 4.2em;
+}
+
+/* ---------- Artwork ----------
+   Takes all the height the copy leaves, and is a size container so the artwork
+   can fit itself to whichever of width or height runs out first. */
+.capabilities__art {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 6cqw;
+  /* Room at the card's foot (the height the corner arrow had, plus a gap). */
+  margin-bottom: calc(var(--go-size) + 4cqw);
+  container-type: size;
+}
+
+/* Card one's answer and card three's arcs run off the card's foot (card three's
+   off its sides too), so the card's own edge crops them as the Figma panel's did.
+   --card-pad can't be reused here: its percentage would resolve against this
+   element's containing block, not the track. In the card's container units the
+   padding is 0.078 / (1 - 2 × 0.078) of the content box = 9.2417cqw. */
+.capabilities__art[data-bleed] {
+  margin-bottom: -9.2417cqw;
+}
+
+.capabilities__art[data-bleed="sides-bottom"] {
+  margin-inline: -9.2417cqw;
+}
+
+
+
+.scene,
+.capabilities__image {
+  position: absolute;
+  left: 50%;
+  width: min(100cqw, 100cqh * var(--ratio));
+  aspect-ratio: var(--ratio);
+  translate: -50% 0;
+}
+
+.scene {
+  bottom: 0;
+  overflow: hidden;
+}
+
+.capabilities__image {
+  top: 50%;
+  translate: -50% -50%;
+}
+
+.capabilities__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- Live loader (card two's search bar) ----------
+   Sized and placed in percentages of the image, so it tracks it at every size, and
+   at exactly the size of the static loader it replaces.
+   Beat = 0.18s; the ring turns 45deg (one dot-step) per beat, 360deg per 1.44s.
+   Dot i sits i steps anticlockwise of 12 o'clock, so the turn carries it to 12 at
+   i beats, i + 8 beats, ... — that spot is where every dot appears and vanishes:
+     0–1.44s     dot i fades in at i beats, so each lands where the last one stood
+     1.44–4.32s  all eight spin, nothing changing (two full turns, ~3s)
+     4.32–5.76s  dot i fades out at 4.32s + i beats — back at 12 o'clock again
+   5.76s is four whole turns, so the loop restarts in lock-step. Opacity only: the
+   dots never shrink or drift, they just appear and disappear on the ring. */
+.loader {
+  position: absolute;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+.loader__ring {
+  position: absolute;
+  inset: 0;
+  animation: loader-turn 1.44s linear infinite;
+}
+
+.loader__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--dot);
+  aspect-ratio: 1;
+  margin: calc(var(--dot) / -2) 0 0 calc(var(--dot) / -2);
+  border-radius: 50%;
+  background: #fff;
+  /* Out to the ring from the centre, at 12 o'clock minus i steps. translate %
+     is of the dot itself, so half the ring is 50% / (dot ÷ ring). */
+  transform: rotate(calc(var(--i) * -45deg)) translateY(calc(-50% / var(--dot-share)));
+  opacity: 0;
+  animation: loader-dot 5.76s linear calc(var(--i) * 0.18s) infinite backwards;
+}
+
+@keyframes loader-turn {
+  to { rotate: 360deg; }
+}
+
+/* Percentages of 5.76s: 2.4% ≈ 0.14s fade; 75% = 4.32s. */
+@keyframes loader-dot {
+  0% { opacity: 0; }
+  2.4% { opacity: 1; }
+  75% { opacity: 1; }
+  77.4% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader__ring,
+  .loader__dot {
+    animation: none;
+  }
+
+  .loader__dot {
+    opacity: 1;
+  }
+}
+
+.scene__layer {
+  position: absolute;
+  display: block;
+}
+
+.scene__layer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The dashes are drawn on a centred strip at least 1.5px wide: the box itself is
+   5 of the scene's 1500 units, which on a phone-sized card comes to under a pixel
+   and the line all but vanished. */
+.scene__dash::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: max(1.5px, 100%);
+  background: repeating-linear-gradient(to bottom, #f0f7ff 0 3px, transparent 3px 7px);
+  translate: -50% 0;
+}
+
+.scene__pill {
+}
+
+.scene__sprite {
+  overflow: hidden;
+}
+
+.scene__sprite img {
+  width: 359.81%;
+  max-width: none;
+}
+
+/* ---------- Card four: cited answer (markup, no Figma source) ---------- */
+
+.cited {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.87em;
+  padding: 0 1.2em;
+  color: #2b1a14;
+  /* Everything below is in em off this one size, which fits whichever of the
+     artwork area's width or height runs out first (the block is ~15em tall). */
+  font-size: min(4.6cqw, 100cqh / 15.5);
+}
+
+.cited__panel {
+  padding: 1.2em 1.2em 1.3em;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.cited__question {
+  margin: 0 0 0.7em;
+  color: #8a5a48;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cited__answer {
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.cited__answer mark {
+  padding: 0 0.15em;
+  background: #f6cdb8;
+  color: inherit;
+}
+
+.cited__answer sup {
+  margin-left: 0.15em;
+  color: #b4573a;
+  font-size: 0.62em;
+  font-weight: 700;
+}
+
+.cited__sources {
+  display: grid;
+  gap: 0.48em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cited__sources li {
+  display: flex;
+  align-items: center;
+  gap: 0.76em;
+  padding: 0.76em 1em;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.74em;
+  letter-spacing: -0.01em;
+}
+
+.cited__sources b {
+  display: grid;
+  flex: none;
+  width: 1.53em;
+  aspect-ratio: 1;
+  place-items: center;
+  background: #b4573a;
+  color: #fff;
+  font-size: 0.8em;
+}
+
+.cited__sources span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cited__sources i {
+  color: rgba(255, 255, 255, 0.5);
+  font-style: normal;
+}
+
+/* ---------- Controls ---------- */
+
+.capabilities__controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: clamp(32px, 4vw, 56px) auto 0;
+  padding-inline: clamp(16px, 3vw, 40px);
+  min-height: 44px;
+}
+
+.capabilities__dots {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.capabilities__dots button {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px; /* round dots, and a pill for the current one */
+  background: #9b9b9b;
+  transition:
+    width 320ms cubic-bezier(0.22, 0.76, 0.24, 1),
+    background 320ms ease;
+}
+
+.capabilities__dots button[aria-current] {
+  width: 46px;
+  background: #6f6f6f;
+}
+
+.capabilities__arrows {
+  position: absolute;
+  right: clamp(16px, 3vw, 40px);
+  display: flex;
+  gap: 12px;
+}
+
+.capabilities__arrows button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: #fff;
+  color: var(--cap-ink);
+  transition:
+    background 180ms ease,
+    opacity 180ms ease;
+}
+
+.capabilities__arrows button:hover:not(:disabled) {
+  background: #f4f4f4;
+}
+
+.capabilities__arrows button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.capabilities__arrows svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.capabilities button:focus-visible {
+  outline: 1px solid var(--cap-ink);
+  outline-offset: 3px;
+}
+
+/* Two cards and a peek of the third. */
+@media (max-width: 1100px) {
+  .capabilities {
+    --card-w: calc((100% - var(--card-gap)) / 2.2);
+  }
+}
+
+@media (max-width: 760px) {
+  .capabilities {
+    --card-w: 84%;
+  }
+
+  .capabilities__header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Titles wrap to two lines at this width; the extra height goes to the artwork. */
+  .capabilities__card {
+    aspect-ratio: 450 / 690;
+  }
+
+  /* Swipe is the control on phones; the arrows would crowd the dots. */
+  .capabilities__arrows {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capabilities__dots button,
+  .capabilities__arrows button {
+    transition: none;
+  }
+}

@@ -1,0 +1,373 @@
+/* The waitlist dialog (WaitlistDialog.tsx). The page dims and blurs behind a
+   faint lattice (the glass key refracts it); the card is near-black with a
+   hairline edge and 3px corners; fields are underlined, labels in the caption's
+   tracked capitals; the submit key sits under the card in liquid glass. */
+
+.waitlist {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  background: rgba(3, 3, 3, 0.62);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 320ms ease,
+    visibility 0s linear 320ms;
+}
+
+/* The lattice the glass key bends (LiquidGlassPill centres it on this box). */
+.waitlist::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.032);
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  pointer-events: none;
+}
+
+.waitlist[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 320ms ease;
+}
+
+.waitlist__stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: min(440px, 100%);
+  translate: 0 14px;
+  scale: 0.98;
+  transition:
+    translate 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.waitlist[data-open] .waitlist__stack {
+  translate: 0 0;
+  scale: 1;
+}
+
+/* --- The card --- */
+
+.waitlist__card {
+  width: 100%;
+  padding: 26px 28px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(22, 22, 22, 0.96), rgba(12, 12, 12, 0.96));
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+.waitlist__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.waitlist__logo {
+  display: block;
+  width: 92px;
+  height: auto;
+}
+
+.waitlist__close {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  margin: -6px -8px -6px 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+.waitlist__close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.waitlist__close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.waitlist__title {
+  margin: 0;
+  font-family: "Nata Sans", var(--font-ui);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.waitlist__lede {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.waitlist__fields {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.waitlist__field {
+  display: grid;
+  gap: 7px;
+}
+
+.waitlist__field > span {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: "Nata Sans", var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.waitlist__field input {
+  width: 100%;
+  padding: 6px 0 9px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 220ms ease;
+}
+
+.waitlist__field input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.26);
+}
+
+.waitlist__field input:focus {
+  border-bottom-color: rgba(255, 255, 255, 0.85);
+}
+
+.waitlist__field input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+  transition: background-color 9999s ease 0s;
+}
+
+.waitlist__trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.waitlist__error {
+  min-height: 18px;
+  margin: 14px 0 0;
+  color: #ff8a7a;
+  font-size: 12.5px;
+}
+
+.waitlist__done {
+  padding: 8px 0 14px;
+}
+
+/* --- The submit key: liquid glass (LiquidGlassPill), under the card --- */
+
+.waitlist__submit {
+  --cta-h: 44px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--cta-h);
+  padding: 0 6px 0 22px;
+  border: 0;
+  border-radius: 100px;
+  background: transparent;
+  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.9);
+  color: #d6d6d6;
+  cursor: pointer;
+  font-family: "Nata Sans", var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition:
+    color 300ms ease,
+    scale 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+
+/* "Done" has no disc: even padding. */
+.waitlist__submit:not(:has(.waitlist__submit-disc)) {
+  padding: 0 26px;
+}
+
+.waitlist__submit:hover {
+  scale: 1.03;
+  color: #ffffff;
+}
+
+.waitlist__submit:active {
+  scale: 0.97;
+}
+
+.waitlist__submit:disabled {
+  cursor: progress;
+  opacity: 0.75;
+  scale: 1;
+}
+
+.waitlist__submit:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 4px;
+}
+
+.waitlist__submit[data-glass="off"] {
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 28px -12px rgba(0, 0, 0, 0.9);
+}
+
+.waitlist__submit[data-glass="off"] .liquid-glass-pill {
+  display: none;
+}
+
+.waitlist__submit-label,
+.waitlist__submit-disc {
+  position: relative;
+  z-index: 1;
+}
+
+.waitlist__submit-disc {
+  display: grid;
+  width: calc(var(--cta-h) * 32 / 42);
+  height: calc(var(--cta-h) * 32 / 42);
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: rotate 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.waitlist__submit-disc svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #000000;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.waitlist__submit:hover .waitlist__submit-disc {
+  rotate: 45deg;
+}
+
+.waitlist__submit:disabled .waitlist__submit-disc {
+  animation: waitlist-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes waitlist-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* Phones: a slimmer card with more room round it — well in from the screen's
+   edges, quieter type, the fields closer together. */
+@media (max-width: 480px) {
+  .waitlist {
+    padding: 32px 28px;
+  }
+
+  .waitlist__stack {
+    gap: 18px;
+  }
+
+  .waitlist__card {
+    padding: 20px 18px 14px;
+  }
+
+  .waitlist__head {
+    margin-bottom: 20px;
+  }
+
+  .waitlist__logo {
+    width: 78px;
+  }
+
+  .waitlist__title {
+    font-size: 18px;
+  }
+
+  .waitlist__lede {
+    font-size: 12px;
+  }
+
+  .waitlist__fields {
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .waitlist__field {
+    gap: 4px;
+  }
+
+  .waitlist__field > span {
+    font-size: 9.5px;
+  }
+
+  .waitlist__field input {
+    padding: 5px 0 7px;
+  }
+
+  .waitlist__error {
+    min-height: 14px;
+    margin-top: 10px;
+    font-size: 11.5px;
+  }
+
+  .waitlist__field input {
+    font-size: 16px; /* no zoom on focus in iOS */
+  }
+
+  .waitlist__submit {
+    --cta-h: 40px;
+
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waitlist,
+  .waitlist__stack {
+    transition: none;
+  }
+}

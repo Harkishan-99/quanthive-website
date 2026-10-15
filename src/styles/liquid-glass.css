@@ -1,0 +1,552 @@
+/* ============================================================
+   Liquid Glass PRO  (:root[data-theme="liquid-glass"])
+
+   An advanced liquid-glass theme layered ON TOP of the shared glass base
+   (glass.css already applies to this theme via [data-theme*="glass"]). This
+   file OVERRIDES the component surface to add the effects from
+   github.com/iyinchao/liquid-glass-studio, approximated in CSS + SVG:
+
+     • Refraction + chromatic DISPERSION  → SVG #lg-glass (per-channel displace)
+     • Fresnel reflection                 → brighter rim border + edge highlight
+     • Glare (directional specular)        → cursor-following radial highlight
+     • Gaussian blur                       → stronger backdrop-filter blur
+     • Superellipse                        → larger squircle-ish radius
+     • Edge reflection (from base)         → --g-rx/--g-ry rim shift
+
+   Driven by the same --g-* params as the glass theme (GlassControls panel).
+   ============================================================ */
+
+/* Glare position (cursor %, set from JS) + glare intensity. Registered so the
+   glare eases smoothly instead of snapping. */
+@property --g-gx {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+@property --g-gy {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 35%;
+}
+@property --g-glare {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Same ambient background photo as the Glass theme */
+:root[data-theme="liquid-glass"] .chat,
+:root[data-theme="liquid-glass"] .wpage {
+  background: url("../assets/images/img2.jpg") center / cover no-repeat;
+}
+
+/* Liquid Glass Pro has NO CSS glass surface. Every glass component is rendered
+   entirely by the WebGL layer (<GlassLayer/>), continuously — one constant look,
+   not a hover state. The elements themselves stay transparent (see the
+   `.lg-webgl-active` rule below, applied to every glass surface every frame) so
+   the shader's photo + refraction/dispersion/fresnel/glare/merge shows through,
+   while their DOM content stays crisp on top. There is intentionally no CSS
+   fallback. The set of glass surfaces lives in SELECTOR (GlassLayer.tsx) and the
+   radius list just below. */
+
+/* Superellipse-ish squircle radius on the Pro glass surfaces (drives the
+   WebGL rounded-rect corners — read live from each element's computed radius) */
+:root[data-theme="liquid-glass"] .lg-glass,
+:root[data-theme="liquid-glass"] .prompt,
+:root[data-theme="liquid-glass"] .rdesk-card,
+:root[data-theme="liquid-glass"] .rdesk__spot-card,
+:root[data-theme="liquid-glass"] .rdesk__news-card,
+:root[data-theme="liquid-glass"] .wl-results,
+:root[data-theme="liquid-glass"] .wl-followed__card,
+:root[data-theme="liquid-glass"] .clock-widget__card,
+:root[data-theme="liquid-glass"] .theme-pop {
+  border-radius: calc(var(--g-radius, 12px) * 0.6);
+}
+
+/* ============================================================
+   WebGL glass mode (data-glass-webgl="on", set by <GlassLayer/>)
+
+   Every glass surface is rendered by the WebGL layer (smooth-min union → the
+   dragged clock fuses into any element it overlaps), continuously. GlassLayer
+   tags every visible glass surface with `.lg-webgl-active` each frame, which
+   strips any DOM surface styling (incl. the base Glass theme's frost, which also
+   matches [data-theme*="glass"]) so only the shader's glass shows. The page
+   background is transparent so the canvas photo shows through.
+   ============================================================ */
+:root[data-theme="liquid-glass"] .lg-webgl-active {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important; /* drop the base theme's chromatic-aberration filter */
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* let the WebGL canvas (photo + glass) show through the page background */
+:root[data-glass-webgl="on"][data-theme="liquid-glass"] .chat,
+:root[data-glass-webgl="on"][data-theme="liquid-glass"] .wpage {
+  background: transparent !important;
+}
+
+/* --- Answer cards + buttons as WebGL glass (experimental) ---------------------
+   In this theme the chart cards and their action buttons are rendered by the
+   WebGL GlassLayer (real refraction + smooth-min metaball merge — the button
+   necks out of the card). So drop the SVG "goo" gel and the button's CSS glass
+   circle; the WebGL layer strips each element's own surface via .lg-webgl-active
+   and draws the glass, with the chart / icon crisp on top. */
+:root[data-theme="liquid-glass"] .msg__gel {
+  display: none;
+}
+
+/* The black→transparent tint is now baked INTO the WebGL glass itself (see
+   tintAt / u_tint in GlassLayer.tsx) — rendered UNDER the rim so the hover/edge
+   highlight stays on top consistently, instead of the DOM tint sitting OVER the
+   glass and letting the bright rim bleed through where it goes transparent at the
+   bottom. This ::before now only carries the drop shadow (the card's own
+   box-shadow is stripped for the WebGL layer, so it lives here). */
+:root[data-theme="liquid-glass"] .msg__content::before,
+:root[data-theme="liquid-glass"] .skel--chart::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Bottom-edge highlight on the tinted surfaces — the bright bloom where the
+   black-to-transparent gradient runs out.
+
+   Placed here rather than in the shader on purpose. The tint itself IS in the
+   shader (tintAt / u_tint in GlassLayer.tsx, dark at the top clearing toward the
+   bottom), but the WebGL canvas sits at z-index -1 while this has to read as light
+   catching the near edge, in front of the glass. A pseudo-element also survives
+   `.lg-webgl-active`, which strips the element's own background/border/shadow with
+   !important but says nothing about its children.
+
+   ::after because ::before already carries these cards' drop shadow.
+
+   Two stacked radials rather than one: a tight core for the bright sliver sitting
+   on the edge, and a wide low-alpha bloom spreading along it. A single gradient
+   either reads as a hard line or as fog, not as both. */
+:root[data-theme="liquid-glass"] .msg__content::after,
+:root[data-theme="liquid-glass"] .skel--chart::after,
+:root[data-theme="liquid-glass"] .wl-results::after,
+:root[data-theme="liquid-glass"] .wl-followed__card::after {
+  content: "";
+  position: absolute;
+  /* Inset from the sides so the band never reaches the 14px corners — no need to
+     clip it to the radius, and the ends have room to feather out. */
+  left: 7%;
+  right: 7%;
+  bottom: -1px; /* a hair of bleed, so the light sits ON the edge not above it */
+  height: 34px;
+  pointer-events: none;
+  z-index: 2; /* in front of .msg__body (z-index 1), as in the reference */
+  background:
+    radial-gradient(
+      ellipse 26% 92% at 50% 100%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.34) 46%,
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 74% 155% at 50% 100%,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.09) 52%,
+      transparent 80%
+    );
+  /* The radials taper horizontally already, but the element is a rectangle — this
+     guarantees the band has no detectable end. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+}
+
+/* --- Watchlist cards -------------------------------------------------------
+   Same black→transparent tint as the answer cards. The tint itself is painted by
+   the shader (both selectors are in TINT_SELECTOR in GlassLayer.tsx, so they get
+   the identical tintAt() falloff) — what's left here is the geometry the
+   pseudo-element highlight needs, plus the text.
+
+   `position: relative` for the ::after above; `isolation: isolate` because that
+   highlight is moved BEHIND the content on these two (see below) and relative
+   positioning alone is not a stacking context — a z-index of -1 would escape the
+   card and land behind the WebGL canvas. */
+:root[data-theme="liquid-glass"] .wl-results,
+:root[data-theme="liquid-glass"] .wl-followed__card {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The one deliberate difference from the answer cards, which paint the bloom in
+   FRONT of their content: a watchlist card fills top-to-bottom with rows, so a
+   bright band in front would wash out the last company name. Behind the rows it
+   still reads as light on the near edge, since the card's own background is
+   transparent under the WebGL glass. */
+:root[data-theme="liquid-glass"] .wl-results::after,
+:root[data-theme="liquid-glass"] .wl-followed__card::after {
+  z-index: -1;
+}
+
+/* The tint is darkest at the TOP of the card, and glass.css styles this page for
+   a LIGHT glass surface (#0f1b28 company names + a white halo behind them). Over
+   the tint that inverts into unreadable dark-on-dark, so the ink flips to white
+   with a dark halo — the same treatment the news cards already use.
+
+   `.wl-results` is in the selector ONLY to outrank glass.css: its
+   `:root[data-theme*="glass"] .wl-row__name` (which matches this theme too) has
+   exactly this rule's specificity, and Bun emits the two stylesheets in a
+   different order in `bun dev` than in the production bundle — so an
+   equal-specificity tie here would give white text in one and dark in the other.
+   Every `.wl-row__name` lives inside `.wl-results` or `.wl-followed__card` (the
+   followed rows reuse the class for their ink), so the extra class changes
+   nothing but the weight. */
+:root[data-theme="liquid-glass"] .wl-results .wl-row__name,
+:root[data-theme="liquid-glass"] .wl-followed__card .wl-row__name {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme="liquid-glass"] .wl-results__empty {
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Row hover was `--accent` (#2b3a63) at 10% — a dark navy wash that disappears
+   against the tint. */
+:root[data-theme="liquid-glass"] .wl-row:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* keep the chart above the tint WITHOUT disturbing its absolute fill */
+:root[data-theme="liquid-glass"] .skel--chart > .chart {
+  z-index: 1;
+}
+:root[data-theme="liquid-glass"] .msg__content > .msg__body {
+  position: relative;
+  z-index: 1;
+}
+/* the button's ::before becomes the same tint over its glass circle */
+/* No flat DOM circle behind the icon — the WebGL layer renders the button glass
+   and smooth-min-unions it with its card, so the button reads as JUST an icon
+   while it's inside the card, and its glass background/border necks OUT of the
+   card edge (engulfing the icon) only as it slides out. */
+:root[data-theme="liquid-glass"] .msg__fg .msg__act::before {
+  display: none;
+}
+
+/* User-sent bubble: WebGL glass with a WHITE-to-transparent tint (mirror of the
+   answer's black-to-transparent). Its ::before (was the sheen) carries the tint;
+   text goes dark for legibility on the light glass. */
+:root[data-theme="liquid-glass"] .msg__bubble::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.36) 48%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  mix-blend-mode: normal;
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="liquid-glass"] .msg__bubble {
+  color: #12283e;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.35);
+}
+
+/* "Latest Post" / "Watchlist" section headings → white over the glass */
+:root[data-theme="liquid-glass"] .rdesk__latest-head {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Prompt field: a little extra padding so the placeholder/text sits off the edge */
+:root[data-theme="liquid-glass"] .prompt__input {
+  padding: 4px 8px;
+}
+
+/* Docked pill → a real lens.
+   glass.css gives every glass surface `url(#liquid-glass)`, whose displacement
+   map is fractal NOISE — that smears the backdrop randomly all over the pane
+   instead of bending it at the rim, and its "chromatic aberration" is a pair of
+   red/cyan drop-shadows on the element rather than a split of the refracted
+   content. Swap both for #pill-glass (see PillGlass.tsx): a rounded-rect bevel
+   normal map, so content passes straight through the middle and compresses only
+   near the edges, with the RGB split appearing only where it bends.
+
+   FILTER ORDER MATTERS. `url(#pill-glass)` must come FIRST: backdrop-filter
+   applies its functions left to right, so a blur ahead of the lens hands it an
+   already-smeared backdrop, and chromatic aberration is only visible against
+   high-frequency detail — blur first and the fringe is mathematically there but
+   perceptually gone. Lens first, frost afterwards.
+
+   The extra `.chat__dock` in the selector is deliberate: it outranks glass.css's
+   equal-specificity `.prompt--dock .prompt__input` rule so this wins regardless
+   of stylesheet order (dev and prod disagree — see the note in glass.css). */
+
+/* Registered so they can be TRANSITIONED — a bare custom property would snap. */
+@property --pill-frost {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1.6px;
+}
+@property --pill-fill {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.06;
+}
+
+:root[data-theme="liquid-glass"] .chat__dock .prompt--dock .prompt__input {
+  /* At rest: nearly clear, so the bend + colour fringe are the visible surface.
+     The residual blur is not decoration — the rim compresses the backdrop hard,
+     and with no blur at all that compression aliases into visible banding. The
+     WebGL shader frosts its rim for exactly this reason (GlassLayer.tsx:177). */
+  --pill-frost: 1.6px;
+  --pill-fill: 0.06;
+  background: rgba(255, 255, 255, var(--pill-fill));
+  -webkit-backdrop-filter: url(#pill-glass) saturate(1.5) brightness(1.05)
+    blur(var(--pill-frost));
+  backdrop-filter: url(#pill-glass) saturate(1.5) brightness(1.05)
+    blur(var(--pill-frost));
+  /* The pill's OWN text goes through a second lens (#pill-glass-text, a radial
+     barrel) so what you type refracts like everything else behind the glass —
+     straight through the middle, splaying out harder toward the caps. This
+     replaces glass.css's fake red/cyan drop-shadow `filter` too. The map fades
+     to neutral over the outer 6px, so the 1px border stays crisp instead of
+     being chewed up by the displacement. */
+  filter: url(#pill-glass-text);
+  /* Typed text is white — the base rule's var(--color-text) is near-black in
+     every theme, which disappears against the dark scrim behind this pill. The
+     shadow keeps it legible where the glass passes a bright patch of the photo. */
+  color: #ffffff;
+  caret-color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  /* Radius is 26px from ChatPanel.css now, for every theme. PillGlass reads the
+     computed value via getComputedStyle, so its SDF follows automatically — and the
+     cap matters to the lens specifically: a stadium's caps curve away and leave no
+     straight run of edge for the roll-off to bend text against. */
+  /* NO scroll-clip inset on any edge.
+
+     Overflow clips at the PADDING box, so a transparent border is the only thing
+     that can hold scrolled text away from an edge — and padding is the only thing
+     that gives resting text breathing room WITHOUT clipping. Every edge now uses
+     padding alone, so text scrolls right up to the glass on all four sides while
+     still resting 17-18px in.
+
+     The horizontal edges already behaved this way (there was never a side border),
+     which is why only the bottom changed here.
+
+     Height and spacing are untouched — the 16px moved from border to padding:
+        54  = 17 + 20 line  + 17
+        134 = 17 + 5 x 20   + 17 */
+  border-width: 0;
+  border-style: solid;
+  border-color: transparent;
+  padding: 17px 18px;
+  /* Must be restated here — ChatPanel.css's 46/126 assume a 2px border. */
+  min-height: 54px;
+  max-height: 134px;
+  /* The rim can no longer be the border (transparent now) and must NOT be an
+     inset shadow: inset shadows draw from the padding box, so glass.css's three
+     would land 12px inside and read as exactly the spurious inner border that
+     keeps getting reported. `outline` sits on the border box and ignores border
+     width, so it stays put; the bevel highlights become hairlines just outside
+     it. Displacement at the contour is ~0 (14px guard), so the lens leaves it
+     crisp. */
+  outline: 1px solid rgba(255, 255, 255, var(--g-fresnel, 0.5));
+  outline-offset: -1px;
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, calc(var(--g-edge, 0.6) * 0.5)),
+    0 1px 0 rgba(255, 255, 255, calc(var(--g-edge, 0.6) * 0.18)),
+    0 var(--g-shadow-y, 6px) var(--g-shadow-spread, 12px) -6px
+      rgba(18, 26, 40, var(--g-shadow, 0.3));
+  transition:
+    --pill-frost 0.4s ease,
+    --pill-fill 0.4s ease;
+}
+
+/* Has at least one character → back to a properly frosted pill so the text
+   you're typing reads against whatever is scrolling behind it. Gated on content
+   ONLY, not :focus — merely clicking into an empty box must not frost it.
+   (:placeholder-shown is false as soon as the value is non-empty.) */
+:root[data-theme="liquid-glass"]
+  .chat__dock:has(.prompt__input:not(:placeholder-shown))
+  .prompt__input {
+  --pill-frost: 3px;
+  --pill-fill: 0.14;
+}
+
+/* Typing scrim: in Liquid Glass Pro the dock scrim is normally invisible (the
+   page colour is transparent). While the user is focused / typing in the prompt,
+   fade in a transparent→black progressive-blur layer BETWEEN the prompt and the
+   content sliding behind it — mirroring the always-on scrim of the light themes,
+   but dark to suit the glass theme.
+
+   Geometry: glass.css shrinks the fade to a 72px band sitting ABOVE the prompt
+   (bottom: 100%). Put it back to covering the whole dock — from 64px above the
+   pill down to the very bottom of the screen — so bubbles scrolling behind the
+   pill darken instead of only getting a band over the pill's head. The dock is
+   z-index 6 (above .chat__convo) and the pill is z-index 1 inside it, so the
+   fade at z-index 0 lands above the bubbles and behind the prompt.
+
+   Layering: the base element must stay at opacity 1. An ancestor with opacity
+   < 1 becomes a *backdrop root*, which makes a descendant's backdrop-filter
+   sample the (empty) group instead of the page behind it — so gating the whole
+   fade with group opacity silently kills the blur. Instead the base only
+   positions, and each painted band carries its own backdrop-filter + opacity
+   transition (both on the same element, which composites correctly). */
+:root[data-theme="liquid-glass"] .chat__dock-fade {
+  top: -64px;
+  bottom: 0;
+  height: auto;
+  opacity: 1;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+/* upper band — gentle blur + the transparent→black scrim */
+:root[data-theme="liquid-glass"] .chat__dock-fade::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.34) 52%,
+    rgba(0, 0, 0, 0.62) 82%
+  );
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 30%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+/* lower band — frosts the band above it too, so blur ramps up toward the pill */
+:root[data-theme="liquid-glass"] .chat__dock-fade::after {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 38%, #000 72%);
+  mask-image: linear-gradient(to bottom, transparent 38%, #000 72%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+/* Gated on the box having CONTENT, not on :focus — clicking into an empty prompt
+   must leave the thread unshaded; the scrim is there to back the text you type. */
+:root[data-theme="liquid-glass"]
+  .chat__dock:has(.prompt__input:not(:placeholder-shown))
+  .chat__dock-fade::before,
+:root[data-theme="liquid-glass"]
+  .chat__dock:has(.prompt__input:not(:placeholder-shown))
+  .chat__dock-fade::after {
+  opacity: 1;
+}
+
+/* --pill-btn also sized the top-edge scrim's horizontal inset. That scrim is gone:
+   it existed to cover the top roll-off band, and with the band removed AND text now
+   scrolling to the top edge it would only have darkened the text itself. */
+
+/* Docked buttons sit 32px tall in a 54px single-line pill, so their inset is
+   (54 − 32) / 2 = 11px, not the 36px-button 5px that ChatPanel.css assumes. Same
+   principle: pinned to the bottom, spaced exactly as the old centring left them
+   on one line. Keep this in step with min-height and the button size. */
+:root[data-theme="liquid-glass"] .chat__dock .prompt__attach,
+:root[data-theme="liquid-glass"] .chat__dock .prompt__send {
+  margin-bottom: 11px;
+}
+
+/* Attach (+) and Send buttons → dark translucent glass, squarish, ~40% bigger,
+   with the same hover-lift / press feel. */
+:root[data-theme="liquid-glass"] .prompt__attach,
+:root[data-theme="liquid-glass"] .prompt__send {
+  width: var(--pill-btn, 32px);
+  height: var(--pill-btn, 32px);
+  border-radius: 10px; /* squarish, not a circle */
+  background: rgba(12, 15, 22, 0.82) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(1.1) brightness(0.9);
+  backdrop-filter: blur(8px) saturate(1.1) brightness(0.9);
+  border: none !important;
+  filter: none;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.16),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.4),
+    0 3px 8px -3px rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.92) !important;
+  cursor: pointer;
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+:root[data-theme="liquid-glass"] .prompt__attach:hover,
+:root[data-theme="liquid-glass"] .prompt__send:hover {
+  transform: translateY(-1px);
+  background: rgba(30, 36, 48, 0.78);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.4),
+    0 6px 14px -4px rgba(0, 0, 0, 0.55);
+}
+:root[data-theme="liquid-glass"] .prompt__attach:active,
+:root[data-theme="liquid-glass"] .prompt__send:active {
+  transform: translateY(0) scale(0.92);
+  background: rgba(10, 13, 19, 0.82);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.5),
+    0 2px 5px -3px rgba(0, 0, 0, 0.45);
+}
+/* scale the icons up to match the bigger buttons */
+:root[data-theme="liquid-glass"] .prompt__attach {
+  font-size: 21px;
+}
+:root[data-theme="liquid-glass"] .prompt__send img {
+  width: 15px;
+  height: 15px;
+}
+
+/* Prompt placeholder: larger, white, and flat. The old rgba(0,0,0,.38) never
+   matched this rule's own description and went invisible once the pill dropped to
+   6% fill over dark glass. `text-shadow: none` is required, not tidiness — the
+   typed-text rule above sets a shadow on the input itself and ::placeholder would
+   otherwise inherit it (a declaration here always beats an inherited value,
+   regardless of specificity). */
+:root[data-theme="liquid-glass"] .prompt__input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: none;
+  font-size: 15px;
+}
+
+/* NO native scrollbar on the docked pill. Two separate reasons, both structural:
+
+   1. Chrome does not clip a scrollbar to `border-radius`. On a 26px-radius pill the
+      track is a straight vertical strip at the padding box's right edge, so near
+      the rounded corners it sits outside the visible glass — it "comes out of" the
+      pill.
+   2. It also lands inside the roll-off band (the band wraps the sides at dn < 19px,
+      and the scrollbar is ~6px from that edge), so #pill-glass-text displaces and
+      stretches it along with everything else. A smeared scroll thumb reads as
+      damage, the same way the spellcheck squiggles did.
+
+   `overflow-y: auto` stays, so wheel, trackpad, caret and drag scrolling all still
+   work — only the indicator is hidden. The alternative, keeping a scrollbar and
+   adding `clip-path: inset(0 round 26px)` to clip it, also clips the pill's OUTER
+   drop shadow away, which costs more than the scrollbar is worth. */
+:root[data-theme="liquid-glass"] .chat__dock .prompt__input {
+  scrollbar-width: none; /* Firefox */
+}
+:root[data-theme="liquid-glass"] .chat__dock .prompt__input::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+

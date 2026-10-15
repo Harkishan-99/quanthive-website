@@ -1,0 +1,746 @@
+/* Third section, after frame 4040:3614: heading top-left, then a field of square
+   cells ruled in a faint grey. Cards sit on the grid in whole cells — a video panel
+   at 10×7, the framed wordmark at 11×3 beside it, and under that a founder tile at
+   2×2 and a 3×1 call to action, both footed on the video's bottom edge.
+
+   Side padding, vertical rhythm and the heading's size match the card section
+   above (Capabilities.css), so the two read as one page system.
+
+   The cell is the field's width over its column count (container units), so every
+   placement scales with the screen and stays square. Square corners throughout. */
+
+.about {
+  --about-gutter: clamp(20px, 6.5vw, 140px); /* = .capabilities --cap-gutter */
+  --about-line: #ebebeb; /* the frame's #e9e9e9, on the white page */
+  --cols: 24;
+  --rows: 9;
+
+  position: relative;
+  z-index: 1; /* above the fixed .motifs layer, like the section before */
+  padding: clamp(64px, 7vw, 128px) var(--about-gutter) clamp(56px, 6vw, 112px);
+  background: #ffffff;
+  color: #151515;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+/* ---------- Heading ---------- */
+
+.about__header {
+  margin: 0 0 clamp(40px, 4.2vw, 80px);
+}
+
+.about__header h2 {
+  margin: 0;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: clamp(28px, 2.25vw, 46px); /* = the section above */
+  font-weight: 400;
+  letter-spacing: -0.03em; /* the frame's -1.14px on 38px */
+  line-height: 1.08;
+}
+
+.about__title-line {
+  display: block;
+}
+
+.about__title-line--light {
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+.about__amp {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 300;
+}
+
+/* The one face this heading adds to the set in Capabilities.css. */
+.cap-face--hanken { font-family: "Hanken Grotesk", sans-serif; }
+/* The frame's -0.48px on 38px, used on the opening letters. */
+.cap-face[data-track="soft"] { letter-spacing: -0.0126em; }
+
+/* ---------- Grid field ---------- */
+
+.about__field {
+  container-type: inline-size;
+}
+
+.about__grid {
+  --cell: calc(100cqw / var(--cols));
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-template-rows: repeat(var(--rows), var(--cell));
+  /* One ruling per cell from its top and left edges; the inset shadow closes the
+     right and bottom. */
+  background-image:
+    linear-gradient(to right, var(--about-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--about-line) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+  box-shadow: inset -1px -1px 0 var(--about-line);
+}
+
+/* ---------- Founder card (4×4) ---------- */
+
+.about__founder {
+  display: flex;
+  flex-direction: column;
+  container-type: size;
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.about__founder {
+  /* Under the wordmark's left edge, its foot on the video's. */
+  grid-column: 13 / span 2;
+  grid-row: 7 / span 2;
+}
+
+/* ---------- Video panel (10×7; 7×5 on tablets, 8×13 on phones) ---------- */
+
+.about__video {
+  position: relative;
+  container-type: size; /* the seeker sizes itself from the panel */
+  grid-column: 2 / span 10;
+  grid-row: 2 / span 7;
+  overflow: hidden;
+  background: #060606; /* frame 4048:3660 */
+}
+
+/* The hero's lattice, at the hero's scale, drawn light on the dark ground: a faint
+   white masked by the full-strength copy of the tile (see .hero__light). Behind
+   the video and the seeker. */
+.about__video::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.04); /* the frame; = LATTICE_INK in VideoPromptGlass */
+  -webkit-mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  mask: url("../assets/images/landing-pattern-mask.png") 50% 50% / 125px 126px repeat;
+  pointer-events: none;
+}
+
+.about__video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #111111;
+}
+
+.about__founder-body {
+  flex: 1;
+  min-height: 0;
+  padding: 7.5cqw 7.5cqw 0;
+  overflow: hidden;
+}
+
+.about__index {
+  display: block;
+  margin-bottom: 4cqw;
+  color: #8c8c8c;
+  font-size: max(4.6cqw, 10px);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.about__bio {
+  margin: 0;
+  font-size: max(4.6cqw, 10.5px);
+  letter-spacing: -0.015em;
+  line-height: 1.32;
+  text-wrap: pretty;
+}
+
+/* The bottom strip is one cell tall; the portrait is that
+   cell, square, in its right-hand corner. The accent rule runs under it all. */
+.about__founder-foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr calc(100cqh / var(--f-rows, 4)); /* one cell, square, whatever the card's width */
+  flex: none;
+  height: calc(100cqh / var(--f-rows, 4)); /* one cell */
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.about__founder-foot::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1.6cqw;
+  background: var(--tone);
+}
+
+.about__name {
+  align-self: center;
+  margin: 0;
+  padding: 0 4cqw 1.6cqw 7.5cqw;
+  font-size: max(3.7cqw, 10px);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.about__name span {
+  color: #b5b5b5;
+}
+
+.about__photo {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: #3a3a3a;
+  color: #9a9a9a;
+  font-size: 4cqw;
+  letter-spacing: 0.04em;
+}
+
+.about__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+}
+
+/* Large screens: at 2×2 the card is too small to read, so it becomes a portrait
+   tile — the photo fills it, the name sits over its foot, the bio steps aside.
+   Tablets and phones keep the full card (see their blocks below). */
+@media (min-width: 1101px) {
+  .about__founder { position: relative; }
+  .about__founder-body { display: none; }
+  .about__founder-foot::after { z-index: 2; }
+
+  .about__founder-foot {
+    position: absolute;
+    inset: 0;
+    display: block;
+    height: auto;
+    border-top: 0;
+  }
+
+  .about__photo {
+    position: absolute;
+    inset: 0;
+    border-left: 0;
+    font-size: 12cqw;
+  }
+
+  .about__name {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    padding: 14cqw 8cqw 9cqw;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.55));
+    font-size: max(7.5cqw, 9px);
+    line-height: 1.3;
+  }
+}
+
+
+/* Download: a small glass key in the panel's top-right corner, inset like the
+   dial along its foot. Clicked, it renders the shot: an orange ring fills round
+   it with the progress (spinning while the render starts up) and the arrow
+   gives way to the percentage, then a tick as the file downloads. */
+/* The panel's round glass keys (download, full screen). */
+.video-tool {
+  display: grid;
+  width: max(30px, 7.5cqmin);
+  aspect-ratio: 1;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    scale 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-tool > * {
+  grid-area: 1 / 1;
+}
+
+.video-tool:hover {
+  background: rgba(211, 149, 50, 0.14);
+  color: #d39532;
+}
+
+.video-tool:active {
+  scale: 0.92;
+}
+
+.video-tool:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}
+
+.video-download[data-phase="rendering"] {
+  cursor: progress;
+}
+
+/* Full screen: four corners opening out. */
+.video-fullscreen {
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+}
+
+.video-fullscreen:hover {
+  box-shadow: inset 0 0 0 1.5px rgba(211, 149, 50, 0.55);
+}
+
+.video-fullscreen svg {
+  width: 44%;
+  height: 44%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.video-download__ring {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  rotate: -90deg; /* the arc starts at 12 o'clock */
+}
+
+.video-download__ring circle {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.video-download__track {
+  stroke: rgba(255, 255, 255, 0.16);
+  transition: stroke 200ms ease;
+}
+
+.video-download:hover .video-download__track {
+  stroke: rgba(211, 149, 50, 0.55);
+}
+
+.video-download__arc {
+  stroke: #d39532;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--progress, 0) * 100);
+  stroke-linecap: round;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 420ms linear,
+    opacity 240ms ease;
+}
+
+.video-download[data-phase="rendering"] .video-download__arc,
+.video-download[data-phase="done"] .video-download__arc {
+  opacity: 1;
+}
+
+/* Starting up (no frames yet): a short arc circles until progress arrives. */
+.video-download[data-starting] .video-download__arc {
+  stroke-dashoffset: 78;
+  transition: opacity 240ms ease;
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  animation: video-download-spin 0.9s linear infinite;
+}
+
+@keyframes video-download-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.video-download__icon {
+  width: 46%;
+  height: 46%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 220ms ease,
+    scale 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-download__percent {
+  color: #ffffff;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: max(9px, 2.3cqmin);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 220ms ease,
+    scale 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-download[data-phase="idle"] .video-download__icon--arrow,
+.video-download[data-phase="done"] .video-download__icon--done,
+.video-download[data-phase="error"] .video-download__icon--error,
+.video-download[data-phase="rendering"]:not([data-starting]) .video-download__percent {
+  opacity: 1;
+  scale: 1;
+}
+
+.video-download[data-phase="done"] {
+  color: #d39532;
+}
+
+.video-download[data-phase="error"] {
+  background: rgba(211, 149, 50, 0.14);
+  color: #d39532;
+}
+
+.video-download__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-download[data-starting] .video-download__arc {
+    animation: none;
+  }
+}
+
+/* Not part of the rendered video. */
+.about__video[data-rendering] .glass-menu,
+.about__video[data-rendering] .seeker {
+  visibility: hidden;
+}
+
+/* ---------- Wordmark (11×3; 7×2 on tablets, 8×2 on phones) ----------
+   Frame 2:28: the QuantHive logo in outline, centred in a hairline box that sits
+   on the grid lines, with square handles at its four corners and the middles of
+   its top and bottom, like a selected layer. The logo runs from the grid line one
+   cell in from the box's left to the one a cell in from its right — the mark on
+   one, the last "e" on the other — so it keeps to whole cells at every size. */
+
+.about__brand {
+  /* Its width in cells; --cell itself can't be used inside, where cqw is the box's. */
+  --span: 11;
+  --handle: max(7px, 100cqw / var(--span) * 0.15); /* the frame's 12px on an 80px cell */
+
+  position: relative;
+  container-type: size;
+  grid-column: 13 / span var(--span);
+  grid-row: 2 / span 3;
+  display: grid;
+  place-items: center;
+}
+
+.about__brand-frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #000000;
+}
+
+.about__brand-handle {
+  position: absolute;
+  width: var(--handle);
+  height: var(--handle);
+  background: #000000;
+  translate: -50% -50%;
+}
+
+.about__brand-handle--tl { top: 0; left: 0; }
+.about__brand-handle--tc { top: 0; left: 50%; }
+.about__brand-handle--tr { top: 0; left: 100%; }
+.about__brand-handle--bl { top: 100%; left: 0; }
+.about__brand-handle--bc { top: 100%; left: 50%; }
+.about__brand-handle--br { top: 100%; left: 100%; }
+
+/* The mark and the wordmark as set in the frame: 641.6 × 121.8 overall. */
+.about__brand-logo {
+  position: relative;
+  display: block;
+  width: calc(100cqw * (var(--span) - 2) / var(--span));
+  aspect-ratio: 641.6 / 121.8;
+  overflow: visible;
+}
+
+/* Each stroke draws on from both of its ends at once — a short piece at each end
+   (5% of its length between them) growing toward the other until they meet —
+   left to right, the first time the section comes in (data-drawn, About.tsx) —
+   once, not again on every return:
+   slow and even, the line fading up from faint as it goes, the strokes overlapping
+   closely so they read as one sweep. Once drawn, the logo stays drawn. */
+.about__brand-logo path {
+  stroke: #000000;
+  /* pathLength 1: a dash at the start, a gap, a dash at the end. */
+  stroke-dasharray: 0.025 0.95 0.025;
+  stroke-dashoffset: 0;
+  opacity: 0.2;
+  transition:
+    stroke-dasharray 600ms cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 600ms ease;
+}
+
+.about[data-drawn] .about__brand-logo path {
+  stroke-dasharray: 0.5 0 0.5;
+  opacity: 1;
+  transition:
+    stroke-dasharray 5200ms cubic-bezier(0.42, 0, 0.3, 1) calc(500ms + var(--i, 0) * 110ms),
+    opacity 3600ms cubic-bezier(0.4, 0, 0.2, 1) calc(500ms + var(--i, 0) * 110ms);
+}
+
+/* ---------- CTA (3×1) ----------
+   Opens as a single dark cell holding the arrow. Once the section is in, an orange
+   key fills that cell, then slides to the far cell while the dark box unclips
+   behind it to its full 3×1; the label fades up in the cells it leaves.
+
+   The element always occupies its 3×1 area (so nothing reflows); the closed state
+   is a clip to the first third, and the key is one third wide, so both stay exactly
+   one grid cell at every breakpoint. */
+
+.about__cta {
+  --cta-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+  position: relative;
+  display: flex;
+  /* Three cells under the wordmark's right edge, its foot on the video's. */
+  grid-column: 21 / span 3;
+  grid-row: 8;
+  align-items: center;
+  overflow: hidden;
+  background: #111111;
+  color: #ffffff;
+  font-size: clamp(13px, 0.95vw, 18px);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  clip-path: inset(0 66.6667% 0 0);
+  opacity: 0;
+  translate: 0 18px;
+}
+
+.about__cta-label {
+  padding-left: 8%;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -6px 0;
+}
+
+.about__cta-key {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 33.3333%;
+  height: 100%;
+  place-items: center;
+}
+
+.about__cta-key::before {
+  content: "";
+  position: absolute;
+  inset: 14%; /* a dark margin all round — the key cell is square, so % is even */
+  background: #d39532; /* the video shot's gold */
+  opacity: 0;
+  scale: 0.55;
+}
+
+.about__cta svg {
+  position: relative;
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: translate 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Going back out (scrolling up to the hero): everything folds home at once. */
+.about__cta,
+.about__cta-key,
+.about__cta-key::before,
+.about__cta-label {
+  transition:
+    clip-path 500ms var(--cta-ease),
+    translate 500ms var(--cta-ease),
+    scale 400ms var(--cta-ease),
+    opacity 400ms var(--cta-ease),
+    background-color 200ms ease;
+}
+
+/* Coming in. The box itself fades up with the cards (see Reveal below); then,
+   half a second on, the key lights, and the expansion follows right behind it. */
+.about[data-revealed] .about__cta-key::before {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1) 1200ms,
+    scale 480ms cubic-bezier(0.22, 1, 0.36, 1) 1200ms;
+}
+
+.about[data-revealed] .about__cta-key {
+  translate: 200% 0;
+  transition: translate 1100ms var(--cta-ease) 1550ms;
+}
+
+.about[data-revealed] .about__cta-label {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) 2100ms,
+    translate 900ms cubic-bezier(0.22, 1, 0.36, 1) 2100ms;
+}
+
+.about__cta:hover {
+  background: #2a2a2a;
+}
+
+.about__cta:hover svg {
+  translate: 3px 0;
+}
+
+/* clip-path would cut an outside ring, so the focus ring sits inside. */
+.about__cta:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -4px;
+}
+
+/* ---------- Narrower screens ---------- */
+
+/* Tablet: 12 columns, the video and the card side by side, the wordmark and the
+   CTA in a band below. */
+@media (max-width: 1100px) {
+  .about {
+    --cols: 12;
+    --rows: 10;
+  }
+
+  .about__video { grid-column: 1 / span 7; grid-row: 2 / span 5; }
+  /* The card's foot on the video's; under them the wordmark, the CTA footed on it. */
+  .about__founder { grid-column: 9 / span 4; grid-row: 3 / span 4; }
+  .about__brand { --span: 7; grid-column: 1 / span var(--span); grid-row: 8 / span 2; }
+  .about__cta { grid-column: 10 / span 3; grid-row: 9; }
+}
+
+/* Phone: 8 columns. The video (8×13) and the wordmark (8×2) run the field's full
+   width; the founder card (6×5) keeps a clear cell on every side. So the field
+   runs taller here than on wider screens. */
+@media (max-width: 640px) {
+  .about {
+    --cols: 8;
+    --rows: 26;
+    --f-rows: 5; /* founder card height, in cells */
+  }
+
+  .about__video { grid-column: 1 / span 8; grid-row: 2 / span 13; }
+  .about__brand { --span: 8; grid-column: 1 / span var(--span); grid-row: 16 / span 2; }
+  .about__founder { grid-column: 2 / span 6; grid-row: 19 / span 5; }
+  .about__cta { grid-column: 5 / span 3; grid-row: 25; font-size: 12px; }
+
+  /* The panel's "⋯" menu, a touch larger and further apart for a thumb. */
+  .about__video .glass-menu { --key: max(36px, 10cqmin); --key-gap-min: 14; }
+
+  /* The taller card has room to set its copy larger. */
+  .about__index { margin-bottom: 4.5cqw; font-size: 5cqw; }
+  .about__bio { font-size: 5.4cqw; line-height: 1.38; }
+  .about__name { font-size: 4.4cqw; }
+  .about__photo { font-size: 4.4cqw; }
+}
+
+/* ---------- Reveal ---------- */
+
+/* Same feel as the section above: the heading lifts out of a soft blur, then the
+   cards rise in a quick chain. Out in reverse, quicker. */
+.about__title-line,
+.about__video,
+.about__brand,
+.about__founder {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 700ms cubic-bezier(0.45, 0, 0.55, 1),
+    translate 800ms cubic-bezier(0.45, 0, 0.55, 1),
+    filter 700ms cubic-bezier(0.45, 0, 0.55, 1),
+    background-color 200ms ease;
+}
+
+.about__title-line {
+  filter: blur(6px);
+}
+
+.about[data-revealed] .about__title-line,
+.about[data-revealed] .about__video,
+.about[data-revealed] .about__brand,
+.about[data-revealed] .about__founder {
+  opacity: 1;
+  translate: 0 0;
+  filter: blur(0);
+  transition:
+    opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate 1300ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1100ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease;
+}
+
+.about[data-revealed] .about__title-line + .about__title-line { transition-delay: 150ms; }
+.about[data-revealed] .about__video { transition-delay: 260ms; }
+.about[data-revealed] .about__brand { transition-delay: 300ms; }
+.about[data-revealed] .about__founder { transition-delay: 340ms; }
+
+/* The wordmark's handles pop onto its corners once the box is in, as a layer
+   being selected. */
+.about__brand-handle {
+  scale: 0;
+  transition: scale 300ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.about[data-revealed] .about__brand-handle {
+  scale: 1;
+  transition: scale 520ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(900ms + var(--i, 0) * 60ms);
+}
+
+.about__brand-handle--tc { --i: 1; }
+.about__brand-handle--tr { --i: 2; }
+.about__brand-handle--br { --i: 3; }
+.about__brand-handle--bc { --i: 4; }
+.about__brand-handle--bl { --i: 5; }
+/* The CTA fades up with the cards as a single cell, then unclips to 3×1 while its
+   key slides across (timings match the key in the CTA block above). */
+.about[data-revealed] .about__cta {
+  opacity: 1;
+  translate: 0 0;
+  clip-path: inset(0);
+  transition:
+    opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1) 420ms,
+    translate 1300ms cubic-bezier(0.16, 1, 0.3, 1) 420ms,
+    clip-path 1100ms var(--cta-ease) 1550ms,
+    background-color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__title-line,
+  .about__video,
+  .about__brand,
+  .about__founder,
+  .about__cta {
+    opacity: 1;
+    translate: 0 0;
+    filter: none;
+    transition: none;
+  }
+
+  .about__cta { clip-path: none; }
+  .about__brand-handle { scale: 1; transition: none; }
+  .about__brand-logo path { stroke-dasharray: none; opacity: 1; transition: none; }
+  .about__cta-key { translate: 200% 0; transition: none; }
+  .about__cta-key::before { opacity: 1; scale: 1; transition: none; }
+  .about__cta-label { opacity: 1; translate: 0 0; transition: none; }
+}

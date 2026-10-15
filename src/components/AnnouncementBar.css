@@ -1,0 +1,253 @@
+/* Announcement Bar at top edge of viewport: a dark strip with white text above
+   the white navbar */
+
+.announcement-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 38px;
+  background: #111111; /* = the site's dark keys (the About CTA) */
+  border-bottom: 1px solid #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 44px 6px 16px;
+  z-index: 60;
+  font-family: var(--font-ui, "Inter", system-ui, -apple-system, sans-serif);
+  color: #ffffff;
+  transform: translateY(0);
+  opacity: 1;
+  transition:
+    transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.28s ease;
+  box-sizing: border-box;
+}
+
+.announcement-bar--closing {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.announcement-bar__content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  gap: 8px 12px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.announcement-bar__text {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: -0.01em;
+}
+
+.announcement-bar__strong {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Desktop vs Mobile text switcher */
+.announcement-bar__desc-desktop {
+  display: inline;
+}
+
+.announcement-bar__desc-mobile {
+  display: none;
+}
+
+.announcement-bar__cta-desktop {
+  display: inline;
+}
+
+.announcement-bar__cta-mobile {
+  display: none;
+}
+
+.announcement-bar__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  padding-bottom: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.announcement-bar__cta:hover {
+  border-bottom-color: #ffffff;
+  color: #ffffff;
+}
+
+.announcement-bar__arrow {
+  display: inline-block;
+  transition: transform 0.16s ease;
+}
+
+.announcement-bar__cta:hover .announcement-bar__arrow {
+  transform: translateX(2.5px);
+}
+
+.announcement-bar__close {
+  position: absolute;
+  right: clamp(10px, 2vw, 20px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.announcement-bar__close:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.announcement-bar__close:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 1px;
+}
+
+/* Tablet / intermediate breakpoint */
+@media (max-width: 860px) {
+  .announcement-bar {
+    min-height: 35px;
+    padding: 5px 40px 5px 14px;
+  }
+
+  .announcement-bar__content {
+    font-size: 12.5px;
+    gap: 8px;
+  }
+}
+
+/* Mobile: ultra-slim single-line announcement bar, preventing any giant wrapped banner */
+@media (max-width: 640px) {
+  .announcement-bar {
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    padding: 0 32px 0 12px;
+  }
+
+  .announcement-bar__content {
+    font-size: 11.5px;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .announcement-bar__text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .announcement-bar__desc-desktop {
+    display: none;
+  }
+
+  .announcement-bar__desc-mobile {
+    display: inline;
+  }
+
+  .announcement-bar__cta-desktop {
+    display: none;
+  }
+
+  .announcement-bar__cta-mobile {
+    display: inline;
+  }
+
+  .announcement-bar__cta {
+    flex-shrink: 0;
+  }
+
+  .announcement-bar__close {
+    width: 20px;
+    height: 20px;
+    right: 6px;
+  }
+
+  .announcement-bar__close svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Extra small mobile (e.g. 360px) */
+@media (max-width: 380px) {
+  .announcement-bar {
+    padding: 0 28px 0 10px;
+  }
+
+  .announcement-bar__content {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .announcement-bar__desc-mobile {
+    display: none;
+  }
+}
+
+/* On Flash's page the strip inverts with the nav: white, dark text. */
+:root[data-page="product"] .announcement-bar {
+  background: #ffffff;
+  border-bottom-color: #e6e6e3;
+  color: #1a1f2c;
+}
+
+:root[data-page="product"] .announcement-bar__text {
+  color: #374151;
+}
+
+:root[data-page="product"] .announcement-bar__strong,
+:root[data-page="product"] .announcement-bar__cta,
+:root[data-page="product"] .announcement-bar__cta:hover {
+  color: #111111;
+}
+
+:root[data-page="product"] .announcement-bar__cta {
+  border-bottom-color: rgba(15, 23, 42, 0.25);
+}
+
+:root[data-page="product"] .announcement-bar__cta:hover {
+  border-bottom-color: #111111;
+}
+
+:root[data-page="product"] .announcement-bar__close {
+  color: #6b7280;
+}
+
+:root[data-page="product"] .announcement-bar__close:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #111827;
+}
+
+:root[data-page="product"] .announcement-bar__close:focus-visible {
+  outline-color: #111111;
+}

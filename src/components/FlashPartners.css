@@ -1,0 +1,109 @@
+/* Flash's second section (frame 11:3765): a light page (#f6f6f6) with an 80px
+   band of #efefef across its top, the logos in it scrolling right to left. The
+   band and every logo scale together off --band, so the strip keeps the frame's
+   proportions at any width. */
+
+.flash-partners {
+  --band: clamp(56px, 4.167vw, 80px); /* the frame's 80 of 1920 */
+  --unit: calc(var(--band) / 80); /* one frame px */
+  --gap: calc(var(--unit) * 96);
+
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  background: #f6f6f6;
+}
+
+.flash-partners__band {
+  height: var(--band);
+  overflow: hidden;
+  background: #efefef;
+  /* The logos come in and go out softly at the ends. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.flash-partners__track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+}
+
+/* One copy's width (--shift, measured in FlashPartners.tsx) per loop, at a
+   steady speed whatever the width (--dur). */
+.flash-partners__track[data-ready] {
+  animation: flash-partners-scroll var(--dur) linear infinite;
+}
+
+/* A reader can stop it to look. */
+.flash-partners__band:hover .flash-partners__track {
+  animation-play-state: paused;
+}
+
+@keyframes flash-partners-scroll {
+  to {
+    translate: calc(-1 * var(--shift)) 0;
+  }
+}
+
+.flash-partners__list {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0 var(--gap) 0 0; /* the same gap across the seam between copies */
+  list-style: none;
+}
+
+.flash-partners__list li {
+  display: flex;
+  flex: none;
+  align-items: center;
+  /* Greyed out, its colour back while the pointer is over it. */
+  filter: grayscale(1);
+  opacity: 0.5;
+  transition:
+    filter 300ms ease,
+    opacity 300ms ease;
+}
+
+.flash-partners__list li:hover {
+  filter: none;
+  opacity: 1;
+}
+
+.flash-partners__list img {
+  display: block;
+  width: calc(var(--unit) * var(--w));
+  height: calc(var(--unit) * var(--h));
+  user-select: none;
+}
+
+.flash-partners__exception {
+  gap: calc(var(--unit) * 8.25 * var(--k, 1));
+}
+
+.flash-partners__exception span {
+  color: #7ec6ee;
+  font-family: "Bebas Neue", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: calc(var(--unit) * 35 * var(--k, 1));
+  line-height: 1;
+  white-space: nowrap;
+  translate: 0 calc(var(--unit) * 2 * var(--k, 1)); /* a touch below the mark's centre, as in the frame */
+}
+
+/* Phones: a smaller band, the logos closer together. */
+@media (max-width: 640px) {
+  .flash-partners {
+    --band: 52px;
+    --gap: calc(var(--unit) * 72);
+  }
+}
+
+/* No motion: hold still, the first copy centred where it fits. */
+@media (prefers-reduced-motion: reduce) {
+  .flash-partners__track {
+    animation: none;
+  }
+}

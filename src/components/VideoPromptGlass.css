@@ -1,0 +1,833 @@
+/* The prompt shot inside the video panel (VideoPromptGlass.tsx). The glass is a
+   WebGL canvas over the whole panel; the words, the send button, the window and
+   the answer are DOM around it, placed from the same per-frame values (--pill-w,
+   --send-x, --win-shift, …). Scene sizes are the frame's (a 1000 × 700 panel)
+   times --u, the prompt's scale. */
+
+.video-prompt {
+  --pill-w: 0px;
+  --text-in: 0;
+  --text-shift: 0px;
+  --send-x: 0px;
+  --send-y: 0px;
+  --send-in: 0;
+  --send-scale: 1;
+  --cursor-x: 120%;
+  --cursor-y: 120%;
+  --cursor-press: 1;
+
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--scene-in, 1); /* fades out at the end of each loop */
+}
+
+.video-prompt__glass {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The pill's interior: clips the line to the glass as it stretches, shrinks
+   and flies into the window. */
+.video-prompt__clip {
+  position: absolute;
+  top: var(--pill-y);
+  left: var(--pill-x);
+  display: flex;
+  align-items: center;
+  width: var(--pill-w);
+  height: var(--pill-h);
+  padding-left: var(--text-pad); /* the frame's 24 on 52, then 10 in the bubble */
+  overflow: hidden;
+  border-radius: 999px;
+  translate: -50% -50%;
+  /* Soft edges inside the padding, so a line longer than the pill fades out
+     rather than being cut at the glass. */
+  --fade-pad: var(--text-pad);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent calc(var(--fade-pad) * 0.35),
+    #000 var(--fade-pad),
+    #000 calc(100% - var(--fade-pad)),
+    transparent calc(100% - var(--fade-pad) * 0.35)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent calc(var(--fade-pad) * 0.35),
+    #000 var(--fade-pad),
+    #000 calc(100% - var(--fade-pad)),
+    transparent calc(100% - var(--fade-pad) * 0.35)
+  );
+}
+
+.video-prompt__line {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  white-space: nowrap;
+  opacity: var(--text-in);
+  translate: var(--text-shift) 0;
+}
+
+.video-prompt__text {
+  color: #ffffff;
+  font-family: var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: var(--text-size);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* A caret rides the end of the line while it types, then fades. */
+.video-prompt__caret {
+  width: 1.5px;
+  height: calc(var(--text-size) * 1.18);
+  margin-left: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.video-prompt[data-typing] .video-prompt__caret {
+  opacity: 1;
+  transition-duration: 80ms;
+}
+
+/* The arrow rides the glass button: it fades in as the button separates. */
+.video-prompt__send {
+  position: absolute;
+  top: var(--send-y);
+  left: var(--send-x);
+  display: grid;
+  width: var(--prompt-h);
+  height: var(--prompt-h);
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: var(--send-in);
+  translate: -50% -50%;
+  scale: var(--send-scale);
+  pointer-events: none;
+}
+
+.video-prompt[data-send-ready] .video-prompt__send {
+  pointer-events: auto;
+}
+
+.video-prompt__send svg {
+  width: 46%; /* the frame's 24 on 52 */
+  height: 46%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.video-prompt__send:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}
+
+/* Clicked: the arrow shrinks away and card two's loader (Capabilities.css
+   .loader) fades in on the glass in its place. */
+.video-prompt__send svg {
+  transition:
+    opacity 260ms ease,
+    scale 320ms cubic-bezier(0.22, 0.76, 0.24, 1);
+}
+
+.video-prompt[data-loading] .video-prompt__send svg {
+  opacity: 0;
+  scale: 0.35;
+}
+
+.video-prompt__loader {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.video-prompt[data-loading] .video-prompt__loader {
+  opacity: 1;
+  transition-delay: 220ms;
+}
+
+/* Its dots run from the moment it shows, so the trail starts on the first beat. */
+.video-prompt:not([data-loading]) .video-prompt__loader .loader__ring,
+.video-prompt:not([data-loading]) .video-prompt__loader .loader__dot {
+  animation: none;
+}
+
+/* The pointer (frame 123:238): placed by its tip (the SVG's 5.2, 1.9 of 22),
+   pressing in on the click. */
+.video-prompt__cursor {
+  position: absolute;
+  top: var(--cursor-y);
+  left: var(--cursor-x);
+  z-index: 2;
+  width: max(16px, calc(var(--u) * 22));
+  height: auto;
+  aspect-ratio: 1;
+  overflow: visible;
+  translate: calc(-5.2 / 22 * 100%) calc(-1.9 / 22 * 100%);
+  scale: var(--cursor-press);
+  transform-origin: calc(5.2 / 22 * 100%) calc(1.9 / 22 * 100%);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}
+
+.video-prompt__cursor path {
+  fill: #d39532; /* the shot's accent */
+}
+
+/* ---------- The answer scene (frame 123:238) ---------- */
+
+/* The Flash window: its tab and body (window.svg) with the traffic lights, the
+   wordmark and a close mark on the tab. It springs in from the right, leaning a
+   little with its speed (--win-skew). */
+.video-window {
+  position: absolute;
+  top: var(--win-y);
+  left: var(--win-x);
+  width: var(--win-w, calc(var(--u) * 736));
+  height: var(--win-h, calc(var(--u) * 519.5));
+  transform: translateX(var(--win-shift, 200%)) skewX(var(--win-skew, 0deg));
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+
+.video-window img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+.video-window__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.video-window__frame path {
+  fill: rgba(28, 28, 28, 0.35); /* = WINDOW_FILL, WINDOW_FILL_ALPHA */
+  stroke: #252525;
+}
+
+.video-window__lights {
+  top: calc(var(--u) * 8.5);
+  left: calc(var(--u) * 16);
+  width: calc(var(--u) * 48.23);
+}
+
+.video-window__logo {
+  top: calc(var(--u) * 12.5);
+  left: calc(var(--u) * 103);
+  width: calc(var(--u) * 100);
+}
+
+.video-window__close {
+  top: calc(var(--u) * 10.5);
+  left: calc(var(--u) * 216);
+  width: calc(var(--u) * 16);
+}
+
+/* The user's avatar: pops in beside the message (a spring past full size and
+   back), as the message makes room for it. */
+.video-avatar {
+  position: absolute;
+  top: var(--avatar-y);
+  left: var(--avatar-x);
+  display: grid;
+  width: calc(var(--u) * 20);
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: #d39532; /* the shot's gold */
+  color: #2b1d06;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--u) * 11);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  opacity: min(1, calc(var(--avatar-in, 0) * 2.5));
+  translate: -50% -50%;
+  scale: var(--avatar-in, 0);
+}
+
+/* "Thought for 0.5s": rises and sharpens into place. */
+.video-think {
+  position: absolute;
+  top: var(--think-y);
+  left: var(--think-x);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 6.07);
+  color: #ffffff;
+  font-family: "Bricolage Grotesque", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--u) * 8);
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: calc(var(--u) * 10);
+  white-space: nowrap;
+  opacity: var(--think-in, 0);
+  translate: 0 calc((1 - var(--think-in, 0)) * var(--u) * 7);
+  filter: blur(calc((1 - var(--think-in, 0)) * 3px));
+}
+
+.video-think img {
+  width: calc(var(--u) * 6.8);
+  height: auto;
+}
+
+/* The reply. Its glass (and the dark gradient behind the words) is drawn on the
+   canvas; this holds the words, clipped to the box as it grows. */
+.video-answer {
+  position: absolute;
+  top: var(--box-y);
+  left: var(--box-x);
+  width: var(--box-w);
+  height: var(--box-h, 0px);
+  overflow: hidden;
+  border-radius: calc(var(--u) * 14);
+  opacity: var(--box-in, 0);
+  translate: 0 var(--box-shift, 0px);
+}
+
+.video-answer__text {
+  margin: 0;
+  padding: calc(var(--ua) * 11) calc(var(--ua) * 10);
+  color: #ffffff;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--ua) * 8.5);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.27;
+}
+
+/* Every word is laid out from the start (so lines never reflow) and fades in as
+   it streams. */
+.video-answer__text span {
+  opacity: var(--p, 0);
+  filter: blur(calc((1 - var(--p, 0)) * 1px));
+}
+
+/* Everything in the reply. Its type is set in --ua, the frame's size × 1.2. */
+.video-answer__scroll {
+  position: relative;
+  color: #ffffff;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+}
+
+/* The window's content scrolls up as a whole (--feed-scroll) once the reply's
+   foot reaches the dial, fading out under the window's top edge (--feed-top). */
+.video-feed {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent var(--feed-top, -100px),
+    #000 calc(var(--feed-top, -100px) + var(--u) * 12)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent var(--feed-top, -100px),
+    #000 calc(var(--feed-top, -100px) + var(--u) * 12)
+  );
+}
+
+.video-feed__inner {
+  position: absolute;
+  inset: 0;
+  translate: 0 var(--feed-scroll, 0px);
+}
+
+/* ---------- The blocks below the reply ----------
+   Each [data-at] element is set to its own progress (--p, 0–1) per frame: by
+   default it rises and sharpens in; bars grow, the line draws, dots pop. */
+.video-answer__scroll [data-at] {
+  opacity: var(--p, 0);
+  translate: 0 calc((1 - var(--p, 0)) * var(--ua) * 5);
+  filter: blur(calc((1 - var(--p, 0)) * 2px));
+}
+
+.va-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--ua) * 12) calc(var(--ua) * 10);
+  padding: calc(var(--ua) * 3) calc(var(--ua) * 10) 0;
+}
+
+.va-metric {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ua) * 2);
+  min-width: 0;
+}
+
+/* The metrics in the shot's gold (#d39532): the figures at full strength, their labels
+   lighter, the captions muted. */
+.va-metric .va-metric__label {
+  color: #e6c184;
+}
+
+.va-metric .va-metric__value {
+  color: #d39532;
+}
+
+.va-metric .va-metric__sub {
+  color: rgba(218, 170, 96, 0.72);
+}
+
+.va-metric__label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: calc(var(--ua) * 6.8);
+  letter-spacing: -0.02em;
+}
+
+.va-metric__value {
+  font-size: calc(var(--ua) * 15);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.va-metric__sub {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: calc(var(--ua) * 6.4);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.va-sources {
+  margin: 0;
+  padding: calc(var(--ua) * 10) calc(var(--ua) * 10) 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: calc(var(--ua) * 6.2);
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+/* A cited source, as a model's answer marks them. */
+.va-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ua) * 2);
+  padding: calc(var(--ua) * 1) calc(var(--ua) * 3.5) calc(var(--ua) * 1) calc(var(--ua) * 1.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: calc(var(--ua) * 5);
+  line-height: 1.2;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.va-chip__icon {
+  width: calc(var(--ua) * 5.5);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f3d9a6, #b97f22 70%);
+}
+
+.va-chip__more {
+  opacity: 0.65;
+}
+
+.va-chart {
+  padding: calc(var(--ua) * 14) calc(var(--ua) * 10) 0;
+}
+
+.va-chart__title {
+  margin: 0;
+  font-size: calc(var(--ua) * 9.2);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.va-chart__sub {
+  margin: calc(var(--ua) * 5) 0 calc(var(--ua) * 4);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: calc(var(--ua) * 6.2);
+  letter-spacing: -0.01em;
+}
+
+.va-chart__svg {
+  display: block;
+  width: 100%;
+  /* Scales with the box, up to where its labels would outgrow the text (a wide
+     showcase column); past that it holds its size. */
+  max-width: calc(var(--ua) * 400);
+  height: auto;
+  overflow: visible;
+}
+
+.va-chart__svg text {
+  fill: rgba(255, 255, 255, 0.72);
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: 5.4px;
+}
+
+.va-chart__svg .va-chart__tick {
+  text-anchor: middle;
+}
+
+.va-chart__grid line {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-dasharray: 0.6 1.6;
+  stroke-linecap: round;
+  stroke-width: 0.6;
+}
+
+/* Bars rise from the baseline on a spring, one after another. */
+.video-answer__scroll .va-chart__bar {
+  fill: url(#va-bar);
+  opacity: min(1, calc(var(--p, 0) * 4));
+  translate: none;
+  filter: none;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  scale: 1 max(0, var(--p, 0));
+}
+
+/* The price line draws from left to right; each point pops as it passes. */
+.video-answer__scroll .va-chart__line {
+  fill: none;
+  stroke: #d39532;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--p, 0));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
+  opacity: 1;
+  translate: none;
+  filter: none;
+}
+
+.video-answer__scroll .va-chart__dot {
+  fill: #d39532;
+  stroke: #2a1d07;
+  stroke-width: 0.7;
+  opacity: min(1, calc(var(--p, 0) * 4));
+  translate: none;
+  filter: none;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  scale: max(0, var(--p, 0));
+}
+
+/* A large landscape showcase: the two charts share a row, the bar chart's note
+   and the paragraph run full width beneath them. Their labels read a size up,
+   so they hold their own at half the width. */
+.video-prompt[data-side-by-side] .video-answer__scroll {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+
+.video-prompt[data-side-by-side] .video-answer__scroll > * {
+  grid-column: 1 / -1;
+}
+
+.video-prompt[data-side-by-side] .va-chart--flows {
+  grid-row: 4;
+  grid-column: 1;
+}
+
+.video-prompt[data-side-by-side] .va-chart--brent {
+  grid-row: 4;
+  grid-column: 2;
+}
+
+.video-prompt[data-side-by-side] .va-chart__svg text {
+  font-size: 7px;
+}
+
+/* …and the reply breathes: clear space between its sections. */
+.video-prompt[data-side-by-side] .va-metrics {
+  padding-top: calc(var(--ua) * 16);
+  row-gap: calc(var(--ua) * 16);
+}
+
+.video-prompt[data-side-by-side] .va-sources {
+  padding-top: calc(var(--ua) * 16);
+}
+
+.video-prompt[data-side-by-side] .va-chart {
+  padding-top: calc(var(--ua) * 30);
+}
+
+.video-prompt[data-side-by-side] .va-chart__sub {
+  margin-bottom: calc(var(--ua) * 8);
+}
+
+.video-prompt[data-side-by-side] .va-sources--chart {
+  padding-top: calc(var(--ua) * 22);
+}
+
+.video-prompt[data-side-by-side] .va-note {
+  padding-top: calc(var(--ua) * 18);
+}
+
+.va-note {
+  margin: 0;
+  padding: calc(var(--ua) * 10) calc(var(--ua) * 10) 0;
+  font-size: calc(var(--ua) * 8.5);
+  letter-spacing: -0.03em;
+  line-height: 1.4;
+}
+
+.va-note span[data-at] {
+  translate: none;
+}
+
+.video-prompt[data-fallback] .video-answer {
+  background: linear-gradient(180deg, rgba(11, 11, 11, 0.92), rgba(5, 5, 5, 0.5) 76.5%, rgba(255, 255, 255, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* No WebGL2: the same shapes as flat dark glass. */
+.video-prompt[data-fallback] .video-prompt__clip,
+.video-prompt[data-fallback] .video-prompt__send {
+  background: linear-gradient(180deg, #1d1d1d, #292929);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+/* The full question for screen readers; the typed copy above is decorative. */
+.video-prompt__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+
+/* Rendering to video: every frame is posed from the timeline, so no CSS easing
+   may lag behind it. */
+.about__video[data-rendering] .video-prompt * {
+  transition: none !important;
+}
+
+/* ---------- Compare: Claude, in a window alongside (compare) ----------
+   Its window is Flash's shape with Claude's dark interface (#262624) and mark;
+   its conversation follows Claude's own look: the question in a plain dark
+   bubble, the spark while it thinks, and a serif answer with no box. */
+.video-window--claude {
+  top: var(--win2-y);
+  left: var(--win2-x);
+  width: var(--win2-w);
+  height: var(--win2-h);
+  transform: translateX(var(--win2-shift, 200%)) skewX(var(--win2-skew, 0deg));
+}
+
+.video-window--claude .video-window__frame path {
+  fill: #262624; /* = CLAUDE_FILL */
+  stroke: #3a3a37;
+}
+
+.video-window__claude-tab {
+  position: absolute;
+  top: calc(var(--u) * 10);
+  left: calc(var(--u) * 106);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 5);
+  color: #c2c0b6;
+  font-family: "PT Serif", Georgia, serif;
+  font-size: calc(var(--u) * 12.5);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.video-window .video-window__claude-tab img {
+  position: static;
+  width: calc(var(--u) * 13);
+  height: calc(var(--u) * 13);
+}
+
+.claude-feed {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent var(--cfeed-top, -100px),
+    #000 calc(var(--cfeed-top, -100px) + var(--u) * 12)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent var(--cfeed-top, -100px),
+    #000 calc(var(--cfeed-top, -100px) + var(--u) * 12)
+  );
+}
+
+.claude-feed__inner {
+  position: absolute;
+  inset: 0;
+  translate: 0 var(--cfeed-scroll, 0px);
+}
+
+.claude-user {
+  position: absolute;
+  top: var(--c-bubble-y);
+  right: calc(100% - var(--c-x) - var(--c-w));
+  max-width: var(--c-w);
+  margin: 0;
+  padding: calc(var(--u) * 6) calc(var(--u) * 10);
+  overflow: hidden;
+  border-radius: calc(var(--u) * 9);
+  background: #141413;
+  color: #faf9f5;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--u) * 8.9);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: min(1, calc(var(--cb-in, 0) * 2));
+  scale: calc(0.88 + 0.12 * var(--cb-in, 0));
+  transform-origin: 100% 50%;
+}
+
+.claude-think {
+  position: absolute;
+  top: var(--c-think-y);
+  left: var(--c-x);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 5);
+  color: #b7b5a9;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--u) * 8);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  opacity: var(--ct-in, 0);
+  translate: 0 calc((1 - var(--ct-in, 0)) * var(--u) * 6);
+}
+
+/* The spark turns and breathes while Claude thinks (VideoPromptGlass). */
+.claude-think__spark {
+  width: calc(var(--u) * 14);
+  height: calc(var(--u) * 14);
+  rotate: var(--ct-rot, 0deg);
+  scale: var(--ct-pulse, 1);
+}
+
+.claude-think__dots {
+  display: inline-block;
+  width: 1.1em;
+  margin-left: calc(var(--u) * -5);
+}
+
+.claude-think__timer {
+  color: #8e8c82;
+  font-variant-numeric: tabular-nums;
+}
+
+.claude-reply {
+  position: absolute;
+  top: var(--c-reply-y);
+  left: var(--c-x);
+  width: var(--c-w);
+  color: #e8e6dc;
+  font-family: "PT Serif", Georgia, serif;
+  font-size: calc(var(--ua) * 8.2);
+  line-height: 1.55;
+}
+
+.claude-reply p {
+  margin: 0 0 calc(var(--ua) * 8);
+}
+
+.claude-reply [data-at] {
+  opacity: var(--p, 0);
+  filter: blur(calc((1 - var(--p, 0)) * 1px));
+}
+
+.claude-chart {
+  margin: calc(var(--ua) * 2) 0 calc(var(--ua) * 10);
+  padding: calc(var(--ua) * 8) calc(var(--ua) * 10);
+  border-radius: calc(var(--ua) * 7);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  translate: 0 calc((1 - var(--p, 0)) * var(--ua) * 4);
+}
+
+.claude-chart figcaption {
+  margin-bottom: calc(var(--ua) * 5);
+  color: #a3a196;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: calc(var(--ua) * 6.4);
+}
+
+.claude-chart svg {
+  display: block;
+  width: 100%;
+  max-width: calc(var(--ua) * 360);
+  height: auto;
+  overflow: visible;
+}
+
+.claude-chart text {
+  fill: #c2c0b6;
+  font-family: "Host Grotesk", var(--font-ui, system-ui), sans-serif;
+  font-size: 7px;
+}
+
+.claude-reply .claude-chart__value {
+  fill: #e8e6dc;
+  filter: none;
+}
+
+/* Bars grow out from the left on a spring, one after another. */
+.claude-reply .claude-chart__bar {
+  fill: #d97757; /* Claude's orange */
+  opacity: min(1, calc(var(--p, 0) * 4));
+  filter: none;
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  scale: max(0, var(--p, 0)) 1;
+}
+
+/* --- The outro (full screen, large displays) ------------------------------------
+   After the shot has faded: the QuantHive lockup in white, centred, resolving out
+   of a soft blur and a touch of scale (--outro-in), then fading away (--outro);
+   both are set per frame from the shot's own clock, so they scrub and loop with
+   it. Playing once, it rests fully shown. */
+.video-outro {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  opacity: var(--outro, 0);
+  pointer-events: none;
+}
+
+.video-outro__logo {
+  width: min(46%, 980px);
+  aspect-ratio: 13266 / 2665.401;
+  background: #ffffff;
+  -webkit-mask: url("../assets/icons/quanthive-lockup.svg") center / 100% 100% no-repeat;
+  mask: url("../assets/icons/quanthive-lockup.svg") center / 100% 100% no-repeat;
+  scale: calc(1.05 - 0.05 * var(--outro-in, 0));
+  filter: blur(calc((1 - var(--outro-in, 0)) * 14px));
+}
