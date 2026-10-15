@@ -28,7 +28,7 @@
    the subtitle in Nata Sans, tracked -1.14. */
 
 .testimonials__title {
-  margin: 0 var(--gutter) clamp(32px, 3.2vw, 64px);
+  margin: 0 var(--gutter) clamp(48px, 5vw, 100px);
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
   /* The same size as the landing page's second-section heading (Capabilities.css). */
   font-size: max(24px, 1.797vw);
