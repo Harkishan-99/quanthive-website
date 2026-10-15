@@ -11,7 +11,7 @@ import "./TeamPage.css";
 // To add a photo: put it in src/assets/images/team/ and set `photo` to
 // "/images/team/<file>". Any ordinary photo works; a head-and-shoulders crop is
 // best. Without one, the box shows the treatment on a placeholder shape.
-// The photos are stand-ins (free stock portraits from Pexels) until the team's own.
+// The team's own photos, cropped square to head and shoulders (800 × 800).
 // `note`: a line under the role; several, and they take turns in a loop.
 const TEAM: { name: string; role: string; note?: string | string[]; photo?: string }[] = [
   { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },

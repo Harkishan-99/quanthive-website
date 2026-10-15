@@ -156,10 +156,12 @@ function lineWork(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
 
 type Cell = "photo" | "ground" | "pastel" | "lines";
 
-/** Which cells show what: a blocky silhouette round the subject, with tiles. */
+/** Which cells show what: a blocky silhouette round the subject, with tiles —
+ *  only ever round its edges, never over the face. */
 function layout(seed: number) {
   const rand = random(seed);
   const cells: Cell[] = [];
+  const ring: number[] = []; // distance of each cell from the middle, no jitter
   const c = (GRID - 1) / 2;
   for (let row = 0; row < GRID; row++) {
     for (let col = 0; col < GRID; col++) {
@@ -167,16 +169,17 @@ function layout(seed: number) {
       // runs down to the shoulders.
       const dx = (col - c) / c;
       const dy = (row - c + 0.6) / (c * 1.25);
-      const r = Math.hypot(dx, dy) + (rand() - 0.5) * 0.35;
-      cells.push(r < 1.02 ? "photo" : "ground");
+      const d = Math.hypot(dx, dy);
+      ring.push(d);
+      cells.push(d + (rand() - 0.5) * 0.35 < 1.02 ? "photo" : "ground");
     }
   }
-  // A few cells swapped for tiles: some inside the silhouette, some on its edge.
+  // A few cells swapped for tiles, picked from the outer ring only, where the
+  // silhouette meets the ground.
+  const edge = cells.map((_, i) => i).filter((i) => ring[i]! >= 0.72 && ring[i]! <= 1.25);
   const tiles = 5 + Math.floor(rand() * 3);
-  for (let n = 0; n < tiles; n++) {
-    const i = Math.floor(rand() * cells.length);
-    const row = Math.floor(i / GRID);
-    if (row === 0 && rand() < 0.5) continue;
+  for (let n = 0; n < tiles && edge.length; n++) {
+    const i = edge.splice(Math.floor(rand() * edge.length), 1)[0]!;
     const roll = rand();
     cells[i] = roll < 0.4 ? "pastel" : roll < 0.75 ? "lines" : cells[i] === "photo" ? "ground" : "lines";
   }
