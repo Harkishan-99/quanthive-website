@@ -94,6 +94,17 @@ a.blog-page__post-link:hover {
   line-height: 1.19;
 }
 
+/* Long posts don't stretch the panel: the title is cut to 3 lines (4 on phones,
+   below) and the excerpt to 3, each ending in an ellipsis. */
+.blog-page__featured-title,
+.blog-page__excerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines, 3);
+  line-clamp: var(--lines, 3);
+}
+
 .blog-page__byline {
   display: grid;
   grid-template-columns: calc(var(--u) * 241) auto;
@@ -285,6 +296,8 @@ a.blog-page__post-link:hover {
   }
 
   .blog-page__featured-title {
+    --lines: 4;
+
     margin-top: 28px;
   }
 
