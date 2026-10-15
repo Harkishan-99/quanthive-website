@@ -97,6 +97,7 @@ export default function Nav({
   onOpenChange,
   onProductSelect,
   onAboutSelect,
+  onContactSelect,
   intro = false,
   page = "landing",
 }: {
@@ -107,6 +108,7 @@ export default function Nav({
   onProductSelect?: () => void;
   /** Opens the About page. */
   onAboutSelect?: () => void;
+  onContactSelect?: () => void;
   /** The page showing, for the bar's tone over Flash's dark hero. */
   page?: string;
 }) {
@@ -205,6 +207,7 @@ export default function Nav({
                     } else {
                       onOpenChange(false);
                       if (it.label === "About") onAboutSelect?.();
+                      if (it.label === "Contact") onContactSelect?.();
                     }
                   }}
                 >
@@ -292,6 +295,7 @@ export default function Nav({
                         onClick={() => {
                           if (item.title === "Product") onProductSelect?.();
                           if (item.title === "About") onAboutSelect?.();
+                          if (item.title === "Contact") onContactSelect?.();
                           onOpenChange(false);
                         }}
                       >

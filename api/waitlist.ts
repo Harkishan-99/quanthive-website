@@ -18,13 +18,13 @@ import nodemailer, { type Transporter } from "nodemailer";
 // otherwise reaches you by email alone.
 
 // process.cwd(), not import.meta.dir: this also runs under Node on Vercel.
-const DATA_DIR = process.env.WAITLIST_DATA_DIR || join(process.cwd(), "data");
+export const DATA_DIR = process.env.WAITLIST_DATA_DIR || join(process.cwd(), "data");
 const LOG_FILE = join(DATA_DIR, "waitlist.jsonl");
 const TO = process.env.WAITLIST_TO || "mail@quanthive.in";
 
 export type Signup = { name: string; email: string; organisation: string; phone: string };
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^[+()\-.\s\d]{6,24}$/;
 
 /** Trims, bounds and checks the fields; returns the clean sign-up or an error. */
@@ -60,13 +60,13 @@ export function rateLimited(ip: string) {
   return recent.length > RATE_MAX;
 }
 
-const escapeHtml = (s: string) =>
+export const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 // Header-safe: no line breaks can reach a subject or reply-to.
-const oneLine = (s: string) => s.replace(/[\r\n]+/g, " ");
+export const oneLine = (s: string) => s.replace(/[\r\n]+/g, " ");
 
 let transport: Transporter | null = null;
-function mailer() {
+export function mailer() {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
   const port = Number(SMTP_PORT || 465);

@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
 import AnnouncementBar from "./components/AnnouncementBar";
 import Capabilities from "./components/Capabilities";
+import ContactPage from "./components/ContactPage";
 import EdgeMotifs from "./components/EdgeMotifs";
 import FlashProductPage from "./components/FlashProductPage";
 import Footer from "./components/Footer";
@@ -38,7 +39,12 @@ const PAGE_TITLE: Record<Page, string> = {
   landing: "QuantHive | Financial Analytics Made Easy",
   product: "Flash | QuantHive",
   about: "About | QuantHive",
+  contact: "Contact | QuantHive",
 };
+
+// The pages that open on a hero; changing between two of them hands one hero
+// over to the other (page-transition.css).
+const isHero = (page: string | undefined) => page === "landing" || page === "product";
 
 export default function App() {
   if (SHOWCASE_ONLY) return <Showcase />;
@@ -94,7 +100,7 @@ function Site() {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const animated = !!document.startViewTransition && !reduce;
       // Hero to hero: the arriving hero's timeline waits for the change.
-      const heroToHero = animated && next !== "about" && document.documentElement.dataset.page !== "about";
+      const heroToHero = animated && isHero(next) && isHero(document.documentElement.dataset.page);
       const apply = () => {
         if (heroToHero) document.documentElement.dataset.handoff = "";
         else delete document.documentElement.dataset.handoff;
@@ -147,6 +153,7 @@ function Site() {
   useEffect(() => onWaitlistRequest(() => setWaitlist(true)), []);
   const closeWaitlist = useCallback(() => setWaitlist(false), []);
   const openAbout = () => goTo("about");
+  const openContact = () => goTo("contact");
 
   return (
     <>
@@ -156,6 +163,8 @@ function Site() {
         <FlashProductPage recessed={menuOpen} handoff={handoff} />
       ) : page === "about" ? (
         <AboutPage />
+      ) : page === "contact" ? (
+        <ContactPage />
       ) : (
         <>
           {/* Fixed to the viewport, so the pages scroll past a single pair rather than
@@ -171,7 +180,7 @@ function Site() {
       )}
       <Footer />
       <WaitlistDialog open={waitlist} onClose={closeWaitlist} />
-      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onAboutSelect={openAbout} page={page} intro={introOnLanding && page === "landing"} />
+      <Nav open={menuOpen} onOpenChange={setMenuOpen} onProductSelect={openProduct} onAboutSelect={openAbout} onContactSelect={openContact} page={page} intro={introOnLanding && page === "landing"} />
     </>
   );
 }

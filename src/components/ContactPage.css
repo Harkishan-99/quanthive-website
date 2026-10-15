@@ -1,0 +1,203 @@
+/* The Contact page (frame 24:4211), in the frame's 1920 measures, scaled with the
+   screen (--ref, tokens.css; 1920 frame px = 1.333 --ref):
+
+   - two columns centred as a pair: the form's 500 wide, a 80 gap, the map 556 × 486;
+   - the invitation in bold 30 / 36, black, two lines;
+   - fields 100 apart: a small italic label (17) over a 1.5px grey underline;
+   - an outlined 250 × 54 button, 2px black, its label 17;
+   - the map in greys.
+
+   Tablets and phones stack the map under the form, full width. */
+
+.contact-page {
+  --u: calc(var(--ref) * 1.3333); /* one frame px */
+  --ink: #1b1b1b;
+  --line: #8e8e8e;
+
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: calc(var(--announcement-h, 0px) + 72px + max(32px, calc(60 * var(--u)))) max(20px, 6vw)
+    max(56px, calc(110 * var(--u)));
+  background: #ffffff;
+  color: var(--ink);
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+.contact-page__inner {
+  display: grid;
+  grid-template-columns: max(300px, calc(500 * var(--u))) max(320px, calc(556 * var(--u)));
+  align-items: start;
+  gap: max(40px, calc(80 * var(--u)));
+}
+
+.contact-page__title {
+  margin: 0;
+  font-size: max(22px, calc(30 * var(--u)));
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* Desktop breaks after "love", as the frame does; narrower screens wrap freely. */
+.contact-page__title {
+  white-space: nowrap;
+}
+
+@media (max-width: 1199px) {
+  .contact-page__title {
+    white-space: normal;
+  }
+
+  .contact-page__br {
+    display: none;
+  }
+}
+
+/* --- The form ------------------------------------------------------------------ */
+
+.contact-form {
+  display: grid;
+  gap: max(26px, calc(48 * var(--u)));
+  margin-top: max(26px, calc(48 * var(--u)));
+}
+
+.contact-form__field {
+  display: grid;
+  gap: max(6px, calc(10 * var(--u)));
+}
+
+.contact-form__field span {
+  color: #3a3a3a;
+  font-size: max(13px, calc(17 * var(--u)));
+  font-style: italic;
+}
+
+.contact-form__field input,
+.contact-form__field textarea {
+  width: 100%;
+  padding: 0 0 max(6px, calc(8 * var(--u)));
+  border: 0;
+  border-bottom: 1.5px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: max(15px, calc(19 * var(--u)));
+  outline: none;
+  transition: border-color 200ms ease;
+}
+
+.contact-form__field textarea {
+  min-height: calc(1.5em + max(6px, calc(8 * var(--u))));
+  line-height: 1.5;
+  resize: vertical;
+  field-sizing: content; /* grows with the message where supported */
+  max-height: 40vh;
+}
+
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  border-bottom-color: var(--ink);
+}
+
+.contact-form__trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.contact-form__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: max(10px, calc(24 * var(--u)));
+}
+
+.contact-form__send {
+  min-width: max(190px, calc(250 * var(--u)));
+  height: max(44px, calc(54 * var(--u)));
+  padding: 0 1.4em;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: max(14px, calc(17 * var(--u)));
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 200ms ease,
+    color 200ms ease;
+}
+
+.contact-form__send:hover:not(:disabled) {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.contact-form__send:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.contact-form__send:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.contact-form__status {
+  margin: 0;
+  color: #555555;
+  font-size: max(13px, calc(16 * var(--u)));
+}
+
+.contact-form__status:empty {
+  display: none;
+}
+
+/* --- The map ------------------------------------------------------------------- */
+
+.contact-page__map {
+  position: relative;
+  aspect-ratio: 556 / 486;
+  overflow: hidden;
+  background: #eeeeee;
+}
+
+.contact-page__map iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: grayscale(1) contrast(0.9) brightness(1.04);
+}
+
+/* --- Tablets and phones: one column ------------------------------------------------ */
+
+@media (max-width: 900px) {
+  .contact-page {
+    place-items: start center;
+  }
+
+  .contact-page__inner {
+    width: min(100%, 560px);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-page__map {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-form__send {
+    width: 100%;
+  }
+}

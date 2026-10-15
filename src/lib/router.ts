@@ -3,6 +3,7 @@
 //   /         the QuantHive landing page
 //   /flash    Flash's page (old /#flash and /#product links still open it)
 //   /about    the About page (old /#about-us links still open it)
+//   /contact  the Contact page
 //
 // Moving between them never reloads: navigate() pushes the address and App.tsx
 // changes page (with its transition) on that, on back/forward, and on a change of
@@ -12,12 +13,13 @@
 // hosts already serve the app at any path (vercel.json, server.ts), so a refresh
 // on the new address works with nothing else to set up.
 
-export type Page = "landing" | "product" | "about";
+export type Page = "landing" | "product" | "about" | "contact";
 
 export const PAGE_URL: Record<Page, string> = {
   landing: "/",
   product: "/flash",
   about: "/about",
+  contact: "/contact",
 };
 
 // Addresses the site used before, still honoured: shown as the page's own.

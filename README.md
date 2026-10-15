@@ -8,6 +8,7 @@ Pages (one app; moving between them never reloads):
 - `/` — QuantHive landing page (hero, capabilities, about section)
 - `/flash` — Flash product page (hero with the waitlist form, partner logos); old `/#flash` and `/#product` links redirect here
 - `/about` — About page; old `/#about-us` links redirect here
+- `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
 ## Requirements
@@ -47,6 +48,7 @@ Bun loads `.env` automatically. **Never commit `.env`** — it's git-ignored.
 | `SMTP_PASS` | for waitlist email | that mailbox's **App Password** (Google: myaccount.google.com/apppasswords, needs 2-Step Verification) |
 | `WAITLIST_TO` | no | where sign-ups are emailed (default `mail@quanthive.in`) |
 | `WAITLIST_FROM` | no | the "from" address (default `SMTP_USER`) |
+| `CONTACT_TO` | no | where contact-form messages are emailed (default `WAITLIST_TO`, then `mail@quanthive.in`) |
 | `WAITLIST_DATA_DIR` | no | where sign-ups are saved (default `data/`) |
 | `PORT` | no | port to listen on (default `4173`) |
 | `NODE_ENV` | in production | set to `production` to serve the minified build without hot reload |
@@ -235,6 +237,7 @@ Common failures:
 ```
 server.ts            Bun server: pages, assets, /api/waitlist, /api/video/render
 api/waitlist.ts      waitlist validation, storage (data/waitlist.jsonl) and SMTP mail
+api/contact.ts       contact form: validation, storage (data/contact.jsonl), same SMTP mail
 index.html           app entry
 src/App.tsx          page switching + page transitions
 src/components/      sections and pages (Hero, Capabilities, About, AboutPage, FlashPartners, Nav, …)
