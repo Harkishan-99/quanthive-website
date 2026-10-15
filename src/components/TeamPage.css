@@ -43,6 +43,11 @@
   font-size: clamp(13px, 0.83vw, 16px);
 }
 
+/* A second line under the role (a past post, say), a shade lighter. */
+.team-page__note {
+  color: #9a9a9a;
+}
+
 .team-page__rule {
   margin-top: clamp(56px, 6vw, 116px);
 }

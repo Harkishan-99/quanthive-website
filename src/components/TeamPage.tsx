@@ -11,9 +11,9 @@ import "./TeamPage.css";
 // "/images/team/<file>". Any ordinary photo works; a head-and-shoulders crop is
 // best. Without one, the box shows the treatment on a placeholder shape.
 // The photos are stand-ins (free stock portraits from Pexels) until the team's own.
-const TEAM: { name: string; role: string; photo?: string }[] = [
+const TEAM: { name: string; role: string; note?: string; photo?: string }[] = [
   { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },
-  { name: "Neelesh Upadhaye", role: "Co-Founder", photo: "/images/team/neelesh.jpg" },
+  { name: "Neelesh Upadhaye", role: "Co-Founder", note: "Ex Quant Desk Head, Dolat Capital", photo: "/images/team/neelesh.jpg" },
   { name: "Chirag S J", role: "Founding Member, SDE", photo: "/images/team/chirag.jpg" },
   { name: "Mahati", role: "Founding Member, Founder's Office Associate", photo: "/images/team/mahati.jpg" },
 ];
@@ -29,8 +29,8 @@ export default function TeamPage() {
 
         <div className="about-page__copy">
           <p>
-            Built at IIT Madras, sharpened on a trading desk: engineers who ship at scale, guided by an
-            ex-quant desk head from Dolat Capital.
+            Some of us met in the hostels of IIT Madras; one of us ran a quant desk. Now we&apos;re building
+            the analyst we always wanted.
           </p>
         </div>
 
@@ -40,6 +40,7 @@ export default function TeamPage() {
               <EngravedPortrait src={person.photo} seed={index + 3} alt={person.photo ? `Portrait of ${person.name}` : ""} />
               <p className="team-page__name">{person.name}</p>
               <p className="team-page__role">{person.role}</p>
+              {person.note && <p className="team-page__role team-page__note">{person.note}</p>}
             </li>
           ))}
         </ul>
