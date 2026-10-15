@@ -1015,11 +1015,11 @@
 }
 
 :root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--left {
-  animation: motif-in-left 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) - 0.5s) backwards;
+  animation: motif-in-left 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 0.1s) backwards;
 }
 
 :root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--right {
-  animation: motif-in-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) - 0.5s) backwards;
+  animation: motif-in-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 0.1s) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

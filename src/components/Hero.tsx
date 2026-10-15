@@ -269,7 +269,7 @@ export default function Hero({
   const flash = variant === "flash";
   // Arriving from the other page, the sweep waits for the page change
   // (--page-t0, page-transition.css).
-  const lightRef = useLightRays(flash, handoff ? 1100 : 0) // = --page-t0;
+  const lightRef = useLightRays(flash, handoff ? 190 : 0) // = --page-t0;
 
   return (
     <main
