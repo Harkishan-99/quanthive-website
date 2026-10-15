@@ -94,7 +94,9 @@ function lightness(image: HTMLImageElement | null, size: number) {
 }
 
 /** The engraving itself: wavy line-screen ink where the photo is dark. */
-function engrave(light: Float32Array, size: number, seed: number) {
+/** `strength` (0–1): how much of the picture is carried by the strokes rather
+ *  than by the photo's own tone between them. Lower reads more like the photo. */
+function engrave(light: Float32Array, size: number, seed: number, strength = 1) {
   const img = new ImageData(size, size);
   const px = img.data;
   const rand = random(seed * 7 + 1);
@@ -112,12 +114,12 @@ function engrave(light: Float32Array, size: number, seed: number) {
       const d = Math.abs((v - Math.floor(v)) - 0.5) * 2; // 0 on a line's centre, 1 between
       const grit = (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
       // Lights carry no ink at all; elsewhere a little grit roughens the edges.
-      const width = dark < 0.08 ? 0 : Math.min(0.92, dark * 0.9) + Math.abs(grit) * 0.04 - 0.02;
+      const width = dark < 0.08 ? 0 : (Math.min(0.92, dark * 0.9) + Math.abs(grit) * 0.04 - 0.02) * strength;
       const ink = d < width ? 1 : 0;
       const o = i * 4;
       // Under the lines, a soft grey print of the photo itself, so a face keeps
       // its features (eyes, brows, the shape of the mouth) between the strokes.
-      const tone = ink ? 11 : Math.round(244 - dark * 150);
+      const tone = ink ? 11 : Math.round(244 - dark * (150 + (1 - strength) * 90));
       px[o] = tone;
       px[o + 1] = tone + (ink ? 0 : 2);
       px[o + 2] = tone + (ink ? 0 : 3);
@@ -192,7 +194,18 @@ function layout(seed: number) {
   return cells;
 }
 
-export default function EngravedPortrait({ src, seed, alt }: { src?: string; seed: number; alt: string }) {
+export default function EngravedPortrait({
+  src,
+  seed,
+  alt,
+  strength = 1,
+}: {
+  src?: string;
+  seed: number;
+  alt: string;
+  /** How strong the engraving is, 0–1 (see engrave). */
+  strength?: number;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -216,7 +229,7 @@ export default function EngravedPortrait({ src, seed, alt }: { src?: string; see
 
       const engraving = document.createElement("canvas");
       engraving.width = engraving.height = size;
-      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed), 0, 0);
+      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed, strength), 0, 0);
 
       const rand = random(seed * 13 + 5);
       const cell = size / GRID;
@@ -256,7 +269,7 @@ export default function EngravedPortrait({ src, seed, alt }: { src?: string; see
       disposed = true;
       ro.disconnect();
     };
-  }, [src, seed]);
+  }, [src, seed, strength]);
 
   return <canvas ref={ref} className="engraved-portrait" role="img" aria-label={alt} />;
 }

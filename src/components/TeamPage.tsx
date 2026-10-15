@@ -13,9 +13,10 @@ import "./TeamPage.css";
 // best. Without one, the box shows the treatment on a placeholder shape.
 // The team's own photos, cropped square to head and shoulders (800 × 800).
 // `note`: a line under the role; several, and they take turns in a loop.
-const TEAM: { name: string; role: string; note?: string | string[]; photo?: string }[] = [
-  { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg" },
-  { name: "Neelesh Upadhaye", role: "Co-Founder", note: ["Ex Quant Head, Dolat Capital", "Professor, IIT Madras"], photo: "/images/team/neelesh.jpg" },
+// `strength`: a lighter engraving (0–1) for a photo that reads less clearly.
+const TEAM: { name: string; role: string; note?: string | string[]; photo?: string; strength?: number }[] = [
+  { name: "Harkishan S Baniya", role: "CEO & Founder", photo: "/images/team/harkishan.jpg", strength: 0.7 },
+  { name: "Neelesh Upadhaye", role: "Co-Founder", note: ["Ex Quant Head, Dolat Capital", "Professor, IIT Madras"], photo: "/images/team/neelesh.jpg", strength: 0.7 },
   { name: "Chirag S J", role: "Founding Member, SDE", photo: "/images/team/chirag.jpg" },
   { name: "Mahati", role: "Founding Member, Founder's Office Associate", photo: "/images/team/mahati.jpg" },
 ];
@@ -55,7 +56,7 @@ export default function TeamPage() {
         <ul className="team-page__grid">
           {TEAM.map((person, index) => (
             <li className="team-page__person" key={index}>
-              <EngravedPortrait src={person.photo} seed={index + 3} alt={person.photo ? `Portrait of ${person.name}` : ""} />
+              <EngravedPortrait src={person.photo} seed={index + 3} strength={person.strength} alt={person.photo ? `Portrait of ${person.name}` : ""} />
               <p className="team-page__name">{person.name}</p>
               <p className="team-page__role">{person.role}</p>
               {person.note && <Note lines={([] as string[]).concat(person.note)} />}
