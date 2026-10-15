@@ -29,6 +29,31 @@ const ORIGINAL_ITEMS = [
   },
 ];
 
+// The bar's and menu's labels for the site's plain pages.
+const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | "blog" | undefined> = {
+  About: "about",
+  Team: "team",
+  Contact: "contact",
+  Blog: "blog",
+};
+
+// The drawer's resources column (its own column on wider screens; on phones its
+// links simply follow the others).
+const RESOURCE_ITEMS = [
+  {
+    title: "Blog",
+    blurb: "Insights, research notes and product news.",
+    // A page with lines of text.
+    icon: (
+      <LineIcon>
+        <path d="M6 3h9l4 4v14H6Z" />
+        <path d="M14.5 3v4.5H19" />
+        <path d="M9 12h7M9 15.5h7M9 9h3" />
+      </LineIcon>
+    ),
+  },
+];
+
 const BAR_ITEMS = ORIGINAL_ITEMS.filter((it) => it.inBar);
 
 // The drawer's icons: plain 1.5px line glyphs in one ink (Nav.css colours them).
@@ -96,7 +121,7 @@ export default function Nav({
   open,
   onOpenChange,
   onProductSelect,
-  onAboutSelect,
+  onPageSelect,
   intro = false,
   page = "landing",
 }: {
@@ -106,7 +131,8 @@ export default function Nav({
   onOpenChange: (open: boolean) => void;
   onProductSelect?: () => void;
   /** Opens the About page. */
-  onAboutSelect?: () => void;
+  /** Opens one of the site's plain pages (About, Team, Contact). */
+  onPageSelect?: (page: "about" | "team" | "contact" | "blog") => void;
   /** The page showing, for the bar's tone over Flash's dark hero. */
   page?: string;
 }) {
@@ -204,7 +230,8 @@ export default function Nav({
                       onOpenChange(!open);
                     } else {
                       onOpenChange(false);
-                      if (it.label === "About") onAboutSelect?.();
+                      const page = PLAIN_PAGES[it.label];
+                      if (page) onPageSelect?.(page);
                     }
                   }}
                 >
@@ -275,6 +302,9 @@ export default function Nav({
                   <div className="nav__dropdown-header-cell">
                     <span className="nav__dropdown-title">QuantHive</span>
                   </div>
+                  <div className="nav__dropdown-header-cell">
+                    <span className="nav__dropdown-title">Resources</span>
+                  </div>
                   <div className="nav__dropdown-header-cell" />
                   <div className="nav__dropdown-hatch nav__dropdown-hatch--right" aria-hidden="true" />
                 </div>
@@ -291,7 +321,30 @@ export default function Nav({
                         tabIndex={open ? 0 : -1}
                         onClick={() => {
                           if (item.title === "Product") onProductSelect?.();
-                          if (item.title === "About") onAboutSelect?.();
+                          const page = PLAIN_PAGES[item.title];
+                          if (page) onPageSelect?.(page);
+                          onOpenChange(false);
+                        }}
+                      >
+                        <NavIconBox>{item.icon}</NavIconBox>
+                        <div className="nav__mega-item-text">
+                          <span className="nav__mega-item-title">{item.title}</span>
+                          <span className="nav__mega-item-blurb">{item.blurb}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="nav__dropdown-col nav__dropdown-col--resources">
+                    {RESOURCE_ITEMS.map((item) => (
+                      <button
+                        type="button"
+                        className="nav__mega-item"
+                        key={item.title}
+                        tabIndex={open ? 0 : -1}
+                        onClick={() => {
+                          const page = PLAIN_PAGES[item.title];
+                          if (page) onPageSelect?.(page);
                           onOpenChange(false);
                         }}
                       >

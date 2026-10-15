@@ -153,21 +153,113 @@
   margin-top: clamp(48px, 4.8vw, 92px);
 }
 
-/* --- Partners ------------------------------------------------------------------
-   The heading in the first cell, then two cells, each set off by a full-height
-   hairline (the frame's lines at 818 and 1102 of a column from 549). */
+/* --- Section titles --------------------------------------------------------------- */
+
+.about-page__section-title {
+  margin: 0 0 clamp(14px, 1.2vw, 22px);
+  font-family: "PP Pangaia", var(--font-display, serif);
+  font-size: clamp(24px, 1.75vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* --- Leadership: portrait beside name, role, a line and LinkedIn -------------------- */
+
+.about-page__leaders {
+  margin-top: clamp(32px, 2.4vw, 45px);
+}
+
+.about-page__leader-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(28px, 2.4vw, 46px);
+  margin: clamp(10px, 1vw, 18px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-page__leader .engraved-portrait {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #fcfcfc;
+}
+
+.about-page__leader-text {
+  margin-top: clamp(14px, 1.1vw, 20px);
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+}
+
+.about-page__leader-name,
+.about-page__leader-role,
+.about-page__leader-bio {
+  margin: 0;
+}
+
+.about-page__leader-name {
+  font-size: clamp(17px, 1.15vw, 22px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.about-page__leader-role {
+  margin-top: 2px;
+  color: #7a7a7a;
+  font-size: clamp(13px, 0.83vw, 16px);
+}
+
+.about-page__leader-bio {
+  margin-top: clamp(10px, 0.8vw, 14px);
+  color: #333333;
+  font-size: clamp(14px, 0.9vw, 17px);
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.about-page__linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: clamp(12px, 0.9vw, 16px);
+  color: #111111;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2px;
+  transition: border-color 200ms ease;
+}
+
+.about-page__linkedin:hover {
+  border-bottom-color: #111111;
+}
+
+.about-page__linkedin svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* --- Partners ---------------------------------------------------------------------
+   Wider screens: one grid three compartments across, the heading in the first;
+   full-width rules between the rows, and short dividers between compartments
+   that stop clear of the rules. Phones: the heading above a two-across grid of
+   hairlines (below). Logos in light grey, their colour back on hover. Blank
+   compartments complete the last row, each shown only where its layout needs it
+   (data-shows). */
 
 .about-page__partners {
   display: grid;
-  grid-template-columns: 269fr 284fr 259fr;
-  min-height: clamp(160px, 13.5vw, 259px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: clamp(28px, 2.8vw, 53px);
 }
 
 .about-page__partners-title {
-  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centred in its compartment, as the logos are */
   margin: 0;
-  padding-left: calc(var(--col) * 10 / 812);
   font-size: clamp(30px, 2.35vw, 45px);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -175,8 +267,122 @@
   white-space: nowrap;
 }
 
-.about-page__partner {
-  border-left: 1px solid var(--rule);
+.about-page__logos {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-page__logo--empty:not([data-shows~="wide"]) {
+  display: none;
+}
+
+.about-page__partners-title,
+.about-page__logo {
+  position: relative;
+  min-height: clamp(110px, 8.6vw, 165px);
+}
+
+.about-page__logo {
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+}
+
+/* Rows after the first: a rule across the top. */
+.about-page__logo:nth-of-type(n + 3) {
+  border-top: 1px solid var(--rule);
+}
+
+/* Short dividers on the left of the second and third compartments of a row,
+   inset from the rules above and below. */
+.about-page__logo:nth-of-type(3n + 1)::before,
+.about-page__logo:nth-of-type(3n + 2)::before,
+.about-page__logo:nth-of-type(3n + 3)::before {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 0;
+  width: 1px;
+  background: var(--rule);
+  content: "";
+}
+
+/* …except the first compartment of each row (logos 3, 6, … sit in column 1). */
+.about-page__logo:nth-of-type(3n)::before {
+  display: none;
+}
+
+.about-page__logo-art {
+  display: flex;
+  width: calc(var(--w, 0.4) * 80cqw); /* airy, as in the reference */
+  justify-content: center;
+  filter: grayscale(1);
+  opacity: var(--o, 0.28); /* faint: present, never loud */
+  transition:
+    filter 300ms ease,
+    opacity 300ms ease;
+}
+
+.about-page__logo:hover .about-page__logo-art {
+  filter: none;
+  opacity: 1;
+}
+
+.about-page__logo-art img,
+.about-page__logo-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Two-part lockups set in the page's own faces. */
+.about-page__lockup {
+  display: flex;
+  width: 100%;
+}
+
+.about-page__lockup--er {
+  align-items: center;
+  gap: 7%;
+}
+
+.about-page__lockup--er svg {
+  width: 13%;
+  flex: none;
+}
+
+/* Its light blue would vanish when greyed: dark until hovered, then its blue. */
+.about-page__lockup--er span {
+  color: #6a6a6a; /* greys to the same weight as the other wordmarks */
+  transition: color 300ms ease;
+  font-family: "Bebas Neue", var(--font-ui, sans-serif);
+  font-size: calc(var(--w) * 13cqw);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.about-page__logo:hover .about-page__lockup--er span {
+  color: #7ec6ee;
+}
+
+.about-page__lockup--nv {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4%;
+}
+
+.about-page__lockup--nv span {
+  color: #111111;
+  font-family: "Host Grotesk", var(--font-ui, sans-serif);
+  font-size: calc(var(--w) * 8.6cqw);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* --- Entrance ----------------------------------------------------------------- */
@@ -185,6 +391,7 @@
 .about-page__copy,
 .about-page__rule,
 .about-page__tiles,
+.about-page__leaders,
 .about-page__partners {
   animation: about-page-in 900ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
@@ -193,6 +400,7 @@
 .about-page__copy { animation-delay: 160ms; }
 .about-page__rule { animation-delay: 220ms; }
 .about-page__tiles { animation-delay: 280ms; }
+.about-page__leaders { animation-delay: 280ms; }
 .about-page__partners { animation-delay: 340ms; }
 
 @keyframes about-page-in {
@@ -259,24 +467,77 @@
     gap: 12px;
   }
 
+  /* Leaders one above the other, each a row: the portrait, its text beside it. */
+  .about-page__leader-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .about-page__leader {
+    display: grid;
+    grid-template-columns: 38% minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+  }
+
+  .about-page__leader-text {
+    margin-top: 0;
+  }
+
+  .about-page__leader-name {
+    font-size: 16px;
+  }
+
+  .about-page__leader-role {
+    font-size: 12.5px;
+  }
+
+  .about-page__leader-bio {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .about-page__linkedin {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  /* Partners: the heading above, then two across with hairlines between. */
   .about-page__partners {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 140px;
-    row-gap: 20px;
-    min-height: 0;
+    display: block;
   }
 
   .about-page__partners-title {
-    grid-column: 1 / -1;
-    padding-left: 0;
+    justify-content: flex-start;
+    min-height: 0;
+    margin-bottom: 20px;
   }
 
-  .about-page__partner:first-of-type {
-    border-left: 0;
+  .about-page__logos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule);
   }
 
-  .about-page__partner + .about-page__partner {
-    border-left: 1px solid var(--rule);
+  .about-page__logo {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    border-top: 0 !important;
+    background: #ffffff;
+  }
+
+  .about-page__logo::before {
+    display: none !important;
+  }
+
+  .about-page__logo--empty[data-shows~="phone"] {
+    display: block;
+  }
+
+  .about-page__logo--empty:not([data-shows~="phone"]) {
+    display: none;
   }
 }
 
@@ -285,6 +546,7 @@
   .about-page__copy,
   .about-page__rule,
   .about-page__tiles,
+  .about-page__leaders,
   .about-page__partners {
     animation: none;
   }

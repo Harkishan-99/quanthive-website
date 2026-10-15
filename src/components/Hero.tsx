@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import LiquidGlassPill from "./LiquidGlassPill";
 import MetalSurface from "./MetalSurface";
 import { openWaitlist } from "./WaitlistDialog";
+import { lowPower, onPowerChange } from "../lib/perf";
 import { PEARL, STAINLESS } from "../shaders/liquidMetal";
 import "./Hero.css";
 
@@ -40,6 +41,14 @@ const AUTO_PATH: { y: number; ms: number }[] = [
 ];
 const easeInOutSine = (t: number) => 0.5 - Math.cos(Math.PI * t) / 2;
 
+// Phones and touch screens don't follow a pointer: once the pass is done, the
+// rays keep drifting on their own, gently up and down — from where the pass
+// settles (70%) up to 46% and back, one slow breath every DRIFT_MS.
+const DRIFT_MID = 0.58;
+const DRIFT_AMP = 0.12;
+const DRIFT_MS = 11000;
+const driftY = (elapsed: number) => DRIFT_MID + DRIFT_AMP * Math.cos((elapsed / DRIFT_MS) * Math.PI * 2);
+
 /** Where the auto pass is at `elapsed` ms: a height share, or null once done. */
 function autoY(elapsed: number) {
   let t = elapsed;
@@ -62,9 +71,13 @@ function useLightRays(auto = false, delayMs = 0) {
   useEffect(() => {
     const layer = ref.current;
     if (!layer) return;
-    const hover = window.matchMedia("(hover: hover)").matches;
+    // Small or touch screens: no pointer following; the auto pass, then a drift.
+    const small = window.matchMedia("(max-width: 640px), (hover: none)").matches;
+    const hover = !small && window.matchMedia("(hover: hover)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const playAuto = auto && !reduce;
+    const drift = playAuto && small;
+    let driftFrom = 0;
     if (!hover && !playAuto) return;
     const rays = Array.from(layer.querySelectorAll<HTMLElement>(".hero__ray"));
 
@@ -81,10 +94,22 @@ function useLightRays(auto = false, delayMs = 0) {
     // a little below the top edge, so the rays open from a gentle angle, not flat.
     const AUTO_TOP = 0.08;
 
+    // The layer's size, kept current by a ResizeObserver rather than measured on
+    // every frame (a per-frame measurement forces layout, which during a page
+    // change — its pulse restyling the page each frame — costs real smoothness).
+    // Filled by the observer's first report (which arrives with the layout already
+    // done), so mounting forces no layout of its own.
+    const box = { width: 0, height: 0 };
+    const sizeObserver = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      box.width = entry.contentRect.width;
+      box.height = entry.contentRect.height;
+    });
+    sizeObserver.observe(layer);
+
     // A ray drawn straight down, rotated by θ, points along (−sin θ, cos θ); so to
     // aim it at (x, y) from its anchor, θ = −atan2(dx, dy). x, y within the layer.
     const aim = (x: number, y: number) => {
-      const box = layer.getBoundingClientRect();
       RAY_ANCHORS.forEach((anchor, i) => {
         target[i] = (-Math.atan2(x - box.width * anchor, Math.max(y, 1)) * 180) / Math.PI;
       });
@@ -93,12 +118,16 @@ function useLightRays(auto = false, delayMs = 0) {
     const step = (now: number) => {
       let moving = false;
       if (autoOn) {
-        const y = autoY(Math.max(0, now - autoFrom));
+        let y = autoY(Math.max(0, now - autoFrom));
+        if (y === null && drift) {
+          // The pass ends at rest at 70%, where the drift starts, also at rest.
+          driftFrom ||= now;
+          y = driftY(now - driftFrom);
+        }
         if (y === null) {
           autoOn = false;
           if (pointer) aim(pointer.x, pointer.y);
         } else {
-          const box = layer.getBoundingClientRect();
           aim(box.width / 2, Math.max(y, AUTO_TOP) * box.height);
           for (let i = 0; i < current.length; i++) current[i] = target[i] ?? 0;
           if (now >= autoFrom) layer.dataset.rays = "";
@@ -112,8 +141,16 @@ function useLightRays(auto = false, delayMs = 0) {
         if (Math.abs(goal - value) > 0.02) moving = true;
         ray.style.setProperty("--ray-a", `${value.toFixed(2)}deg`);
       });
-      frame = moving ? requestAnimationFrame(step) : 0;
+      frame = moving && !offscreen ? requestAnimationFrame(step) : 0;
     };
+
+    // The drift never ends, so it rests while the hero is scrolled out of view.
+    let offscreen = false;
+    const io = new IntersectionObserver(([entry]) => {
+      offscreen = !entry?.isIntersecting;
+      if (!offscreen && autoOn && !frame) frame = requestAnimationFrame(step);
+    });
+    io.observe(layer);
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
@@ -138,6 +175,8 @@ function useLightRays(auto = false, delayMs = 0) {
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       cancelAnimationFrame(frame);
+      io.disconnect();
+      sizeObserver.disconnect();
     };
   }, [auto, delayMs]);
 
@@ -209,8 +248,18 @@ function HeadlineText() {
  * lit white — and cut back to outside the letters, so none of it lies on them.
  */
 function GlintFilter() {
+  // On weaker devices the turbulence holds still (its churn re-renders the glow
+  // every frame); the sweep still carries the glint across.
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const pause = () => {
+      if (lowPower()) ref.current?.pauseAnimations();
+    };
+    pause();
+    return onPowerChange(pause);
+  }, []);
   return (
-    <svg className="hero__glint-defs" width="0" height="0" aria-hidden focusable="false">
+    <svg ref={ref} className="hero__glint-defs" width="0" height="0" aria-hidden focusable="false">
       {/* The headline's, a gentler one for it on phones, and a finer one for the
           much smaller logo. */}
       <GlintFilterDef id="hero-glint" ring={1.6} bumps={9} soft={0.8} halo={4} frequency={0.045} />
@@ -258,7 +307,7 @@ export default function Hero({
   const flash = variant === "flash";
   // Arriving from the other page, the sweep waits for the page change
   // (--page-t0, page-transition.css).
-  const lightRef = useLightRays(flash, handoff ? 1500 : 0);
+  const lightRef = useLightRays(flash, handoff ? 190 : 0); // = --page-t0
 
   return (
     <main

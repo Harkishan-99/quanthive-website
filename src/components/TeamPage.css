@@ -1,0 +1,118 @@
+/* The Team page (frame 24:4168), on the About page's column (AboutPage.css):
+   240-square boxes, 46 apart across the 812 column, starting 420 down the frame
+   (about 110 under the copy); five of them, so three and then two. A rule (the
+   frame's, at 1029) closes the column. */
+
+.team-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 2.6vw, 50px) calc(var(--col) * 46 / 812);
+  margin: clamp(40px, 4.3vw, 82px) 0 0;
+  padding: 0;
+  list-style: none;
+  animation: about-page-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 280ms backwards;
+}
+
+.team-page__person {
+  min-width: 0;
+}
+
+.engraved-portrait {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #fcfcfc; /* the frame's box, until the portrait is drawn */
+}
+
+.team-page__name,
+.team-page__role {
+  margin: 0;
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  letter-spacing: -0.02em;
+}
+
+.team-page__name {
+  margin-top: clamp(10px, 0.8vw, 16px);
+  font-size: clamp(15px, 1.04vw, 20px);
+  font-weight: 500;
+}
+
+.team-page__role {
+  margin-top: 2px;
+  color: #7a7a7a;
+  font-size: clamp(13px, 0.83vw, 16px);
+}
+
+/* A second line under the role (a past post, say), a shade lighter. */
+.team-page__note {
+  color: #9a9a9a;
+}
+
+/* Two lines that take turns (Neelesh's): stacked in one cell, so the line is as
+   tall as the longer; each holds for about 2.8s, then slides up and out as the
+   other rises into its place, on a 6.4s loop. */
+.team-page__note--cycle {
+  display: grid;
+  overflow: hidden;
+}
+
+.team-page__note--cycle > span[aria-hidden] {
+  grid-area: 1 / 1;
+  opacity: 0;
+  animation: team-note-turn 6.4s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--i) * 3.2s) infinite backwards;
+}
+
+/* Half the loop each: in over 0.4s, hold, out over 0.4s as the other comes in. */
+@keyframes team-note-turn {
+  0% {
+    opacity: 0;
+    translate: 0 70%;
+  }
+  6.25%,
+  50% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  56.25%,
+  100% {
+    opacity: 0;
+    translate: 0 -70%;
+  }
+}
+
+.team-page__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-page__note--cycle > span[aria-hidden] {
+    animation: none;
+  }
+
+  .team-page__note--cycle > span[aria-hidden]:first-of-type {
+    opacity: 1;
+  }
+}
+
+.team-page__rule {
+  margin-top: clamp(56px, 6vw, 116px);
+}
+
+/* Phones: two to a row. */
+@media (max-width: 640px) {
+  .team-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-page__grid {
+    animation: none;
+  }
+}

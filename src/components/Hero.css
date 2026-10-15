@@ -87,13 +87,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  --sub-gap: clamp(22px, 2.865vw, 55px); /* 55 on the 1920 frame */
+  --sub-gap: max(18px, calc(55 * var(--ref))); /* 55 on the reference screen */
 
-  /* Width-led, but never so wide that the lockup outgrows a short viewport. The
-     reserve covers the page's own padding (up to 160px for the pair) plus the gap
-     and the caption; the floor keeps the expression from collapsing on a viewport
-     shorter than the reserve itself. */
-  width: min(1080px, calc(100% - 2 * var(--hero-pad)));
+  /* 1080 on the reference screen, scaled with it (--ref, tokens.css), so the
+     lockup is the same share of a laptop's window as of a 1440p monitor's — and
+     never so wide that it outgrows a short viewport. The reserve covers the page's
+     own padding (up to 160px for the pair) plus the gap and the caption; the floor
+     keeps the expression from collapsing on a viewport shorter than the reserve. */
+  width: min(calc(1080 * var(--ref)), calc(100% - 2 * var(--hero-pad)));
   max-width: max(260px, calc((100dvh - 250px) * var(--lockup-aspect)));
 }
 
@@ -123,7 +124,7 @@
   margin: 0;
   color: #000;
   font-family: "PP Pangaia", var(--font-display);
-  font-size: clamp(38px, 5.6vw, 108px); /* the frame's 70, enlarged ~54% */
+  font-size: max(30px, calc(108 * var(--ref))); /* the frame's 70, enlarged ~54% */
   font-weight: 500;
   line-height: 1.0714; /* 75 / 70 */
   text-align: center;
@@ -188,7 +189,7 @@
   max-width: 100%;
   color: #000;
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
-  font-size: clamp(10.5px, 0.82vw, 15.5px); /* the frame's 16, trimmed slightly */
+  font-size: max(10.5px, calc(15.5 * var(--ref))); /* the frame's 16, trimmed slightly */
   font-weight: 500;
   letter-spacing: 0.2em;
   line-height: 1.75;
@@ -219,12 +220,12 @@
    and may run wider than the lockup's narrow column up to a 16px page gutter. */
 @media (max-width: 640px) {
   .hero__headline {
-    font-size: clamp(31px, 8.6vw, 50px); /* clears the edge motifs */
+    font-size: clamp(26px, 8.6vw, 50px); /* clears the edge motifs, down to 320px */
   }
 
   .hero__sub {
     text-wrap: balance;
-    font-size: 8.75px;
+    font-size: clamp(8.75px, 2.4vw, 11px);
   }
 
   .hero__sub span {
@@ -480,6 +481,10 @@
   translate: -50% 0;
   rotate: var(--ray-a, 0deg);
   transition: opacity 700ms ease;
+  /* Its own layer, so turning it only re-composites. Without one, every frame of
+     the sweep re-rasterised the whole blurred beam through the lattice mask — the
+     lag on weaker GPUs. */
+  will-change: rotate, opacity;
 }
 
 /* Same light as the blobs, anchored a third of the way in from each side. */
@@ -488,6 +493,11 @@
 
 .hero__light[data-rays] .hero__ray {
   opacity: 1;
+}
+
+/* Weaker devices (lib/perf.ts): the light holds still. */
+:root[data-perf="low"] .hero__blob {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -523,6 +533,19 @@
 @media (max-width: 640px) {
   .hero {
     --hero-pad: clamp(26px, 16.5vw, 106px);
+  }
+
+  /* Width from the padding alone here (see above), not the reference scale. */
+  .hero__inner {
+    width: calc(100% - 2 * var(--hero-pad));
+  }
+}
+
+/* Portrait tablets: the lockup at most 60% of the width, so it keeps clear of
+   the edge marks (the reference scale alone brings it within a few pixels). */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+  .hero {
+    --hero-pad: 20vw;
   }
 }
 
@@ -699,10 +722,10 @@
    the view-transition names at the end of this section. */
 
 .hero--flash {
-  --flash-logo-w: clamp(200px, 21.2vw, 560px); /* the frame's 407 of 1920 */
+  --flash-logo-w: max(180px, calc(542.7 * var(--ref))); /* the frame's 407 of 1920 */
   /* = the landing hero's ornaments (--motif-w, --motif-y in EdgeMotifs.css), so
      the two pages' marks are the same size and in the same place. */
-  --flash-motif-w: clamp(173px, 23.4375vw, 496px);
+  --flash-motif-w: max(120px, calc(496 * var(--ref)));
   --flash-motif-y: 47%;
 
   color: #ffffff;
@@ -792,13 +815,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(22px, 2.14vw, 41px);
+  gap: max(18px, calc(41 * var(--ref)));
   margin-top: calc(var(--sub-gap) * 0.76);
 }
 
 /* Nata Sans Medium 14 / 28, tracked 2.8px, upper case, white; in two lines. */
 .hero__sub--flash {
-  font-size: clamp(9.5px, 0.72vw, 13.5px); /* the frame's 14, trimmed as the landing caption's 16 is */
+  font-size: max(9.5px, calc(13.5 * var(--ref))); /* the frame's 14, trimmed as the landing caption's 16 is */
 }
 
 .hero__sub--flash span {
@@ -846,7 +869,7 @@
   box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.9);
   color: #c7c7c7;
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
-  font-size: clamp(10px, 0.656vw, 12.6px); /* 0.9 × the frame's 14 */
+  font-size: max(10px, calc(12.6 * var(--ref))); /* 0.9 × the frame's 14 */
   font-weight: 500;
   letter-spacing: 0.2em; /* 2.8 on 14 */
   line-height: 2;
@@ -991,6 +1014,22 @@
   animation: none;
 }
 
+/* …unless the landing page's marks were scrolled out of view as it left (App.tsx
+   sets data-marks-enter): then these enter from their own sides, as on a fresh
+   load, once the page has changed. */
+:root[data-marks-enter] .hero__motif--left,
+:root[data-marks-enter] .hero__motif--right {
+  view-transition-name: none;
+}
+
+:root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--left {
+  animation: motif-in-left 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 0.1s) backwards;
+}
+
+:root[data-marks-enter] .hero--flash[data-handoff] .hero__motif--right {
+  animation: motif-in-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--page-t0, 0s) + 0.1s) backwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero__sub--logo {
     animation: none;
@@ -1016,7 +1055,7 @@
     filter: blur(9px);
   }
 
-  .hero__glint {
+  .hero__glint .hero__headline--glint {
     filter: url(#hero-glint-sm);
   }
 
@@ -1024,6 +1063,10 @@
     --flash-logo-w: min(48vw, 225px); /* a quarter smaller than 64vw / 300px */
     --flash-motif-w: clamp(63px, 19.125vw, 124px); /* = the landing ornaments on phones */
     --flash-motif-y: 50%;
+  }
+
+  .hero__sub--flash {
+    font-size: clamp(9.5px, 2.45vw, 11px);
   }
 
   .hero__sub--flash span {
@@ -1074,17 +1117,21 @@
   display: flex;
   justify-content: center;
   pointer-events: none;
-  filter: url(#hero-glint);
   -webkit-mask: linear-gradient(100deg, transparent 42%, #000 50%, transparent 58%) 100% 0 / 280% 100% no-repeat;
   mask: linear-gradient(100deg, transparent 42%, #000 50%, transparent 58%) 100% 0 / 280% 100% no-repeat;
   opacity: 0.85;
   animation: hero-glint-sweep 7.5s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 4.4s) infinite;
 }
 
-/* The copy is only a shape for the filter; it isn't the headline. */
+/* The copy is only a shape for the filter; it isn't the headline. The filter
+   sits on it, in its own layer, and the sweep's mask on the wrapper: so the glow
+   is rendered once and only the mask moves, rather than the whole filter chain
+   re-running every frame of the sweep (by far the page's heaviest paint). */
 .hero__headline--glint {
   view-transition-name: none;
   animation: none;
+  filter: url(#hero-glint);
+  will-change: transform;
 }
 
 @keyframes hero-glint-sweep {
@@ -1110,8 +1157,11 @@
    so the glow arrives and leaves with it. */
 .hero__glint--logo {
   display: block;
-  filter: url(#hero-glint-fine);
   animation: hero-glint-sweep-once 1.25s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--page-t0, 0s) + 1.05s);
+}
+
+.hero__glint--logo > img {
+  filter: url(#hero-glint-fine);
 }
 
 @keyframes hero-glint-sweep-once {

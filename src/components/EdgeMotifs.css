@@ -8,7 +8,7 @@
      where the border line's is 280.5, so the line is derived from the ornament
      rather than sized independently — change the ornament and the line follows,
      at every breakpoint, without the two drifting out of proportion. */
-  --motif-w: clamp(173px, 23.4375vw, 496px);
+  --motif-w: max(120px, calc(496 * var(--ref))); /* 496 on the reference screen (tokens.css) */
   --motif-line-w: calc(var(--motif-w) * (280.5 / 450));
   --motif-line-len: calc(var(--motif-line-w) * var(--motif-line-len-ratio, 3.99789));
   /* Brushed silver, shared with the lockup's no-WebGL fallback so the two read as
@@ -148,8 +148,8 @@
 
 /* Arriving from Flash's page they morph across from its marks (page change), so
    no entrance of their own. */
-:root[data-handoff] .motif--left,
-:root[data-handoff] .motif--right {
+:root[data-handoff]:not([data-marks-enter]) .motif--left,
+:root[data-handoff]:not([data-marks-enter]) .motif--right {
   animation: none;
 }
 
@@ -163,6 +163,19 @@
 /* Carried across to Flash's flat white marks when the page changes (Hero.css). */
 .motif--left { view-transition-name: edge-motif-left; }
 .motif--right { view-transition-name: edge-motif-right; }
+
+/* Arriving from the other hero while its marks were scrolled out of view
+   (App.tsx): no carry-over; the marks enter from their sides once the page has
+   changed (--page-t0). */
+:root[data-marks-enter] .motif--left,
+:root[data-marks-enter] .motif--right {
+  view-transition-name: none;
+  /* A little quicker than a fresh load's entrance, and before the centre: in as
+     the ground finishes turning. */
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: calc(var(--page-t0, 0s) + 0.1s);
+}
 
 /* --- Phones ------------------------------------------------------------------
    Same 640px boundary as Hero.css and Problem.css.
