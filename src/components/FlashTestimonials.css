@@ -217,6 +217,21 @@
 
 /* --- Tablets: the head stacks ----------------------------------------------------- */
 
+/* --- Large screens: centred ----------------------------------------------------------
+   The title centred across the page, and the box 45% narrower than the full
+   column, centred under it. */
+
+@media (min-width: 1200px) {
+  .testimonials__title {
+    text-align: center;
+  }
+
+  .testimonials__box {
+    width: calc((100% - 2 * var(--gutter)) * 0.55);
+    margin-inline: auto;
+  }
+}
+
 /* --- Phones: the tabs stacked above the panel ---------------------------------------- */
 
 @media (max-width: 640px) {
