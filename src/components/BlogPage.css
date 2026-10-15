@@ -271,7 +271,7 @@ a.blog-page__post-link:hover {
 /* --- Phones ---------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
-  /* About 30% taller than the plain stack: a deeper image, more air between. */
+  /* About 50% taller than the plain stack: a deeper image, more air between. */
   .blog-page__featured {
     grid-template-columns: minmax(0, 1fr);
     gap: 28px;
@@ -280,7 +280,7 @@ a.blog-page__post-link:hover {
 
   .blog-page__featured-image {
     grid-row: 1;
-    aspect-ratio: 320 / 270;
+    aspect-ratio: 320 / 352;
   }
 
   .blog-page__featured-title {
