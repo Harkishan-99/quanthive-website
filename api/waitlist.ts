@@ -11,8 +11,14 @@ import nodemailer, { type Transporter } from "nodemailer";
 //   WAITLIST_TO (default mail@quanthive.in), WAITLIST_FROM (default SMTP_USER)
 //
 // set in .env (Bun loads it). See .env.example.
+//
+// The same file is the Vercel function for /api/waitlist (POST, below): Vercel
+// runs every file in api/ as a serverless function. There the disk is read-only,
+// so a sign-up is only stored if WAITLIST_DATA_DIR points somewhere writable, and
+// otherwise reaches you by email alone.
 
-const DATA_DIR = join(import.meta.dir, "..", "data");
+// process.cwd(), not import.meta.dir: this also runs under Node on Vercel.
+const DATA_DIR = process.env.WAITLIST_DATA_DIR || join(process.cwd(), "data");
 const LOG_FILE = join(DATA_DIR, "waitlist.jsonl");
 const TO = process.env.WAITLIST_TO || "mail@quanthive.in";
 
@@ -73,16 +79,27 @@ function mailer() {
   return transport;
 }
 
-/** Stores the sign-up, then mails it. `mailed` is false if SMTP isn't set up or
- *  the send failed (the sign-up is still stored). */
+/** Stores the sign-up, then mails it. Throws only if it could do neither, so a
+ *  sign-up is never acknowledged and then lost. */
 export async function submit(signup: Signup, meta: { ip: string; ua: string }) {
   const entry = { ...signup, at: new Date().toISOString(), ...meta };
-  await mkdir(DATA_DIR, { recursive: true });
-  await appendFile(LOG_FILE, JSON.stringify(entry) + "\n");
+  let stored = false;
+  try {
+    await mkdir(DATA_DIR, { recursive: true });
+    await appendFile(LOG_FILE, JSON.stringify(entry) + "\n");
+    stored = true;
+  } catch (error) {
+    console.warn("[waitlist] could not store sign-up (read-only disk?):", error);
+  }
+  const { mailed } = await mail(signup, entry.at);
+  if (!stored && !mailed) throw new Error("sign-up neither stored nor mailed");
+  return { stored, mailed };
+}
 
+async function mail(signup: Signup, at: string) {
   const smtp = mailer();
   if (!smtp) {
-    console.warn("[waitlist] SMTP not configured (SMTP_HOST/USER/PASS) — sign-up stored only.");
+    console.warn("[waitlist] SMTP not configured (SMTP_HOST/USER/PASS) — sign-up not mailed.");
     return { mailed: false };
   }
   const rows: [string, string][] = [
@@ -90,7 +107,7 @@ export async function submit(signup: Signup, meta: { ip: string; ua: string }) {
     ["Email", signup.email],
     ["Organisation", signup.organisation],
     ["Phone", signup.phone],
-    ["Signed up", entry.at],
+    ["Signed up", at],
   ];
   try {
     await smtp.sendMail({
@@ -109,7 +126,28 @@ export async function submit(signup: Signup, meta: { ip: string; ua: string }) {
     });
     return { mailed: true };
   } catch (error) {
-    console.error("[waitlist] mail failed (sign-up stored):", error);
+    console.error("[waitlist] mail failed:", error);
     return { mailed: false };
   }
 }
+
+/** POST /api/waitlist: the whole request, for server.ts and for Vercel. */
+export async function handleWaitlist(req: Request, fallbackIp = "unknown") {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || fallbackIp;
+  if (rateLimited(ip)) return Response.json({ ok: false, error: "Too many tries — please wait a few minutes." }, { status: 429 });
+  const body = await req.json().catch(() => null);
+  // A field people never see; bots fill it in.
+  if (body && typeof body === "object" && (body as { website?: unknown }).website) return Response.json({ ok: true });
+  const result = validate(body);
+  if ("error" in result) return Response.json({ ok: false, error: result.error }, { status: 400 });
+  try {
+    const { mailed } = await submit(result.signup, { ip, ua: req.headers.get("user-agent") ?? "" });
+    return Response.json({ ok: true, mailed });
+  } catch (error) {
+    console.error("[waitlist] could not take sign-up:", error);
+    return Response.json({ ok: false, error: "Something went wrong — please try again." }, { status: 500 });
+  }
+}
+
+/** Vercel's entry point (a web-standard handler). server.ts doesn't use it. */
+export const POST = (req: Request) => handleWaitlist(req);

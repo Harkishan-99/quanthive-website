@@ -43,6 +43,22 @@
   --sidebar-w: 244px;
   --nav-w: 214px;
   --sidebar-pad-x: 15px;
+
+  /* ---- Reference scale ----
+     The heroes were set on a 2560 × 1440 monitor, whose browser window is about
+     2560 × 1300. One --ref is one pixel of that window, scaled to this one by
+     whichever of width or height runs out first, so a hero keeps its proportions
+     on a 13" laptop and keeps growing on screens larger than the reference. */
+  --ref: min(calc(100vw / 2560), calc(100dvh / 1300));
+}
+
+/* Portrait tablets: by width alone, and a little larger than the landscape
+   proportion, or the heroes look lost in the extra height. Phones (640px and
+   under) set their own sizes. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --ref: calc(100vw / 1800);
+  }
 }
 
 /* ---- Theme variants (set data-theme on <html> to switch everything) ---- */

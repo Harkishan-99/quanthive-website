@@ -1,11 +1,30 @@
 import { useEffect, useRef, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { buildHeroMask } from "../lib/heroMask";
+import { maxDpr, onPowerChange } from "../lib/perf";
 import { HERO_FRAG, HERO_VERT, STAINLESS, material, type Alloy } from "../shaders/liquidMetal";
 import "./MetalSurface.css";
 
 // Retina is worth it on metal — the banding is high-frequency — but past 2x the
-// fragment count stops buying anything a viewer can see.
+// fragment count stops buying anything a viewer can see. Weaker devices draw at
+// less (lib/perf.ts).
 const MAX_DPR = 2;
+
+// Building a mask (a distance transform over every pixel) is the costliest thing
+// a surface does, and the same art is often wanted at the same size again: both
+// edge marks share one, and the landing page and Flash's draw the same marks, so
+// changing page would otherwise rebuild them mid-transition. Kept for the page's
+// life, a few at most.
+const maskCache = new Map<string, ImageData>();
+function cachedMask(src: string, art: HTMLImageElement, w: number, h: number, bevelPx: number) {
+  const key = `${src}|${w}x${h}|${bevelPx.toFixed(2)}`;
+  let mask = maskCache.get(key);
+  if (!mask) {
+    mask = buildHeroMask(art, w, h, bevelPx);
+    maskCache.set(key, mask);
+    if (maskCache.size > 8) maskCache.delete(maskCache.keys().next().value!);
+  }
+  return mask;
+}
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string) {
   const sh = gl.createShader(type)!;
@@ -196,7 +215,7 @@ export default function MetalSurface({
     const uploadMask = () => {
       if (!art || !maskW || !maskH) return;
       const bevelPx = maskH * artHeightShare * bevelFrac;
-      const mask = buildHeroMask(art, maskW, maskH, bevelPx);
+      const mask = cachedMask(src, art, maskW, maskH, bevelPx);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mask);
     };
@@ -260,7 +279,7 @@ export default function MetalSurface({
       const cw = host.offsetWidth;
       const ch = host.offsetHeight;
       if (!cw || !ch) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      const dpr = maxDpr(MAX_DPR);
       const w = Math.max(1, Math.round(cw * dpr));
       const h = Math.max(1, Math.round(ch * dpr));
       if (w === maskW && h === maskH) return;
@@ -286,6 +305,7 @@ export default function MetalSurface({
 
     const ro = new ResizeObserver(resize);
     ro.observe(host);
+    const stopPowerWatch = onPowerChange(resize);
 
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -327,6 +347,7 @@ export default function MetalSurface({
       disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      stopPowerWatch();
       io.disconnect();
       host.removeEventListener("pointermove", onPointerMove);
       host.removeEventListener("pointerleave", onPointerLeave);

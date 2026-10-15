@@ -41,6 +41,17 @@
   animation: page-pulse 1.25s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
+/* Weaker devices (lib/perf.ts): the same pulse without the lattice layer, which
+   is what made it costly — a full-screen tiled mask re-composited every frame.
+   The ground and lines then turn together. */
+:root[data-perf="low"]::view-transition-new(root) {
+  mask-image: radial-gradient(circle at 50% 100%, #000 calc(var(--pulse) - 6vmax), transparent calc(var(--pulse) + 16vmax));
+  mask-position: 0 0;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-composite: add;
+}
+
 @keyframes page-pulse {
   from {
     --pulse: 0px;

@@ -33,6 +33,13 @@ if (typeof window !== "undefined") canonicaliseAddress();
 // /showcase: the About panel's demo alone, full screen, for a display.
 const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname === "/showcase";
 
+// The browser tab's name on each page (index.html carries the landing page's).
+const PAGE_TITLE: Record<Page, string> = {
+  landing: "QuantHive | Financial Analytics Made Easy",
+  product: "Flash | QuantHive",
+  about: "About | QuantHive",
+};
+
 export default function App() {
   if (SHOWCASE_ONLY) return <Showcase />;
   return <Site />;
@@ -68,6 +75,7 @@ function Site() {
   // dark hero (Nav.css, AnnouncementBar.css), and so does the page ground.
   useEffect(() => {
     document.documentElement.dataset.page = page;
+    document.title = PAGE_TITLE[page];
   }, [page]);
 
   // Changing page is one view transition, not a reload (page-transition.css): the

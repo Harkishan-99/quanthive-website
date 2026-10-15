@@ -8,7 +8,7 @@
      where the border line's is 280.5, so the line is derived from the ornament
      rather than sized independently — change the ornament and the line follows,
      at every breakpoint, without the two drifting out of proportion. */
-  --motif-w: clamp(173px, 23.4375vw, 496px);
+  --motif-w: max(120px, calc(496 * var(--ref))); /* 496 on the reference screen (tokens.css) */
   --motif-line-w: calc(var(--motif-w) * (280.5 / 450));
   --motif-line-len: calc(var(--motif-line-w) * var(--motif-line-len-ratio, 3.99789));
   /* Brushed silver, shared with the lockup's no-WebGL fallback so the two read as

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import LiquidGlassPill from "./LiquidGlassPill";
 import MetalSurface from "./MetalSurface";
 import { openWaitlist } from "./WaitlistDialog";
+import { lowPower, onPowerChange } from "../lib/perf";
 import { PEARL, STAINLESS } from "../shaders/liquidMetal";
 import "./Hero.css";
 
@@ -209,8 +210,18 @@ function HeadlineText() {
  * lit white — and cut back to outside the letters, so none of it lies on them.
  */
 function GlintFilter() {
+  // On weaker devices the turbulence holds still (its churn re-renders the glow
+  // every frame); the sweep still carries the glint across.
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const pause = () => {
+      if (lowPower()) ref.current?.pauseAnimations();
+    };
+    pause();
+    return onPowerChange(pause);
+  }, []);
   return (
-    <svg className="hero__glint-defs" width="0" height="0" aria-hidden focusable="false">
+    <svg ref={ref} className="hero__glint-defs" width="0" height="0" aria-hidden focusable="false">
       {/* The headline's, a gentler one for it on phones, and a finer one for the
           much smaller logo. */}
       <GlintFilterDef id="hero-glint" ring={1.6} bumps={9} soft={0.8} halo={4} frequency={0.045} />

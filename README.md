@@ -47,6 +47,7 @@ Bun loads `.env` automatically. **Never commit `.env`** — it's git-ignored.
 | `SMTP_PASS` | for waitlist email | that mailbox's **App Password** (Google: myaccount.google.com/apppasswords, needs 2-Step Verification) |
 | `WAITLIST_TO` | no | where sign-ups are emailed (default `mail@quanthive.in`) |
 | `WAITLIST_FROM` | no | the "from" address (default `SMTP_USER`) |
+| `WAITLIST_DATA_DIR` | no | where sign-ups are saved (default `data/`) |
 | `PORT` | no | port to listen on (default `4173`) |
 | `NODE_ENV` | in production | set to `production` to serve the minified build without hot reload |
 | `GNEWS_API_KEY` | no | only for the legacy company-news proxy (`/api/company-news`) |
@@ -75,6 +76,26 @@ bun run render-video   # render the about-section demo to src/assets/videos/quan
 The site must be run **as a Bun server** (it has API routes: the waitlist form
 posts to `/api/waitlist`). Uploading only the static `dist/` folder to a static
 host will show the pages but **the waitlist form will not work**.
+
+### On Vercel
+
+`vercel.json` sets everything up: Vercel installs with Bun, runs `bun run build`,
+serves `dist/`, and serves the app at `/flash` and `/showcase` too, so refreshing
+those pages works instead of showing Vercel's 404. `api/waitlist.ts` runs as a
+Vercel function for the waitlist form.
+
+1. Import the repo in Vercel and leave the framework preset on **Other**. Don't
+   override the build settings: `vercel.json` provides them.
+2. Project → Settings → Environment Variables: add `SMTP_HOST`, `SMTP_PORT`,
+   `SMTP_USER`, `SMTP_PASS` and optionally `WAITLIST_TO` / `WAITLIST_FROM` (see
+   [Waitlist email (SMTP)](#waitlist-email-smtp--set-up-before-going-live)), then redeploy.
+
+On Vercel the disk is read-only, so sign-ups are **only emailed**, not saved to
+`data/waitlist.jsonl`. If SMTP isn't set up, the form shows an error rather than
+dropping the sign-up. The demo-video download (`/api/video/render`) isn't
+available on Vercel.
+
+### On your own server
 
 On any Linux VM / VPS (or a container platform such as Railway, Render, Fly.io):
 
@@ -173,7 +194,7 @@ nc -vz smtp.gmail.com 465
 
 ### 4. Test it
 
-1. Open `/#flash` on the live site, click "Join waitlist" and submit the form
+1. Open `/flash` on the live site, click "Join waitlist" and submit the form
    once.
 2. The email should arrive at `WAITLIST_TO` from "Flash waitlist". Replying to
    it replies to the person who signed up.

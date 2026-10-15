@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "bun install",
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/flash", "destination": "/index.html" },
+    { "source": "/flash/", "destination": "/index.html" },
+    { "source": "/showcase", "destination": "/index.html" },
+    { "source": "/showcase/", "destination": "/index.html" }
+  ]
+}
