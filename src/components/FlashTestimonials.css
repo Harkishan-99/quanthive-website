@@ -15,46 +15,42 @@
 .testimonials {
   --line: #dededb;
   --muted: #8a8a86;
-  --gutter: max(20px, 9vw);
+  --gutter: max(20px, 4vw); /* the frame's 77 of 1920 */
 
   padding: clamp(64px, 7vw, 140px) 0 clamp(72px, 8vw, 160px);
   color: #111111;
   font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
 }
 
-/* --- Head --------------------------------------------------------------------- */
-
-.testimonials__head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px 48px;
-  margin: 0 var(--gutter) clamp(32px, 3.2vw, 64px);
-}
-
-.testimonials__label {
-  margin: 0 0 clamp(8px, 0.7vw, 14px);
-  color: var(--muted);
-  font-size: clamp(10px, 0.62vw, 12px);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+/* --- Title (frame 11:3765) -------------------------------------------------------
+   Two lines at the frame's 38 on 1920, 77 in from the left (the box below shares
+   that edge): "Trusted By Our Pilot Partners", single letters in other faces, then
+   the subtitle in Nata Sans, tracked -1.14. */
 
 .testimonials__title {
-  margin: 0;
-  font-size: clamp(28px, 2.5vw, 50px);
-  font-weight: 500;
+  margin: 0 var(--gutter) clamp(32px, 3.2vw, 64px);
+  font-family: "Nata Sans", var(--font-ui, "Inter", system-ui, sans-serif);
+  font-size: max(24px, calc(38 * var(--ref) * 1.3333));
+  font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: 1.1;
+  line-height: normal;
 }
 
-.testimonials__intro {
-  max-width: 30em;
-  margin: 0;
-  color: var(--muted);
-  font-size: clamp(13px, 0.78vw, 15px);
-  line-height: 1.55;
+.testimonials__title-line {
+  display: block;
+}
+
+.testimonials__title-line:first-child {
+  letter-spacing: -0.0042em; /* the frame's -0.16 on 38 */
+}
+
+.testimonials__face--pp { font-family: "PP Pangaia", var(--font-display, serif); font-weight: 500; }
+.testimonials__face--pg { font-family: var(--font-wordmark); font-weight: 400; }
+.testimonials__face--sg { font-family: "Schibsted Grotesk", var(--font-ui); font-weight: 500; }
+.testimonials__face--bg {
+  font-family: "Bricolage Grotesque", var(--font-ui);
+  font-weight: 500;
+  font-variation-settings: "opsz" 14, "wdth" 100;
 }
 
 /* --- The box ------------------------------------------------------------------ */
@@ -68,21 +64,6 @@
   border-bottom: 1px solid var(--line);
 }
 
-/* The top and bottom hairlines run on past the box, to the page's edges. */
-.testimonials__box::before,
-.testimonials__box::after {
-  position: absolute;
-  right: calc(-1 * var(--gutter));
-  left: calc(-1 * var(--gutter));
-  height: 1px;
-  background: var(--line);
-  content: "";
-  pointer-events: none;
-}
-
-.testimonials__box::before { top: -1px; }
-.testimonials__box::after { bottom: -1px; }
-
 .testimonials__tabs {
   display: grid;
   grid-auto-rows: 1fr;
@@ -95,7 +76,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  min-height: clamp(72px, 6.2vw, 124px);
+  min-height: clamp(64px, 4.6vw, 96px);
   padding: 0 16px;
   border: 0;
   background: transparent;
@@ -235,13 +216,6 @@
 
 /* --- Tablets: the head stacks ----------------------------------------------------- */
 
-@media (max-width: 900px) {
-  .testimonials__head {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 /* --- Phones: the tabs in a row above the panel ---------------------------------------- */
 
 @media (max-width: 640px) {
@@ -249,20 +223,30 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Five tabs don't fit across a phone: they scroll sideways, a peek of the
+     next showing, and the chosen one is kept in view (FlashTestimonials.tsx). */
   .testimonials__tabs {
-    grid-auto-rows: auto;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-right: 0;
-    border-left: 0;
+    display: flex;
+    overflow-x: auto;
+    border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .testimonials__tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .testimonials__tab {
     flex-direction: column;
     gap: 6px;
+    flex: none;
+    width: 29%;
     min-height: 76px;
     padding: 0 6px;
     font-size: 14px;
+    scroll-snap-align: start;
   }
 
   .testimonials__tab + .testimonials__tab {
@@ -271,11 +255,11 @@
   }
 
   .testimonials__panel {
-    border-right: 0;
+    border-left: 1px solid var(--line);
   }
 
   .testimonials__figure {
-    padding: 28px 0 32px;
+    padding: 28px 20px 32px;
   }
 
   .testimonials__foot {

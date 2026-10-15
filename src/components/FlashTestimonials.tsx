@@ -33,6 +33,16 @@ const MARK = {
       <path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7Z M12 7.5 8 9.75v4.5L12 16.5l4-2.25v-4.5Z" fillRule="evenodd" />
     </svg>
   ),
+  lumen: (
+    <svg viewBox="0 0 24 24" aria-hidden>
+      <path d="M12 2 14.6 9.4 22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6Z" />
+    </svg>
+  ),
+  arbor: (
+    <svg viewBox="0 0 24 24" aria-hidden>
+      <path d="M3 21 12 3l9 18h-4.2L12 11.4 7.2 21Z" />
+    </svg>
+  ),
   syncell: (
     <svg viewBox="0 0 24 24" aria-hidden>
       <path d="M4 7h11l-3-3h3l4.5 4.5L15 13h-3l3-3H4Z M20 17H9l3 3H9l-4.5-4.5L9 11h3l-3 3h11Z" />
@@ -41,6 +51,26 @@ const MARK = {
 };
 
 const TESTIMONIALS: Testimonial[] = [
+  {
+    company: "Lumenta",
+    mark: MARK.lumen,
+    quote:
+      "Earnings season used to bury us. Now Flash drafts the read-through for every call within minutes, and our analysts start from the questions that matter.",
+    name: "Aisha Verma",
+    role: "Director of Equity Research, Lumenta",
+    figure: "10X",
+    figureLabel: "More calls covered each quarter",
+  },
+  {
+    company: "Arborly",
+    mark: MARK.arbor,
+    quote:
+      "We tested Flash against our own models for a month. It caught the same signals, faster, and explained them in a way the whole desk could follow.",
+    name: "Marcus Lee",
+    role: "Quant Strategist, Arborly",
+    figure: "92%",
+    figureLabel: "Of answers used without edits",
+  },
   {
     company: "Converra",
     mark: MARK.converra,
@@ -75,6 +105,11 @@ const TESTIMONIALS: Testimonial[] = [
 
 const ROTATE_MS = 7000;
 
+/** A run of the title in one of the frame's faces. */
+function F({ f, children }: { f: "pp" | "bg" | "pg" | "sg"; children: string }) {
+  return <span className={`testimonials__face--${f}`}>{children}</span>;
+}
+
 const initials = (name: string) =>
   name
     .split(/\s+/)
@@ -98,6 +133,18 @@ export default function FlashTestimonials() {
     return () => window.clearTimeout(timer);
   }, [active, chosen, held]);
 
+  // On phones the tabs scroll sideways: keep the current one in view (without
+  // moving the page, which scrollIntoView would).
+  useEffect(() => {
+    const tabs = boxRef.current?.querySelector<HTMLElement>(".testimonials__tabs");
+    const tab = tabs?.children[active] as HTMLElement | undefined;
+    if (!tabs || !tab || tabs.scrollWidth <= tabs.clientWidth) return;
+    const left = tab.offsetLeft - tabs.offsetLeft;
+    if (left < tabs.scrollLeft || left + tab.offsetWidth > tabs.scrollLeft + tabs.clientWidth) {
+      tabs.scrollTo({ left: left - (tabs.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
+    }
+  }, [active]);
+
   const choose = (index: number) => {
     setActive(index);
     setChosen(true);
@@ -117,18 +164,33 @@ export default function FlashTestimonials() {
 
   return (
     <section className="testimonials" aria-labelledby="testimonials-title">
-      <header className="testimonials__head">
-        <div>
-          <p className="testimonials__label">Testimonials</p>
-          <h2 id="testimonials-title" className="testimonials__title">
-            Trusted by many users
-          </h2>
-        </div>
-        <p className="testimonials__intro">
-          Research teams use Flash to read the market faster, cover more companies and check every answer
-          against its source.
-        </p>
-      </header>
+      {/* Frame 11:3765's title, letter for letter: the first line sets single
+          letters in other faces, as the hero's headline does; the second is Nata
+          Sans throughout. (The frame spells "Rsearch".) */}
+      <h2 id="testimonials-title" className="testimonials__title">
+        <span className="testimonials__title-line">
+          <F f="pp">T</F>
+          <F f="bg">ru</F>
+          <F f="pp">s</F>
+          <F f="pg">t</F>
+          <F f="pp">ed B</F>
+          <F f="sg">y</F>
+          <F f="pp"> O</F>
+          <F f="bg">ur</F>
+          <F f="pp"> Pilo</F>
+          <F f="pg">t </F>
+          <F f="pp">Pa</F>
+          <F f="bg">r</F>
+          <F f="pg">t</F>
+          <F f="bg">n</F>
+          <F f="pp">e</F>
+          <F f="bg">r</F>
+          <F f="pp">s</F>
+        </span>
+        <span className="testimonials__title-line testimonials__title-line--sub">
+          Rsearch Teams Use Flash To Read The Market Faster
+        </span>
+      </h2>
 
       <div
         className="testimonials__box"
