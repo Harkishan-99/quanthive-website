@@ -170,7 +170,11 @@
 :root[data-marks-enter] .motif--left,
 :root[data-marks-enter] .motif--right {
   view-transition-name: none;
-  animation-delay: calc(var(--page-t0, 0s) + 0.05s);
+  /* A little quicker than a fresh load's entrance, and before the centre: in as
+     the ground finishes turning. */
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: calc(var(--page-t0, 0s) - 0.5s);
 }
 
 /* --- Phones ------------------------------------------------------------------
