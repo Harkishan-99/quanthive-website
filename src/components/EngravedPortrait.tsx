@@ -100,7 +100,7 @@ function engrave(light: Float32Array, size: number, seed: number) {
   const rand = random(seed * 7 + 1);
   const pitch = Math.max(3, size / 118); // line spacing: fine enough for a face to read
   const wave = size / 5; // wavelength of the lines' sway
-  const sway = pitch * 0.9; // gentle, so the lines don't fight the features
+  const sway = pitch * 0.6; // gentle, so the lines don't fight the features
   const tilt = (rand() - 0.5) * 0.3;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -112,13 +112,16 @@ function engrave(light: Float32Array, size: number, seed: number) {
       const d = Math.abs((v - Math.floor(v)) - 0.5) * 2; // 0 on a line's centre, 1 between
       const grit = (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
       // Lights carry no ink at all; elsewhere a little grit roughens the edges.
-      const width = dark < 0.06 ? 0 : Math.min(1, dark * 1.05) + Math.abs(grit) * 0.05 - 0.025;
+      const width = dark < 0.08 ? 0 : Math.min(0.92, dark * 0.9) + Math.abs(grit) * 0.04 - 0.02;
       const ink = d < width ? 1 : 0;
       const o = i * 4;
-      if (ink) {
-        px[o] = px[o + 1] = px[o + 2] = 11;
-        px[o + 3] = 255;
-      }
+      // Under the lines, a soft grey print of the photo itself, so a face keeps
+      // its features (eyes, brows, the shape of the mouth) between the strokes.
+      const tone = ink ? 11 : Math.round(244 - dark * 150);
+      px[o] = tone;
+      px[o + 1] = tone + (ink ? 0 : 2);
+      px[o + 2] = tone + (ink ? 0 : 3);
+      px[o + 3] = 255;
     }
   }
   return img;
