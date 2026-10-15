@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { LOREM_LONG, PageHead } from "./AboutPage";
+import { PageHead } from "./AboutPage";
 import "./AboutPage.css";
 import "./ContactPage.css";
 
@@ -9,8 +9,8 @@ import "./ContactPage.css";
 // /api/contact (api/contact.ts), which mails the message to the team.
 
 // Where the map points. A place name or full street address both work.
-const MAP_PLACE = "India";
-const MAP_ZOOM = 4;
+const MAP_PLACE = "X6RV+C5 Chennai, Tamil Nadu"; // Google plus code of the office
+const MAP_ZOOM = 16;
 const MAP_SRC = `https://maps.google.com/maps?q=${encodeURIComponent(MAP_PLACE)}&z=${MAP_ZOOM}&output=embed`;
 
 type Status = { state: "idle" | "sending" | "sent" } | { state: "error"; message: string };
@@ -52,7 +52,10 @@ export default function ContactPage() {
         </PageHead>
 
         <div className="about-page__copy">
-          <p>{LOREM_LONG}</p>
+          <p>
+            We&apos;d love to hear from you. Tell us what slows your research down, and we&apos;ll help you put
+            Flash to work for your team.
+          </p>
         </div>
 
         <div className="contact-page__body">
