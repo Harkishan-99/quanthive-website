@@ -321,6 +321,18 @@
   letter-spacing: -0.03em;
 }
 
+/* Large screens: a roomier bar and taller fields. */
+@media (min-width: 1101px) {
+  .careers-page__bar {
+    min-height: clamp(76px, 4vw, 92px);
+  }
+
+  .careers-page__field input {
+    height: clamp(34px, 1.8vw, 40px);
+    padding: 0 12px;
+  }
+}
+
 /* --- The end: two rules, the motif between them -------------------------------------- */
 
 .careers-page__end {
