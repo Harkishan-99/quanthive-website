@@ -1,5 +1,6 @@
 import { join, normalize } from "node:path";
 import index from "./index.html";
+import { handleCareers } from "./api/careers.ts";
 import { handleContact } from "./api/contact.ts";
 import { handleNewsletter } from "./api/newsletter.ts";
 import { handleWaitlist } from "./api/waitlist.ts";
@@ -73,6 +74,10 @@ const server = Bun.serve({
     // The contact page's form (api/contact.ts).
     "/api/contact": {
       POST: (req, srv) => handleContact(req, srv.requestIP(req)?.address),
+    },
+    // The Careers page's applications (api/careers.ts).
+    "/api/careers": {
+      POST: (req, srv) => handleCareers(req, srv.requestIP(req)?.address),
     },
     "/videos/:file": (req) =>
       new Response(Bun.file(join(VIDEO_DIR, safeName(req.params.file)))),

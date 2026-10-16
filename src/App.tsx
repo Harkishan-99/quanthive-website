@@ -5,6 +5,7 @@ import AnnouncementBar from "./components/AnnouncementBar";
 import ArticlePage from "./components/ArticlePage";
 import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
+import CareersPage from "./components/CareersPage";
 import ContactPage from "./components/ContactPage";
 import MaintenancePage from "./components/MaintenancePage";
 import TeamPage from "./components/TeamPage";
@@ -45,6 +46,7 @@ const PAGE_TITLE: Record<Page, string> = {
   about: "About | QuantHive",
   team: "Team | QuantHive",
   contact: "Contact | QuantHive",
+  careers: "Careers | QuantHive",
   blog: "Blog | QuantHive",
   article: "Blog | QuantHive", // ArticlePage names the tab after the article
   maintenance: "Under maintenance | QuantHive",
@@ -194,6 +196,8 @@ function Site() {
         <TeamPage />
       ) : page === "contact" ? (
         <ContactPage />
+      ) : page === "careers" ? (
+        <CareersPage />
       ) : (
         <>
           {/* Fixed to the viewport, so the pages scroll past a single pair rather than
