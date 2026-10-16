@@ -15,7 +15,7 @@ const LEADERS = [
   {
     name: "Harkishan Singh Baniya",
     role: "Founder & CEO",
-    bio: "Leads QuantHive's strategy and product, building research tools that bring AI and quantitative modelling to everyday investment analysis.",
+    bio: "Has built open-source quantitative finance tools and consulted for high-frequency trading firms, and now leads QuantHive's strategy and product.",
     linkedin: "https://www.linkedin.com/in/harkishan/",
     photo: "/images/team/harkishan.jpg",
   },
