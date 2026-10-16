@@ -438,8 +438,21 @@
     text-align: center;
   }
 
+  /* Sent: the person at the left, the thanks set to the right, on one row. */
   .careers-page__bar--sent {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 20px;
+  }
+
+  .careers-page__bar--sent .careers-page__person {
+    margin: 0;
+  }
+
+  .careers-page__bar--sent .careers-page__thanks {
+    grid-column: 2;
+    text-align: right;
+    text-wrap: balance;
   }
 }
 
