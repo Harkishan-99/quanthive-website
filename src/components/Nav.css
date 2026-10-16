@@ -1355,7 +1355,7 @@
 /* --- The drawer's columns: the four links, resources (Blog), the Flash card ---- */
 .nav__dropdown-header-row,
 .nav__dropdown-body-row {
-  grid-template-columns: 1fr minmax(300px, 390px) minmax(220px, 270px) minmax(290px, 360px) 1fr;
+  grid-template-columns: 1fr minmax(300px, 380px) minmax(220px, 270px) minmax(290px, 360px) 1fr; /* the first 380, not 390: the gaps between the three columns' contents come out equal */
 }
 
 /* Its own colour, as each link's icon has. */
