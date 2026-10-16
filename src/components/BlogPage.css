@@ -269,16 +269,6 @@ a.blog-page__post-link:hover {
   line-height: 1.22;
 }
 
-/* The small grey motif closing the page. */
-.blog-page__end {
-  display: block;
-  width: calc(clamp(22px, 1.51vw, 29px) * 450 / 390);
-  aspect-ratio: 450 / 453.649;
-  margin: clamp(56px, 5.6vw, 108px) auto 0;
-  background: #e2e2e2;
-  -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
-  mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
-}
 
 /* --- Phones ---------------------------------------------------------------------------- */
 

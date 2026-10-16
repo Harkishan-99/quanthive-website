@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ARTICLES, type Article } from "../content/articles";
-import { PageHead } from "./AboutPage";
+import { PageEnd, PageHead } from "./AboutPage";
 import { articleHref } from "./ArticlePage";
 import "./AboutPage.css";
 import "./BlogPage.css";
@@ -158,7 +158,7 @@ export default function BlogPage() {
           )}
         </ul>
 
-        <span className="blog-page__end" aria-hidden />
+        <PageEnd />
       </article>
     </main>
   );
