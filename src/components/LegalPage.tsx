@@ -101,6 +101,7 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
         <hr className="about-page__rule" />
 
         <div className="legal-page__body">
+          <div className="legal-page__sections">
           {text.sections.map((section, n) => (
             <section key={section.title} className="legal-page__section">
               <h2>
@@ -137,6 +138,7 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
               </span>
             </address>
           </section>
+          </div>
 
           <p className="legal-page__updated">Last updated: {text.updated}</p>
         </div>

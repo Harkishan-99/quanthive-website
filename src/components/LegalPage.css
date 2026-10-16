@@ -76,6 +76,7 @@
 
 .legal-page__section {
   margin-top: clamp(32px, 2.4vw, 46px);
+  break-inside: avoid;
   font-family: "Nata Sans", var(--font-ui, sans-serif);
   font-size: clamp(15px, 0.86vw, 16.5px);
   font-weight: 500;
@@ -153,6 +154,27 @@
   background: #e2e2e2;
   -webkit-mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
   mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
+}
+
+/* Large screens: the sections in two columns, read down the first and on down
+   the second, none split between them. Spaced by padding below rather than a
+   margin above, so the second column starts level with the first. */
+@media (min-width: 1101px) {
+  .legal-page__sections {
+    margin-top: clamp(32px, 2.4vw, 45px);
+    column-count: 2;
+    column-gap: calc(var(--u) * 64);
+  }
+
+  .legal-page__sections .legal-page__section,
+  .legal-page__sections .legal-page__section:first-child {
+    margin-top: 0;
+    padding-bottom: clamp(30px, 2.2vw, 42px);
+  }
+
+  .legal-page__sections + .legal-page__updated {
+    margin-top: 0;
+  }
 }
 
 /* --- Phones ---------------------------------------------------------------------- */
