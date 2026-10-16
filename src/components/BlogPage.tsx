@@ -149,7 +149,9 @@ export default function BlogPage() {
               </li>
             ) : (
               <li key={index} className="blog-page__post blog-page__post--soon" aria-hidden>
-                <div className="blog-page__post-image" />
+                <div className="blog-page__post-image">
+                  <PostArt />
+                </div>
                 <p className="blog-page__post-title">Coming soon</p>
               </li>
             ),

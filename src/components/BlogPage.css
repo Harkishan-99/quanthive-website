@@ -254,8 +254,9 @@ a.blog-page__post-link:hover {
   list-style: none;
 }
 
+/* The featured post's proportions (320 × 198; 320 × 250 on a phone, below). */
 .blog-page__post-image {
-  aspect-ratio: 250 / 166;
+  aspect-ratio: 320 / 198;
   overflow: hidden;
   background: #f9f9f9;
 }
@@ -331,6 +332,10 @@ a.blog-page__post-link:hover {
 
   .blog-page__posts {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .blog-page__post-image {
+    aspect-ratio: 320 / 250;
   }
 }
 
