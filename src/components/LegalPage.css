@@ -2,8 +2,8 @@
    page's column (AboutPage.css):
 
    - the opening paragraph at the lead's 25 (.about-page__copy);
-   - the details as the frames' labelled lines: a label 10 in #b5b5b5, tracked
-     out and in capitals, the value under it, a hairline below; two to a row;
+   - the details: a label 10 in #b5b5b5, tracked out and in capitals, the
+     value under it; two to a row;
    - the sections: numbered titles 22, paragraphs and lists 16 in Nata Sans, the
      column's measure;
    - the end: two #e3e3e3 rules with the small grey motif between them.
@@ -46,7 +46,6 @@
 
 .legal-page__details > div {
   padding: 14px 0 12px;
-  border-bottom: 1px solid var(--rule);
 }
 
 .legal-page__details dt {
