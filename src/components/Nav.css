@@ -1872,7 +1872,8 @@
   transition-delay: 200ms;
 }
 
-/* --- Phones: titles a size down, each ending in a diagonal arrow -------------- */
+/* --- Phones: titles a size down, each ending in a diagonal arrow, the links
+   closer together -------------------------------------------------------------- */
 .nav__mega-item-arrow {
   display: none;
 }
@@ -1880,6 +1881,20 @@
 @media (max-width: 640px) {
   .nav .nav__mega-item-title {
     font-size: 19px;
+  }
+
+  .nav .nav__dropdown-col:not(.nav__dropdown-col--cards) {
+    gap: 0;
+  }
+
+  .nav .nav__dropdown-col .nav__mega-item {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* Blog and Careers follow Contact at the same spacing. */
+  .nav .nav__dropdown-col.nav__dropdown-col--resources {
+    margin-top: -24px;
   }
 
   .nav__mega-item-arrow {
