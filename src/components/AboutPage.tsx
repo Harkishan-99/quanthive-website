@@ -22,7 +22,7 @@ const LEADERS = [
   {
     name: "Dr. Neelesh S Upadhye",
     role: "Co-Founder & Advisor",
-    bio: "Distinguished academic with extensive research in mathematical modeling and computational finance, providing strategic guidance on algorithm development and validation.",
+    bio: "Ex quant desk head at Dolat Capital, with research in mathematical modeling and computational finance, giving strategic guidance on algorithm development and validation.",
     linkedin: "https://www.linkedin.com/in/neelesh-upadhye-3b031956/",
     photo: "/images/team/neelesh.jpg",
   },
