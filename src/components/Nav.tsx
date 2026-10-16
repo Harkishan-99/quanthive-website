@@ -43,7 +43,7 @@ const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | "blog" | "caree
 const RESOURCE_ITEMS = [
   {
     title: "Blog",
-    blurb: "Insights, research notes and product news.",
+    blurb: "Research notes and product news.",
     // A page with lines of text.
     icon: (
       <LineIcon>
@@ -55,7 +55,7 @@ const RESOURCE_ITEMS = [
   },
   {
     title: "Careers",
-    blurb: "Open roles on the team at IITM Research Park.",
+    blurb: "Open roles at IITM Research Park.",
     // A briefcase.
     icon: (
       <LineIcon>
