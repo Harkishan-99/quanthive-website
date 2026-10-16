@@ -1,3 +1,5 @@
+import { MAINTENANCE_SEO, PAGES } from "./content/seo";
+import { applySeo } from "./lib/seo";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import AbstractLines from "./components/AbstractLines";
@@ -40,21 +42,10 @@ if (typeof window !== "undefined") canonicaliseAddress();
 // /showcase: the About panel's demo alone, full screen, for a display.
 const SHOWCASE_ONLY = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") === "/showcase";
 
-// The browser tab's name on each page (index.html carries the landing page's).
-const PAGE_TITLE: Record<Page, string> = {
-  landing: "QuantHive | Financial Analytics Made Easy",
-  product: "Flash | QuantHive",
-  about: "About | QuantHive",
-  team: "Team | QuantHive",
-  contact: "Contact | QuantHive",
-  careers: "Careers | QuantHive",
-  terms: "Terms & Conditions | QuantHive",
-  privacy: "Privacy Policy | QuantHive",
-  license: "License | QuantHive",
-  blog: "Blog | QuantHive",
-  article: "Blog | QuantHive", // ArticlePage names the tab after the article
-  maintenance: "Under maintenance | QuantHive",
-};
+// What each page tells search engines and link previews (its title is the
+// tab's): src/content/seo.ts.
+const seoFor = (page: Page) =>
+  page === "maintenance" ? MAINTENANCE_SEO : PAGES.find((p) => p.path === PAGE_URL[page]) ?? PAGES[0]!;
 
 // The pages that open on a hero; changing between two of them hands one hero
 // over to the other (page-transition.css).
@@ -95,7 +86,7 @@ function Site() {
   // dark hero (Nav.css, AnnouncementBar.css), and so does the page ground.
   useEffect(() => {
     document.documentElement.dataset.page = page;
-    if (page !== "article") document.title = PAGE_TITLE[page];
+    if (page !== "article") applySeo(seoFor(page)); // ArticlePage sets its own
   }, [page]);
 
   // Changing page is one view transition, not a reload (page-transition.css): the

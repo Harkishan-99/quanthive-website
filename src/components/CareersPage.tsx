@@ -1,4 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import { POSITIONS, type Position } from "../content/careers";
 import { PageHead } from "./AboutPage";
 import "./AboutPage.css";
 import "./CareersPage.css";
@@ -9,45 +10,6 @@ import "./CareersPage.css";
 // Now" opens a black bar under its row — name, email, send — that applies for
 // that role (POST /api/careers, mailed like the contact form). One bar at a time.
 
-type Position = { role: string; requirement: string; mode: string; term: string; location: string; art: string };
-
-// Each role's tile: an abstract motion blur (288 × 167 WebP, a few KB each).
-const ART = "/images/careers-";
-
-const POSITIONS: Position[] = [
-  {
-    role: "Software Developer Intern",
-    art: `${ART}tide.webp`,
-    requirement: "Prior Internship Experience Required",
-    mode: "Remote / On Site",
-    term: "2 Months ( extendable )",
-    location: "IITM Research Park, Chennai",
-  },
-  {
-    role: "Research Software Engineer",
-    art: `${ART}slate.webp`,
-    requirement: "Prior Work Experience Required",
-    mode: "Remote / On Site",
-    term: "Contract Based ( Post Interview )",
-    location: "IITM Research Park, Chennai",
-  },
-  {
-    role: "Backend Developer Intern",
-    art: `${ART}ember.webp`,
-    requirement: "Prior Internship Experience Required",
-    mode: "Remote / On Site",
-    term: "2 Months ( extendable )",
-    location: "IITM Research Park, Chennai",
-  },
-  {
-    role: "UI/UX Designer Intern",
-    art: `${ART}dusk.webp`,
-    requirement: "Prior Internship Experience Required",
-    mode: "Remote / On Site",
-    term: "2 Months ( extendable )",
-    location: "IITM Research Park, Chennai",
-  },
-];
 
 export default function CareersPage() {
   const [open, setOpen] = useState<string | null>(null);

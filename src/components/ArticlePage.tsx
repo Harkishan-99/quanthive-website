@@ -1,3 +1,5 @@
+import { articleSeo } from "../content/seo";
+import { applySeo } from "../lib/seo";
 import { useEffect, useState } from "react";
 import { articleBySlug, sectionId, type Article, type Block, type Face } from "../content/articles";
 import { navigate } from "../lib/router";
@@ -252,7 +254,7 @@ export default function ArticlePage() {
   const article = articleBySlug(slug);
 
   useEffect(() => {
-    if (article) document.title = `${article.title} | QuantHive`;
+    if (article) applySeo(articleSeo(article));
   }, [article]);
 
   return (
