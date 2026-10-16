@@ -403,8 +403,8 @@
   /* The bar stacks: the fields full width, Apply Now under them. */
   .careers-page__bar {
     grid-template-columns: 1fr;
-    row-gap: 10px;
-    padding: 16px 14px;
+    row-gap: 14px;
+    padding: 28px 22px 26px;
   }
 
   .careers-page__person {
@@ -417,21 +417,22 @@
 
   .careers-page__field input {
     width: 100%;
-    height: 40px;
-    padding: 0 12px;
+    height: 46px;
+    padding: 0 14px;
     font-size: 16px; /* under 16, iOS zooms in on focus */
   }
 
   .careers-page__send {
     grid-column: 1;
-    justify-self: end;
-    margin-top: 4px;
+    justify-self: center;
+    margin-top: 12px;
     font-size: 14px;
   }
 
   .careers-page__error,
   .careers-page__thanks {
     grid-column: 1;
+    text-align: center;
   }
 
   .careers-page__bar--sent {
