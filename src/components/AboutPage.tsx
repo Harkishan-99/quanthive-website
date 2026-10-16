@@ -66,7 +66,7 @@ function IncubationCellSeal() {
 // `o`: a little more opacity for a fine-lined seal, which fades out sooner.
 const PARTNERS: { name: string; w: number; o?: number; logo: ReactNode }[] = [
   { name: "Citi", w: 0.26, logo: <img src={`${LOGO}/logo-citi.svg`} alt="" /> },
-  { name: "Google", w: 0.38, logo: <img src={`${LOGO}/logo-google.svg`} alt="" /> },
+  { name: "Google", w: 0.456, logo: <img src={`${LOGO}/logo-google.svg`} alt="" /> },
   { name: "AWS", w: 0.24, logo: <img src={`${LOGO}/logo-aws.svg`} alt="" /> },
   { name: "Anthropic", w: 0.56, logo: <img src={`${LOGO}/logo-anthropic.svg`} alt="" /> },
   {
