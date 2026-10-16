@@ -1880,7 +1880,34 @@
 
 @media (max-width: 640px) {
   .nav .nav__mega-item-title {
-    font-size: 19px;
+    font-size: 17px;
+  }
+
+  .nav .nav__dropdown-col .nav-pixel-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav .nav__dropdown-col .nav-pixel-icon__glyph {
+    width: 17px;
+    height: 17px;
+  }
+
+  .nav .nav__dropdown-col .nav__mega-item {
+    gap: 14px;
+  }
+
+  .nav .nav__drawer-cta {
+    height: 46px;
+    font-size: 14px;
+  }
+
+  .nav .nav__promo-title {
+    font-size: 16px;
+  }
+
+  .nav .nav__promo-blurb {
+    font-size: 12.5px;
   }
 
   .nav .nav__dropdown-col:not(.nav__dropdown-col--cards) {
@@ -1947,8 +1974,8 @@
   .nav__mega-item-arrow {
     display: block;
     flex: none;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     margin-left: auto;
     fill: none;
     stroke: currentColor;
