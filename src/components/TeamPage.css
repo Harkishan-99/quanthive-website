@@ -203,8 +203,24 @@
   mask: url("../assets/icons/hero-motif.svg") 0 0 / 100% 100% no-repeat;
 }
 
-/* Phones: two to a row. */
+/* Phones: two to a row. The join line takes the column's full width, the
+   Careers key full width under it. */
 @media (max-width: 640px) {
+  .team-page__join {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .team-page__join-text {
+    max-width: none;
+  }
+
+  .team-page__join-key {
+    width: 100%;
+    height: 52px;
+  }
+
   .team-page__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px 12px;
