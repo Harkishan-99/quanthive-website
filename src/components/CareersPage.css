@@ -58,12 +58,15 @@
   text-wrap: pretty;
 }
 
+/* As tall as the notes beside it, however many lines they run to, inset a
+   little at each end to sit within the text's ink. */
 .careers-page__divider {
+  align-self: stretch;
   width: 1px;
-  height: clamp(40px, 2.55vw, 52px);
-  margin-top: 7px;
+  margin: 0.3em 0;
   justify-self: center;
   background: var(--grey);
+  font-size: clamp(14px, 0.81vw, 15px);
 }
 
 /* --- Open Positions ------------------------------------------------------------------ */

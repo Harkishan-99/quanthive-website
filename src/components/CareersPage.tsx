@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { PageHead } from "./AboutPage";
 import "./AboutPage.css";
 import "./CareersPage.css";
@@ -51,6 +51,8 @@ const POSITIONS: Position[] = [
 
 export default function CareersPage() {
   const [open, setOpen] = useState<string | null>(null);
+  const notesRef = useRef<HTMLDivElement>(null);
+  useEvenLines(notesRef);
 
   return (
     <main className="about-page careers-page" aria-labelledby="careers-title">
@@ -70,7 +72,7 @@ export default function CareersPage() {
           </p>
         </div>
 
-        <div className="careers-page__notes">
+        <div className="careers-page__notes" ref={notesRef}>
           <p>
             At QuantHive, we're combining AI, quantitative finance, and engineering to simplify complex financial
             research and build smarter investment solutions.
@@ -108,6 +110,56 @@ export default function CareersPage() {
       </article>
     </main>
   );
+}
+
+/** Keeps the two notes to the same number of lines: whichever runs to fewer is
+ *  narrowed — as little as it takes — until it wraps to as many as the other.
+ *  Rechecked whenever the notes change size (the window, the fonts loading). */
+function useEvenLines(ref: React.RefObject<HTMLDivElement | null>) {
+  useLayoutEffect(() => {
+    const box = ref.current;
+    if (!box) return;
+    const [first, second] = box.querySelectorAll("p");
+    if (!first || !second) return;
+    const notes = [first, second];
+    const lines = (p: HTMLElement) =>
+      Math.round(p.getBoundingClientRect().height / parseFloat(getComputedStyle(p).lineHeight));
+    let width = 0;
+    const even = () => {
+      // Side by side only; stacked on a phone, each keeps its own lines.
+      if (getComputedStyle(box).gridTemplateColumns.split(" ").length < 3) {
+        notes.forEach((p) => (p.style.maxWidth = ""));
+        return;
+      }
+      notes.forEach((p) => (p.style.maxWidth = ""));
+      const a = lines(first);
+      const b = lines(second);
+      if (a === b) return;
+      const short = a < b ? first : second;
+      const target = Math.max(a, b);
+      // The widest width at which the shorter note wraps to the other's lines.
+      let hi = short.getBoundingClientRect().width;
+      let lo = hi * 0.4;
+      for (let i = 0; i < 12; i++) {
+        const mid = (lo + hi) / 2;
+        short.style.maxWidth = `${mid}px`;
+        if (lines(short) >= target) lo = mid;
+        else hi = mid;
+      }
+      short.style.maxWidth = `${Math.floor(lo)}px`;
+    };
+    even();
+    const observer = new ResizeObserver(() => {
+      const w = box.getBoundingClientRect().width;
+      if (w !== width) {
+        width = w;
+        even();
+      }
+    });
+    observer.observe(box);
+    document.fonts?.ready.then(even);
+    return () => observer.disconnect();
+  }, [ref]);
 }
 
 function PositionRow({ position, open, onToggle }: { position: Position; open: boolean; onToggle: () => void }) {
