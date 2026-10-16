@@ -194,6 +194,11 @@ function layout(seed: number) {
   return cells;
 }
 
+/** Small portraits (a phone's) carry the face in too few lines for the full
+ *  engraving: it eases off below 240 CSS px (as large as the Team page's boxes
+ *  on a desktop), to half by 120. */
+const sizeFactor = (css: number) => Math.min(1, Math.max(0.5, 0.5 + ((css - 120) / 120) * 0.5));
+
 export default function EngravedPortrait({
   src,
   seed,
@@ -229,7 +234,7 @@ export default function EngravedPortrait({
 
       const engraving = document.createElement("canvas");
       engraving.width = engraving.height = size;
-      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed, strength), 0, 0);
+      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed, strength * sizeFactor(css)), 0, 0);
 
       const rand = random(seed * 13 + 5);
       const cell = size / GRID;
