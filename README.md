@@ -12,6 +12,7 @@ Pages (one app; moving between them never reloads):
 - `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); the newest article is its featured post
 - `/blog/<slug>` — an article; articles are data in `src/content/articles.ts` (add one there to publish it; its sections fill the Contents navigator automatically)
 - `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
+- `/terms`, `/privacy`, `/license` — the legal pages (text in `src/content/legal.ts`)
 - `/careers` — Careers page (each role's Apply Now posts to `/api/careers`, mailed the same way)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 

@@ -7,6 +7,7 @@ import BlogPage from "./components/BlogPage";
 import Capabilities from "./components/Capabilities";
 import CareersPage from "./components/CareersPage";
 import ContactPage from "./components/ContactPage";
+import LegalPage from "./components/LegalPage";
 import MaintenancePage from "./components/MaintenancePage";
 import TeamPage from "./components/TeamPage";
 import EdgeMotifs from "./components/EdgeMotifs";
@@ -47,6 +48,9 @@ const PAGE_TITLE: Record<Page, string> = {
   team: "Team | QuantHive",
   contact: "Contact | QuantHive",
   careers: "Careers | QuantHive",
+  terms: "Terms & Conditions | QuantHive",
+  privacy: "Privacy Policy | QuantHive",
+  license: "License | QuantHive",
   blog: "Blog | QuantHive",
   article: "Blog | QuantHive", // ArticlePage names the tab after the article
   maintenance: "Under maintenance | QuantHive",
@@ -198,6 +202,8 @@ function Site() {
         <ContactPage />
       ) : page === "careers" ? (
         <CareersPage />
+      ) : page === "terms" || page === "privacy" || page === "license" ? (
+        <LegalPage key={page} doc={page} />
       ) : (
         <>
           {/* Fixed to the viewport, so the pages scroll past a single pair rather than

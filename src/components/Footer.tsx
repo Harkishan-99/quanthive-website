@@ -34,9 +34,9 @@ const FOOTER_COLUMNS: { title: string; links: [string, string | null][] }[] = [
       ["Blog", "/blog"],
       ["Reports", "/reports"],
       ["Press Kit", "/press"],
-      ["Legal", "/legal"],
+      ["License", "/license"],
       ["Privacy Policy", "/privacy"],
-      ["Terms of Use", "/terms"],
+      ["Terms & Conditions", "/terms"],
     ],
   },
   {
