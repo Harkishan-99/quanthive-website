@@ -582,18 +582,19 @@
 }
 
 /* Phone: 8 columns. The video (8×13) and the wordmark (8×2) run the field's full
-   width; the founder card (6×5) keeps a clear cell on every side. So the field
-   runs taller here than on wider screens. */
+   width; under them the Blog tile (4×3) from the field's left edge, and "Get in
+   touch" beside it at the right, footed level with the tile, a clear cell
+   between them. So the field runs taller here than on wider screens. */
 @media (max-width: 640px) {
   .about {
     --cols: 8;
-    --rows: 23;
+    --rows: 22;
   }
 
   .about__video { grid-column: 1 / span 8; grid-row: 2 / span 13; }
   .about__brand { --span: 8; grid-column: 1 / span var(--span); grid-row: 16 / span 2; }
-  .about__blog { grid-column: 2 / span 3; grid-row: 19 / span 2; }
-  .about__cta { grid-column: 5 / span 3; grid-row: 22; font-size: 12px; }
+  .about__blog { grid-column: 1 / span 4; grid-row: 19 / span 3; }
+  .about__cta { grid-column: 6 / span 3; grid-row: 21; font-size: 12px; }
 
   /* The panel's "⋯" menu, a touch larger and further apart for a thumb. */
   .about__video .glass-menu { --key: max(36px, 10cqmin); --key-gap-min: 14; }
