@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import { navigate } from "../lib/router";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
@@ -127,6 +127,41 @@ export function PageHead({ id, children }: { id: string; children: ReactNode }) 
   );
 }
 
+/** A line inviting the reader on (left) and a square black key to the page it
+ *  means (right): "Careers ↗" over a dotted rule. Stacked on a phone. Closes
+ *  the Team and About pages. */
+export function PageInvite({ label, href, children }: { label: string; href: string; children: ReactNode }) {
+  const open = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    navigate(href);
+  };
+  return (
+    <section className="about-page__invite" aria-label={label}>
+      <p className="about-page__invite-text">{children}</p>
+      <a className="about-page__invite-key" href={href} onClick={open}>
+        <span className="about-page__invite-label">
+          {label}
+          <svg viewBox="0 0 12 12" aria-hidden>
+            <path d="M3 9 9 3M4 3h5v5" />
+          </svg>
+        </span>
+      </a>
+    </section>
+  );
+}
+
+/** The close of a page: two rules with the small grey motif between them. */
+export function PageEnd() {
+  return (
+    <div className="about-page__end" aria-hidden>
+      <span />
+      <span className="about-page__end-motif" />
+      <span />
+    </div>
+  );
+}
+
 export default function AboutPage() {
   return (
     <main className="about-page" aria-labelledby="about-page-title">
@@ -204,6 +239,15 @@ export default function AboutPage() {
             ))}
           </ul>
         </section>
+
+        <hr className="about-page__rule about-page__rule--close" />
+
+        <PageInvite label="Contact" href="/contact">
+          Looking to partner with us? Reach out with your details and we'll get back to you to explore how we can
+          work together.
+        </PageInvite>
+
+        <PageEnd />
       </article>
     </main>
   );

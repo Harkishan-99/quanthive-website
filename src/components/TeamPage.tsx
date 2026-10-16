@@ -1,6 +1,5 @@
-import type { CSSProperties, MouseEvent } from "react";
-import { navigate } from "../lib/router";
-import { PageHead } from "./AboutPage";
+import type { CSSProperties } from "react";
+import { PageEnd, PageHead, PageInvite } from "./AboutPage";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
 import "./TeamPage.css";
@@ -39,13 +38,6 @@ function Note({ lines }: { lines: string[] }) {
   );
 }
 
-/** The key opens Careers in place; a new tab or window opens it there. */
-function openCareers(event: MouseEvent<HTMLAnchorElement>) {
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-  event.preventDefault();
-  navigate("/careers");
-}
-
 export default function TeamPage() {
   return (
     <main className="about-page" aria-labelledby="team-page-title">
@@ -75,25 +67,11 @@ export default function TeamPage() {
 
         <hr className="about-page__rule team-page__rule" />
 
-        <section className="team-page__join" aria-label="Careers">
-          <p className="team-page__join-text">
-            Looking to be part of the team? Check out the open roles at QuantHive and find one that suits you.
-          </p>
-          <a className="team-page__join-key" href="/careers" onClick={openCareers}>
-            <span className="team-page__join-key-label">
-              Careers
-              <svg viewBox="0 0 12 12" aria-hidden>
-                <path d="M3 9 9 3M4 3h5v5" />
-              </svg>
-            </span>
-          </a>
-        </section>
+        <PageInvite label="Careers" href="/careers">
+          Looking to be part of the team? Check out the open roles at QuantHive and find one that suits you.
+        </PageInvite>
 
-        <div className="team-page__end" aria-hidden>
-          <span />
-          <span className="team-page__end-motif" />
-          <span />
-        </div>
+        <PageEnd />
       </article>
     </main>
   );
