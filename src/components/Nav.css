@@ -1355,10 +1355,11 @@
 /* --- The drawer's columns: the four links, resources (Blog), the Flash card ---- */
 .nav__dropdown-header-row,
 .nav__dropdown-body-row {
-  /* Resources as wide as its one-line descriptions. The first column's 375 and
-     Resources' extra 5px at its right (below) leave the same space between
-     each column's contents and the next's. */
-  grid-template-columns: 1fr minmax(300px, 375px) max-content minmax(290px, 360px) 1fr;
+  /* Resources 288: as wide as its one-line descriptions need (a fixed width,
+     not max-content, so the titles' row and the links' row match). The first
+     column's 375 and Resources' extra 5px at its right (below) leave the same
+     space between each column's contents and the next's. */
+  grid-template-columns: 1fr minmax(300px, 375px) 288px minmax(290px, 360px) 1fr;
 }
 
 /* Its descriptions on one line each (the column grows to hold them). */
