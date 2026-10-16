@@ -401,18 +401,27 @@
   }
 
   /* The bar stacks: the fields full width, Apply Now under them. */
+  /* The person at the top left, Apply Now level with it at the right; the
+     fields full width below. */
   .careers-page__bar {
-    grid-template-columns: 1fr;
-    row-gap: 14px;
-    padding: 28px 22px 26px;
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 18px;
+    padding: 28px 22px;
   }
 
-  /* The person heads the form, at its top left. */
   .careers-page__person {
     grid-column: 1;
+    grid-row: 1;
     justify-self: start;
-    margin: 0 0 2px;
+    margin: 0 0 6px;
   }
+
+  .careers-page__field {
+    grid-column: 1 / -1;
+  }
+
+  .careers-page__field--name { grid-row: 2; }
+  .careers-page__field--email { grid-row: 3; }
 
   .careers-page__field {
     padding-right: 0;
@@ -426,13 +435,21 @@
   }
 
   .careers-page__send {
-    grid-column: 1;
-    justify-self: center;
-    margin-top: 12px;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin: 0 0 6px;
     font-size: 14px;
   }
 
-  .careers-page__error,
+  .careers-page__error {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin: 0;
+    text-align: center;
+  }
+
   .careers-page__thanks {
     grid-column: 1;
     text-align: center;
