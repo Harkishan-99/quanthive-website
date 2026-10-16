@@ -407,8 +407,11 @@
     padding: 28px 22px 26px;
   }
 
+  /* The person heads the form, at its top left. */
   .careers-page__person {
-    display: none;
+    grid-column: 1;
+    justify-self: start;
+    margin: 0 0 2px;
   }
 
   .careers-page__field {
