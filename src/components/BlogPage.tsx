@@ -121,9 +121,20 @@ export default function BlogPage() {
               <time>{FEATURED.date}</time>
             </p>
           </div>
-          <div className="blog-page__featured-image">
-            {FEATURED.image ? <img src={FEATURED.image} alt="" style={{ objectPosition: FEATURED.imageFocus }} /> : FEATURED.href && <PostArt dark />}
-          </div>
+          {FEATURED.href ? (
+            // The picture opens the post too (its title is the link for keyboards
+            // and screen readers); on hover a small arrow in its corner says so.
+            <a className="blog-page__featured-image" href={FEATURED.href} tabIndex={-1} aria-hidden>
+              {FEATURED.image ? <img src={FEATURED.image} alt="" style={{ objectPosition: FEATURED.imageFocus }} /> : <PostArt dark />}
+              <span className="blog-page__featured-arrow">
+                <svg viewBox="0 0 12 12">
+                  <path d="M3 9 9 3M4 3h5v5" />
+                </svg>
+              </span>
+            </a>
+          ) : (
+            <div className="blog-page__featured-image" />
+          )}
         </article>
 
         <Newsletter />
