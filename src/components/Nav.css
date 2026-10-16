@@ -1892,9 +1892,22 @@
     padding-bottom: 8px;
   }
 
-  /* Blog and Careers follow Contact at the same spacing. */
+  /* Blog and Careers follow Contact, set off from the QuantHive links by a
+     hairline across the list (inset to the links' own edges). */
   .nav .nav__dropdown-col.nav__dropdown-col--resources {
-    margin-top: -24px;
+    margin-top: -16px;
+  }
+
+  .nav .nav__dropdown-col.nav__dropdown-col--resources::before {
+    display: block;
+    height: 1px;
+    margin: 0 10px 8px;
+    background: #e3e3e3;
+    content: "";
+  }
+
+  .nav[data-tone="dark"] .nav__dropdown-col.nav__dropdown-col--resources::before {
+    background: rgba(255, 255, 255, 0.14);
   }
 
   .nav__mega-item-arrow {
