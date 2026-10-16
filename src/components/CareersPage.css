@@ -321,10 +321,26 @@
   letter-spacing: -0.03em;
 }
 
+/* Tablets and up: each row and its bar 15% taller than the frame's. */
+@media (min-width: 641px) {
+  .careers-page__row {
+    row-gap: clamp(11.5px, 0.655vw, 15px);
+    padding: calc(var(--cell-x) * 1.15) 0;
+  }
+
+  .careers-page__tile {
+    min-height: clamp(68px, 3.6vw, 82px);
+  }
+
+  .careers-page__bar {
+    min-height: calc((clamp(58px, 3.02vw, 70px) + 2px) * 1.15);
+  }
+}
+
 /* Large screens: a roomier bar and taller fields. */
 @media (min-width: 1101px) {
   .careers-page__bar {
-    min-height: clamp(76px, 4vw, 92px);
+    min-height: clamp(87px, 4.6vw, 106px);
   }
 
   .careers-page__field input {
