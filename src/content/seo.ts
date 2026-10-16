@@ -25,6 +25,8 @@ export type PageSeo = {
   jsonLd?: object[];
   /** For link previews: "website" or "article". */
   type?: "website" | "article";
+  /** For link previews: the picture (an absolute URL); the site's own if unset. */
+  image?: string;
   /** How often it changes and its weight, for the sitemap. */
   changefreq?: "weekly" | "monthly" | "yearly";
   priority?: number;
@@ -246,6 +248,7 @@ export function articleSeo(article: Article): PageSeo {
     title: `${article.title} | QuantHive`,
     description,
     type: "article",
+    image: article.shareImage ? `${SITE}${article.shareImage}` : undefined,
     changefreq: "monthly",
     priority: 0.7,
     jsonLd: [
@@ -259,7 +262,7 @@ export function articleSeo(article: Article): PageSeo {
         publisher: { "@id": `${SITE}/#organization` },
         ...(published ? { datePublished: published } : {}),
         mainEntityOfPage: `${SITE}${path}`,
-        image: article.image ? `${SITE}${article.image}` : OG_IMAGE,
+        image: article.shareImage ? `${SITE}${article.shareImage}` : article.image ? `${SITE}${article.image}` : OG_IMAGE,
       },
       breadcrumbs([["QuantHive", "/"], ["Blog", "/blog"], [article.title, path]]),
     ],

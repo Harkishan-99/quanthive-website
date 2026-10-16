@@ -14,7 +14,7 @@ import "./BlogPage.css";
 // featured post, and every article also appears in the grid. Until there are
 // three, the grid's remaining places show quiet "coming soon" tiles.
 
-type Post = { tag?: string; title: string; excerpt?: string; author?: string; date?: string; image?: string; href?: string };
+type Post = { tag?: string; title: string; excerpt?: string; author?: string; date?: string; image?: string; imageFocus?: string; href?: string };
 
 const toPost = (article: Article): Post => ({
   tag: article.category,
@@ -23,6 +23,7 @@ const toPost = (article: Article): Post => ({
   author: article.author,
   date: article.date,
   image: article.image,
+  imageFocus: article.imageFocus,
   href: articleHref(article),
 });
 
@@ -121,7 +122,7 @@ export default function BlogPage() {
             </p>
           </div>
           <div className="blog-page__featured-image">
-            {FEATURED.image ? <img src={FEATURED.image} alt="" /> : FEATURED.href && <PostArt dark />}
+            {FEATURED.image ? <img src={FEATURED.image} alt="" style={{ objectPosition: FEATURED.imageFocus }} /> : FEATURED.href && <PostArt dark />}
           </div>
         </article>
 
@@ -135,10 +136,10 @@ export default function BlogPage() {
               <li key={index} className="blog-page__post">
                 {post.href ? (
                   <a className="blog-page__post-image" href={post.href} tabIndex={-1} aria-hidden>
-                    {post.image ? <img src={post.image} alt="" /> : <PostArt />}
+                    {post.image ? <img src={post.image} alt="" style={{ objectPosition: post.imageFocus }} /> : <PostArt />}
                   </a>
                 ) : (
-                  <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" />}</div>
+                  <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" style={{ objectPosition: post.imageFocus }} />}</div>
                 )}
                 {post.tag && <p className="blog-page__post-tag">{post.tag}</p>}
                 <h3 className="blog-page__post-title">

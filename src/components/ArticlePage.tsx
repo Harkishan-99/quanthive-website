@@ -213,7 +213,7 @@ function ArticleView({ article }: { article: Article }) {
 
         {/* No cover yet: the placeholder — the lattice, faint, round the motif. */}
         <div className="article-page__cover">
-          {article.image ? <img src={article.image} alt="" /> : <span className="article-page__cover-art" aria-hidden />}
+          {article.image ? <img src={article.image} alt="" style={{ objectPosition: article.imageFocus }} /> : <span className="article-page__cover-art" aria-hidden />}
         </div>
 
         <p className="article-page__lead">{article.lead}</p>

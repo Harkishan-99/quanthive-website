@@ -27,11 +27,11 @@ export function applySeo(seo: PageSeo) {
   meta("property", "og:url", url);
   meta("property", "og:type", seo.type ?? "website");
   meta("property", "og:site_name", SITE_NAME);
-  meta("property", "og:image", OG_IMAGE);
+  meta("property", "og:image", seo.image ?? OG_IMAGE);
   meta("name", "twitter:card", "summary_large_image");
   meta("name", "twitter:title", seo.title);
   meta("name", "twitter:description", seo.description);
-  meta("name", "twitter:image", OG_IMAGE);
+  meta("name", "twitter:image", seo.image ?? OG_IMAGE);
 
   let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   if (!canonical) {
