@@ -77,8 +77,8 @@ export default function CareersPage() {
           </p>
           <span className="careers-page__divider" aria-hidden />
           <p>
-            We're a small team, so your work matters from day one: you'll own what you build, learn alongside
-            researchers and engineers, and see it ship.
+            Experience a collaborative, innovation-driven culture with expert mentorship, hands-on learning, and
+            connections to IIT Madras and its Research Park ecosystem.
           </p>
         </div>
 
