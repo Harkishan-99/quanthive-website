@@ -30,11 +30,12 @@ const ORIGINAL_ITEMS = [
 ];
 
 // The bar's and menu's labels for the site's plain pages.
-const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | "blog" | undefined> = {
+const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | "blog" | "careers" | undefined> = {
   About: "about",
   Team: "team",
   Contact: "contact",
   Blog: "blog",
+  Careers: "careers",
 };
 
 // The drawer's resources column (its own column on wider screens; on phones its
@@ -42,7 +43,7 @@ const PLAIN_PAGES: Record<string, "about" | "team" | "contact" | "blog" | undefi
 const RESOURCE_ITEMS = [
   {
     title: "Blog",
-    blurb: "Insights, research notes and product news.",
+    blurb: "Research notes and product news.",
     // A page with lines of text.
     icon: (
       <LineIcon>
@@ -52,7 +53,28 @@ const RESOURCE_ITEMS = [
       </LineIcon>
     ),
   },
+  {
+    title: "Careers",
+    blurb: "Open roles at IITM Research Park.",
+    // A briefcase.
+    icon: (
+      <LineIcon>
+        <rect x="3.5" y="7.5" width="17" height="12" rx="1.5" />
+        <path d="M9 7.5V5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        <path d="M3.5 12.5h17" />
+      </LineIcon>
+    ),
+  },
 ];
+
+/** On phones, each link's title ends in a small diagonal arrow (Nav.css). */
+function MegaArrow() {
+  return (
+    <svg className="nav__mega-item-arrow" viewBox="0 0 12 12" aria-hidden="true">
+      <path d="M3 9 9 3M4 3h5v5" />
+    </svg>
+  );
+}
 
 const BAR_ITEMS = ORIGINAL_ITEMS.filter((it) => it.inBar);
 
@@ -132,7 +154,7 @@ export default function Nav({
   onProductSelect?: () => void;
   /** Opens the About page. */
   /** Opens one of the site's plain pages (About, Team, Contact). */
-  onPageSelect?: (page: "about" | "team" | "contact" | "blog") => void;
+  onPageSelect?: (page: "about" | "team" | "contact" | "blog" | "careers") => void;
   /** The page showing, for the bar's tone over Flash's dark hero. */
   page?: string;
 }) {
@@ -331,6 +353,7 @@ export default function Nav({
                           <span className="nav__mega-item-title">{item.title}</span>
                           <span className="nav__mega-item-blurb">{item.blurb}</span>
                         </div>
+                        <MegaArrow />
                       </button>
                     ))}
                   </div>
@@ -353,6 +376,7 @@ export default function Nav({
                           <span className="nav__mega-item-title">{item.title}</span>
                           <span className="nav__mega-item-blurb">{item.blurb}</span>
                         </div>
+                        <MegaArrow />
                       </button>
                     ))}
                   </div>

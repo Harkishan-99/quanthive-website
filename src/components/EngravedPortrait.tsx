@@ -95,8 +95,10 @@ function lightness(image: HTMLImageElement | null, size: number) {
 
 /** The engraving itself: wavy line-screen ink where the photo is dark. */
 /** `strength` (0–1): how much of the picture is carried by the strokes rather
- *  than by the photo's own tone between them. Lower reads more like the photo. */
-function engrave(light: Float32Array, size: number, seed: number, strength = 1) {
+ *  than by the photo's own tone between them. Lower reads more like the photo.
+ *  `soften` (0–1): how far the strokes' black gives way to the photo's own tone
+ *  under them — for a small portrait, where black lines overwhelm the face. */
+function engrave(light: Float32Array, size: number, seed: number, strength = 1, soften = 0) {
   const img = new ImageData(size, size);
   const px = img.data;
   const rand = random(seed * 7 + 1);
@@ -119,7 +121,8 @@ function engrave(light: Float32Array, size: number, seed: number, strength = 1) 
       const o = i * 4;
       // Under the lines, a soft grey print of the photo itself, so a face keeps
       // its features (eyes, brows, the shape of the mouth) between the strokes.
-      const tone = ink ? 11 : Math.round(244 - dark * (150 + (1 - strength) * 90));
+      const print = Math.round(244 - dark * (150 + (1 - strength) * 90));
+      const tone = ink ? Math.round(11 + (print - 11) * soften * 0.6) : print;
       px[o] = tone;
       px[o + 1] = tone + (ink ? 0 : 2);
       px[o + 2] = tone + (ink ? 0 : 3);
@@ -194,6 +197,12 @@ function layout(seed: number) {
   return cells;
 }
 
+/** Small portraits (a phone's) carry the face in too few lines for the full
+ *  engraving: below 240 CSS px (as large as the Team page's boxes on a desktop)
+ *  it eases off, reaching its lightest at 120 — thinner strokes, in a grey
+ *  nearer the photo's own than black. 0 at full size, 1 at its lightest. */
+const smallness = (css: number) => Math.min(1, Math.max(0, (240 - css) / 120));
+
 export default function EngravedPortrait({
   src,
   seed,
@@ -229,7 +238,7 @@ export default function EngravedPortrait({
 
       const engraving = document.createElement("canvas");
       engraving.width = engraving.height = size;
-      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed, strength), 0, 0);
+      engraving.getContext("2d")!.putImageData(engrave(lightness(image, size), size, seed, strength * (1 - 0.6 * smallness(css)), smallness(css)), 0, 0);
 
       const rand = random(seed * 13 + 5);
       const cell = size / GRID;

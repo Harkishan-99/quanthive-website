@@ -1,3 +1,5 @@
+import { articleSeo } from "../content/seo";
+import { applySeo } from "../lib/seo";
 import { useEffect, useState } from "react";
 import { articleBySlug, sectionId, type Article, type Block, type Face } from "../content/articles";
 import { navigate } from "../lib/router";
@@ -211,7 +213,7 @@ function ArticleView({ article }: { article: Article }) {
 
         {/* No cover yet: the placeholder — the lattice, faint, round the motif. */}
         <div className="article-page__cover">
-          {article.image ? <img src={article.image} alt="" /> : <span className="article-page__cover-art" aria-hidden />}
+          {article.image ? <img src={article.image} alt="" style={{ objectPosition: article.imageFocus }} /> : <span className="article-page__cover-art" aria-hidden />}
         </div>
 
         <p className="article-page__lead">{article.lead}</p>
@@ -252,7 +254,7 @@ export default function ArticlePage() {
   const article = articleBySlug(slug);
 
   useEffect(() => {
-    if (article) document.title = `${article.title} | QuantHive`;
+    if (article) applySeo(articleSeo(article));
   }, [article]);
 
   return (

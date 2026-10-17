@@ -1,12 +1,13 @@
 import type { CSSProperties } from "react";
-import { PageHead } from "./AboutPage";
+import { PageEnd, PageHead, PageInvite } from "./AboutPage";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
 import "./TeamPage.css";
 
 // The Team page (frame 24:4168): the About page's head and copy, then the team in
 // square boxes three to a row, as in the frame — each portrait engraved and cut into a grid (EngravedPortrait), with
-// the person's name and role under it; a rule closes the column.
+// the person's name and role under it; a rule, a line inviting the reader to the
+// Careers page beside a key to it, and the closing rules with the motif.
 //
 // To add a photo: put it in src/assets/images/team/ and set `photo` to
 // "/images/team/<file>". Any ordinary photo works; a head-and-shoulders crop is
@@ -65,6 +66,12 @@ export default function TeamPage() {
         </ul>
 
         <hr className="about-page__rule team-page__rule" />
+
+        <PageInvite label="Careers" href="/careers">
+          Looking to be part of the team? Check out the open roles at QuantHive and find one that suits you.
+        </PageInvite>
+
+        <PageEnd />
       </article>
     </main>
   );

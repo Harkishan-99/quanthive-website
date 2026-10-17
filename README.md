@@ -12,6 +12,8 @@ Pages (one app; moving between them never reloads):
 - `/blog` — Blog page (newsletter sign-ups post to `/api/newsletter`); the newest article is its featured post
 - `/blog/<slug>` — an article; articles are data in `src/content/articles.ts` (add one there to publish it; its sections fill the Contents navigator automatically)
 - `/contact` — Contact page (its form posts to `/api/contact` and is mailed like the waitlist)
+- `/terms`, `/privacy`, `/license` — the legal pages (text in `src/content/legal.ts`)
+- `/careers` — Careers page (each role's Apply Now posts to `/api/careers`, mailed the same way)
 - `/showcase` — the about-section demo alone, full screen (for a display)
 
 ## Requirements
@@ -52,6 +54,7 @@ Bun loads `.env` automatically. **Never commit `.env`** — it's git-ignored.
 | `WAITLIST_TO` | no | where sign-ups are emailed (default `mail@quanthive.in`) |
 | `WAITLIST_FROM` | no | the "from" address (default `SMTP_USER`) |
 | `CONTACT_TO` | no | where contact-form messages are emailed (default `WAITLIST_TO`, then `mail@quanthive.in`) |
+| `CAREERS_TO` | no | where job applications are emailed (default `WAITLIST_TO`, then `mail@quanthive.in`) |
 | `WAITLIST_DATA_DIR` | no | where sign-ups are saved (default `data/`) |
 | `PORT` | no | port to listen on (default `4173`) |
 | `NODE_ENV` | in production | set to `production` to serve the minified build without hot reload |
@@ -235,12 +238,23 @@ Common failures:
 - **Rotate the password if it leaks:** revoke the app password, create a new
   one, update `SMTP_PASS` and restart.
 
+## Search engines (SEO)
+
+Nothing here shows on the pages; it's what Google, Bing and link previews read.
+
+- **Titles, descriptions, structured data** live in `src/content/seo.ts`, one entry per page (articles get theirs from `src/content/articles.ts`, job postings from `src/content/careers.ts`). Edit the wording there.
+- **The build** (`bun run build`) runs `scripts/seo.ts` after bundling: it writes each page's head into its own file (`dist/about.html`, `dist/blog/<slug>.html`, …; `vercel.json`'s `cleanUrls` serves them at `/about` etc.), plus `dist/sitemap.xml` and `dist/robots.txt`.
+- **In the browser**, `src/lib/seo.ts` keeps the head in step as the app changes page.
+- **Adding a page:** add it to `PAGES` in `src/content/seo.ts` as well as to the router.
+- **After deploying:** add the site in [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster Tools](https://www.bing.com/webmasters) and submit `https://quanthive.in/sitemap.xml`.
+
 ## Project layout
 
 ```
 server.ts            Bun server: pages, assets, /api/waitlist, /api/video/render
 api/waitlist.ts      waitlist validation, storage (data/waitlist.jsonl) and SMTP mail
 api/contact.ts       contact form: validation, storage (data/contact.jsonl), same SMTP mail
+api/careers.ts       job applications: validation, storage (data/careers.jsonl), same SMTP mail
 api/newsletter.ts    blog newsletter sign-ups (data/newsletter.jsonl), same SMTP mail
 index.html           app entry
 src/App.tsx          page switching + page transitions
