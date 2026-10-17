@@ -4,6 +4,11 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 // (scripts/render-video.ts, via /api/video/render) — or reuse the last render
 // if nothing has changed — shows its progress as a ring round the key, and
 // downloads the .mov once it's ready.
+//
+// Where there's no render service (Vercel serves the site statically, and
+// /api/video/render is only in server.ts), it downloads the render that ships
+// with the site, src/assets/videos/quanthive-flash.mov — re-render it with
+// `bun run render-video` and commit it whenever the panel changes.
 
 const RENDER_API = "/api/video/render";
 const VIDEO_URL = "/videos/quanthive-flash.mov";
@@ -54,7 +59,15 @@ export default function VideoDownload({
     setPhase("rendering");
     setProgress(0);
     try {
-      let job: Job = await (await fetch(RENDER_API, { method: "POST" })).json();
+      const response = await fetch(RENDER_API, { method: "POST" });
+      // No render service here: the shipped render is the video.
+      if (!response.ok || !response.headers.get("content-type")?.includes("json")) {
+        setProgress(1);
+        download();
+        settleTo("done", 1600);
+        return;
+      }
+      let job: Job = await response.json();
       while (job.state === "rendering" && alive.current) {
         setProgress(job.progress);
         await new Promise((resolve) => window.setTimeout(resolve, POLL_MS));

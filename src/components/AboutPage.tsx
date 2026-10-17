@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import { navigate } from "../lib/router";
 import EngravedPortrait from "./EngravedPortrait";
 import "./AboutPage.css";
@@ -15,14 +15,14 @@ const LEADERS = [
   {
     name: "Harkishan Singh Baniya",
     role: "Founder & CEO",
-    bio: "Visionary leader with expertise in AI and financial modeling, dedicated to democratizing investment strategies through innovative technology solutions.",
+    bio: "Has built open-source quantitative finance tools and consulted for high-frequency trading firms, and now leads QuantHive's strategy and product, shaping how its research reaches investors.",
     linkedin: "https://www.linkedin.com/in/harkishan/",
     photo: "/images/team/harkishan.jpg",
   },
   {
     name: "Dr. Neelesh S Upadhye",
     role: "Co-Founder & Advisor",
-    bio: "Distinguished academic with extensive research in mathematical modeling and computational finance, providing strategic guidance on algorithm development and validation.",
+    bio: "Ex quant desk head at Dolat Capital, with research in mathematical modeling and computational finance, giving strategic guidance on algorithm development and validation.",
     linkedin: "https://www.linkedin.com/in/neelesh-upadhye-3b031956/",
     photo: "/images/team/neelesh.jpg",
   },
@@ -66,7 +66,7 @@ function IncubationCellSeal() {
 // `o`: a little more opacity for a fine-lined seal, which fades out sooner.
 const PARTNERS: { name: string; w: number; o?: number; logo: ReactNode }[] = [
   { name: "Citi", w: 0.26, logo: <img src={`${LOGO}/logo-citi.svg`} alt="" /> },
-  { name: "Google", w: 0.38, logo: <img src={`${LOGO}/logo-google.svg`} alt="" /> },
+  { name: "Google", w: 0.456, logo: <img src={`${LOGO}/logo-google.svg`} alt="" /> },
   { name: "AWS", w: 0.24, logo: <img src={`${LOGO}/logo-aws.svg`} alt="" /> },
   { name: "Anthropic", w: 0.56, logo: <img src={`${LOGO}/logo-anthropic.svg`} alt="" /> },
   {
@@ -124,6 +124,41 @@ export function PageHead({ id, children }: { id: string; children: ReactNode }) 
       </h1>
       <span className="about-page__motif" aria-hidden />
     </header>
+  );
+}
+
+/** A line inviting the reader on (left) and a square black key to the page it
+ *  means (right): "Careers ↗" over a dotted rule. Stacked on a phone. Closes
+ *  the Team and About pages. */
+export function PageInvite({ label, href, children }: { label: string; href: string; children: ReactNode }) {
+  const open = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    navigate(href);
+  };
+  return (
+    <section className="about-page__invite" aria-label={label}>
+      <p className="about-page__invite-text">{children}</p>
+      <a className="about-page__invite-key" href={href} onClick={open}>
+        <span className="about-page__invite-label">
+          {label}
+          <svg viewBox="0 0 12 12" aria-hidden>
+            <path d="M3 9 9 3M4 3h5v5" />
+          </svg>
+        </span>
+      </a>
+    </section>
+  );
+}
+
+/** The close of a page: two rules with the small grey motif between them. */
+export function PageEnd() {
+  return (
+    <div className="about-page__end" aria-hidden>
+      <span />
+      <span className="about-page__end-motif" />
+      <span />
+    </div>
   );
 }
 
@@ -204,6 +239,15 @@ export default function AboutPage() {
             ))}
           </ul>
         </section>
+
+        <hr className="about-page__rule about-page__rule--close" />
+
+        <PageInvite label="Contact" href="/contact">
+          Looking to partner with us? Reach out with your details and we'll get back to you to explore how we can
+          work together.
+        </PageInvite>
+
+        <PageEnd />
       </article>
     </main>
   );

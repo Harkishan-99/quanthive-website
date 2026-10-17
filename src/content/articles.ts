@@ -31,6 +31,12 @@ export type Article = {
   date: string;
   /** Cover image for the article's panel and the blog's cards (optional). */
   image?: string;
+  /** The picture link previews show (X, LinkedIn, WhatsApp, …): a 1200 × 630
+   *  JPEG, which every platform reads. Defaults to the site's own. */
+  shareImage?: string;
+  /** Where a crop of the cover keeps its subject (CSS object-position), for the
+   *  wide and tall boxes it fills. Defaults to the centre. */
+  imageFocus?: string;
   /** The opening paragraph, under the cover and above the rule. */
   lead: string;
   body: Block[];
@@ -64,6 +70,9 @@ export const ARTICLES: Article[] = [
     category: "Research",
     author: "Harkishan S Baniya",
     date: "December 2025",
+    image: "/images/blog-coin-flip.webp",
+    shareImage: "/images/blog-coin-flip-og.jpg",
+    imageFocus: "50% 30%", // the coin sits high: keep it whole
     lead:
       "The financial industry has embraced large language models with unprecedented enthusiasm, deploying them for everything from research assistance to trading recommendations. Yet beneath the impressive demonstrations and polished marketing lies a troubling reality: these systems fail catastrophically on the tasks that matter most. This article examines four fundamental limitations that render current LLMs unsuitable for mission-critical financial applications, drawing on recent interpretability research from Anthropic, empirical benchmarks, and technical analyses that expose the gap between perception and reality.",
     body: [

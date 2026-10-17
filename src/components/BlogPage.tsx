@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ARTICLES, type Article } from "../content/articles";
-import { PageHead } from "./AboutPage";
+import { PageEnd, PageHead } from "./AboutPage";
 import { articleHref } from "./ArticlePage";
 import "./AboutPage.css";
 import "./BlogPage.css";
@@ -14,7 +14,7 @@ import "./BlogPage.css";
 // featured post, and every article also appears in the grid. Until there are
 // three, the grid's remaining places show quiet "coming soon" tiles.
 
-type Post = { tag?: string; title: string; excerpt?: string; author?: string; date?: string; image?: string; href?: string };
+type Post = { tag?: string; title: string; excerpt?: string; author?: string; date?: string; image?: string; imageFocus?: string; href?: string };
 
 const toPost = (article: Article): Post => ({
   tag: article.category,
@@ -23,6 +23,7 @@ const toPost = (article: Article): Post => ({
   author: article.author,
   date: article.date,
   image: article.image,
+  imageFocus: article.imageFocus,
   href: articleHref(article),
 });
 
@@ -120,9 +121,20 @@ export default function BlogPage() {
               <time>{FEATURED.date}</time>
             </p>
           </div>
-          <div className="blog-page__featured-image">
-            {FEATURED.image ? <img src={FEATURED.image} alt="" /> : FEATURED.href && <PostArt dark />}
-          </div>
+          {FEATURED.href ? (
+            // The picture opens the post too (its title is the link for keyboards
+            // and screen readers); on hover a small arrow in its corner says so.
+            <a className="blog-page__featured-image" href={FEATURED.href} tabIndex={-1} aria-hidden>
+              {FEATURED.image ? <img src={FEATURED.image} alt="" style={{ objectPosition: FEATURED.imageFocus }} /> : <PostArt dark />}
+              <span className="blog-page__featured-arrow">
+                <svg viewBox="0 0 12 12">
+                  <path d="M3 9 9 3M4 3h5v5" />
+                </svg>
+              </span>
+            </a>
+          ) : (
+            <div className="blog-page__featured-image" />
+          )}
         </article>
 
         <Newsletter />
@@ -135,10 +147,10 @@ export default function BlogPage() {
               <li key={index} className="blog-page__post">
                 {post.href ? (
                   <a className="blog-page__post-image" href={post.href} tabIndex={-1} aria-hidden>
-                    {post.image ? <img src={post.image} alt="" /> : <PostArt />}
+                    {post.image ? <img src={post.image} alt="" style={{ objectPosition: post.imageFocus }} /> : <PostArt />}
                   </a>
                 ) : (
-                  <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" />}</div>
+                  <div className="blog-page__post-image">{post.image && <img src={post.image} alt="" style={{ objectPosition: post.imageFocus }} />}</div>
                 )}
                 {post.tag && <p className="blog-page__post-tag">{post.tag}</p>}
                 <h3 className="blog-page__post-title">
@@ -148,14 +160,16 @@ export default function BlogPage() {
               </li>
             ) : (
               <li key={index} className="blog-page__post blog-page__post--soon" aria-hidden>
-                <div className="blog-page__post-image" />
+                <div className="blog-page__post-image">
+                  <PostArt />
+                </div>
                 <p className="blog-page__post-title">Coming soon</p>
               </li>
             ),
           )}
         </ul>
 
-        <span className="blog-page__end" aria-hidden />
+        <PageEnd />
       </article>
     </main>
   );

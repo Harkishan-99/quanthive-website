@@ -5,6 +5,8 @@
 //   /about    the About page (old /#about-us links still open it)
 //   /team     the Team page
 //   /contact  the Contact page
+//   /careers  the Careers page
+//   /terms, /privacy, /license  the legal pages
 //   /blog     the Blog page
 //   /blog/<slug>  an article (src/content/articles.ts)
 //   anything else an "under maintenance" note, until that page is built
@@ -17,7 +19,7 @@
 // hosts already serve the app at any path (vercel.json, server.ts), so a refresh
 // on the new address works with nothing else to set up.
 
-export type Page = "landing" | "product" | "about" | "team" | "contact" | "blog" | "article" | "maintenance";
+export type Page = "landing" | "product" | "about" | "team" | "contact" | "careers" | "terms" | "privacy" | "license" | "blog" | "article" | "maintenance";
 
 export const PAGE_URL: Record<Page, string> = {
   landing: "/",
@@ -25,6 +27,10 @@ export const PAGE_URL: Record<Page, string> = {
   about: "/about",
   team: "/team",
   contact: "/contact",
+  careers: "/careers",
+  terms: "/terms",
+  privacy: "/privacy",
+  license: "/license",
   blog: "/blog",
   article: "/blog", // an article lives at /blog/<slug> (src/content/articles.ts)
   maintenance: "/maintenance", // any address with no page yet
